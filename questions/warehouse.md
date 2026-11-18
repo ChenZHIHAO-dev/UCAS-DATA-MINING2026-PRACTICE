@@ -12,13 +12,11 @@
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 航空公司希望分析常客的旅行趋势、不同航线旅客的季节变化和增长，并跟踪不同航班上消费的食品和饮料。请为航空公司的任务设计一个数据仓库模型。
-
-### 第一步：中文翻译与条件
-
-原题为中文。需要同时支持“旅客旅行”和“机上餐饮”分析，设计事实表、维度和概念层次。
 
 ### 逐步解答
 
@@ -40,6 +38,8 @@ DimProduct ─ FactCatering ─ DimDate
 
 Define the grain first. Use a passenger-flight fact for travel and a separate consumption fact for catering, with shared date, passenger and flight dimensions.
 
+先定义粒度。旅行使用旅客—航班事实，餐饮使用独立消费事实，共享日期、旅客和航班维度。
+
 ### 易错点与约定
 
 不同粒度事实直接连接再汇总会重复计数。题目没给票价或消费金额时，应写为可选度量，不能假装已有该字段。
@@ -55,13 +55,11 @@ Define the grain first. Use a passenger-flight fact for travel and a separate co
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
 
 An e-mail database stores a large number of electronic mail messages. How can such a database be structured so as to facilitate multidimensional search, such as by sender, by receiver, by subject, and by time?
 
-### 第一步：中文翻译与条件
-
-邮件数据库存放大量半结构化邮件。如何组织它，以便按发件人、收件人、主题和时间进行多维检索？
+一个电子邮件数据库存储了大量邮件。应怎样组织这个数据库，以便按发件人、收件人、主题、时间等进行多维搜索？
 
 ### 逐步解答
 
@@ -74,6 +72,8 @@ An e-mail database stores a large number of electronic mail messages. How can su
 ### English answer pattern
 
 Store message-level facts with sender, subject and time dimensions. Model multiple recipients with a bridge and avoid double-counting messages.
+
+保存邮件级事实，设置发件人、主题和时间维度。用桥接表建模多个收件人，避免邮件重复计数。
 
 
 ---
@@ -96,17 +96,25 @@ Store message-level facts with sender, subject and time dimensions. Model multip
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 The operational database is represented by the ER diagram below. Vehicle has plate_no, is_rental and daily_price; a rental vehicle belongs to one provider. ParkingLot has lot_id, city and state. Calendar contains day, ISO week, week-year and calendar year. ParkingRecord records the lot in which a vehicle is parked on a date. Each vehicle has at most one parking record per date. For this exercise, rental status, provider and listed daily price remain unchanged over the recorded period. Non-rental vehicles have a NULL rental price.
+
+业务数据库由下方 ER 图表示。Vehicle 包含车牌号、是否租赁、日租价；一辆租赁车属于一个服务商。ParkingLot 包含停车场编号、城市和州或省。Calendar 包含日、ISO 周、周年和自然年。ParkingRecord 记录车辆某日在何处停车。每辆车每天最多一条停车记录。本练习中，租赁状态、服务商和挂牌日租价在记录期间保持不变。非租赁车辆的租价为 NULL。
 
 ![停车与租赁业务 ER 图](../assets/diagrams/recall2025-er.svg)
 
 **(a)** Design a star-schema data warehouse. State the fact grain, keys, dimensions and measures.
 
+**(a)** 设计星型模式数据仓库。说明事实粒度、键、维度和度量。
+
 **(b)** Specify appropriate concept hierarchies. Distinguish calendar year from ISO week-year.
 
+**(b)** 指定适当的概念层次。区分自然年与 ISO 周年。
+
 **(c)** Starting from the base cuboid [day, vehicle, lot, provider], return, for each rental vehicle parked in Beijing in calendar year 2025, its average listed daily rental price over its recorded Beijing parking days. Give the OLAP operations and a SQL query. Use the six records below to calculate the result. A listed price is not rental revenue.
+
+**(c)** 从基本方体 [日、车辆、停车场、服务商] 出发，对自然年 2025 年在北京停车的每辆租赁车，返回其已记录的北京停车日上的平均挂牌日租价。给出 OLAP 操作及 SQL 查询。使用下方六条记录计算结果。挂牌价格不等于租赁收入。
 
 | Date | Plate | Lot | City | Provider | Daily price |
 | --- | --- | --- | --- | --- | --- |
@@ -116,16 +124,6 @@ The operational database is represented by the ER diagram below. Vehicle has pla
 | 2025-02-03 | 京C003 | L1 | Beijing | N/A | NULL |
 | 2025-03-01 | 京B002 | L3 | Shanghai | P2 | 150 |
 | 2024-12-30 | 京A001 | L1 | Beijing | P1 | 200 |
-
-### 第一步：中文翻译与条件
-
-图中的车辆含车牌、是否租赁和挂牌日租价；租赁车辆归属一个服务商。停车场含编号、城市和州/省，日期维含日、ISO 周、周年与自然年。停车记录说明某车某天停在哪个场：**一车一天最多一条**。本练习中车辆租赁状态、服务商及日租价在记录期内不变；非租赁车的租价为 NULL。
-
-(a) 依据图中的业务实体设计星型仓库，先定义事实表的一行代表什么，再标主外键、维度和度量。
-
-(b) 给出维度概念层次，并说明自然年与 ISO 周年不能随意混用。
-
-(c) 按**自然年 2025、城市 Beijing、租赁车辆**筛选，对每辆车在这些停车日上的挂牌日租价求平均，交出查询步骤、SQL 和实际结果。这里不求租赁收入，也不要求统计未被记录的日期。
 
 ### 小问要求与完成标准
 
@@ -153,7 +151,7 @@ The operational database is represented by the ER diagram below. Vehicle has pla
 | DimLot | lot_key; lot_id, city, state | 停车场及其地点。 |
 | DimProvider | provider_key; provider_id, provider_name | 租赁商；自有车可指向 N/A 维度成员。 |
 
-$parked\_count$ 可按日累计为“停车车日”，不是跨日独立车辆数。$daily\_rent$ 是价格，对时间不能当作收入直接求和。若需要物化均价，应保留价格之和与有效价格的观测数，最后相除。
+$parked\_count$ 可按日累计为“停车车日”；统计跨日独立车辆数时需按车辆去重。$daily\_rent$ 是价格，对时间不能当作收入直接求和。若需要物化均价，应保留价格之和与有效价格的观测数，最后相除。
 
 #### 3. 概念层次
 
@@ -191,11 +189,13 @@ $$\begin{aligned}
 | 京A001 | 2 | 200 |
 | 京B002 | 1 | 150 |
 
-第四条为非租赁车，第五条不在北京，第六条不在自然年 2025。京A001 的价格不是 $200+200=400$ 元日租价。
+第四条为非租赁车，第五条不在北京，第六条不在自然年 2025。京A001 的平均日租价为 $(200+200)/2=200$ 元。
 
 ### English answer pattern
 
 Use a vehicle-day fact grain. Slice to Beijing and calendar year 2025, retain the vehicle dimension, and average valid listed daily prices. The two resulting prices are 200 and 150.
+
+采用车辆—日事实粒度。切片到北京及自然年 2025，保留车辆维，对有效挂牌日租价求平均。所得两个价格为 200、150。
 
 ### 易错点与约定
 
@@ -216,13 +216,11 @@ Use a vehicle-day fact grain. Slice to Beijing and calendar year 2025, retain th
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 假定数据仓库有 date, product, vendor, location 四维和 sales_volume, sales_cost 两个度量。(a) 画星型模式；(b) 从基本方体出发列出每年在 Los Angles 的每个 vendor 的 sales_volume；(c) 讨论位图索引优点和问题。
-
-### 第一步：中文翻译与条件
-
-原题为中文；Los Angles 按常用地名 Los Angeles 理解。要保留每个供应商，不是只筛 vendor A。
 
 ### 逐步解答
 
@@ -245,6 +243,8 @@ GROUP BY d.year, v.vendor_name;
 
 Slice the location to Los Angeles, roll up date to year and product to ALL, and group sales volume by year and vendor.
 
+把地点切片到洛杉矶，日期上卷到年、商品上卷到 ALL，按年和供应商汇总销售量。
+
 ### 计算与内存分析
 
 位图的字级交运算约 O(N/w)，w 为机器字长；扫描聚合约 O(N)，输出分组表额外 O(g) 空间。
@@ -260,13 +260,11 @@ Slice the location to Los Angeles, roll up date to year and product to ALL, and 
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
 
 Design a data warehouse for a regional weather bureau with about 1000 land/ocean probes collecting air pressure, temperature and precipitation each hour for over ten years. Present the schema, fact table(s), dimension tables and concept hierarchies for querying and OLAP.
 
-### 第一步：中文翻译与条件
-
-为区域气象局设计仓库：约 1000 个陆地/海洋探针，逐小时记录气压、温度和降水，已有十余年数据。给出模式、事实表、维度表与层次。
+为地区气象局设计数据仓库：约 1000 个陆地或海洋探测器，每小时采集气压、温度、降水，已有十余年数据。给出供查询和 OLAP 使用的模式、事实表、维度表与概念层次。
 
 ### 逐步解答
 
@@ -279,6 +277,8 @@ FactWeather 一行是一探针一小时的观测，键 probe_key,time_key，度�
 ### English answer pattern
 
 Use a probe-hour grain. Store additive precipitation intervals carefully and aggregate temperature with sums and valid counts rather than summing averages.
+
+采用探测器—小时粒度。谨慎保存可加的降水时段量；温度用总和与有效计数聚合。
 
 ### 易错点与约定
 
@@ -299,13 +299,11 @@ Use a probe-hour grain. Store additive precipitation intervals carefully and agg
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 四维 date, product, vendor, location；度量 sales_volume, sales_cost。画星型，并从基本方体列出每年 vendor A 的 sales_volume。
-
-### 第一步：中文翻译与条件
-
-原题为中文。和当前 HW1 的城市条件不同，这题筛选供应商 A，再求其各年销售量。
 
 ### 逐步解答
 
@@ -325,6 +323,8 @@ GROUP BY d.year;
 
 Slice vendor to A and roll up all dimensions except year.
 
+把供应商切片到 A，除年份外的维度均上卷。
+
 
 ---
 
@@ -336,13 +336,11 @@ Slice vendor to A and roll up all dimensions except year.
 
 状态：完整；形式：设计 / OLAP。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 某网络社交平台数据库存储大量信息。设计数据仓库结构，便于多维查询和挖掘。
-
-### 第一步：中文翻译与条件
-
-原题为中文。开放设计题，需要选择明确业务过程、粒度、维度与度量。
 
 ### 逐步解答
 
@@ -355,3 +353,5 @@ Slice vendor to A and roll up all dimensions except year.
 ### English answer pattern
 
 Choose an interaction-event grain and distinguish event counts from distinct-user measures.
+
+选择交互事件粒度，区分事件计数与去重用户度量。

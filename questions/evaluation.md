@@ -12,13 +12,11 @@
 
 状态：完整；形式：历年简答。
 
-### 原题 / 转录整理
+### 原文
 
 How to overcome overfitting in decision trees? What is overfitting?
 
-### 第一步：中文翻译与条件
-
-什么是过拟合？如何减轻决策树过拟合？
+怎样克服决策树过拟合？什么是过拟合？
 
 ### 逐步解答
 
@@ -26,13 +24,15 @@ How to overcome overfitting in decision trees? What is overfitting?
 
 1. **Pre-pruning 预剪枝：**限制最大深度、最小分裂/叶样本数、最小增益等，提前停止不可靠分裂。优点是省训练成本；可能过早停止而欠拟合。
 2. **Post-pruning 后剪枝：**先生成树，再用验证误差或误差估计、代价复杂度等剪去不能改善泛化的子树。允许保留早期看似弱但后续有用的分裂。
-3. 用独立验证集或交叉验证选择树的复杂度；训练误差不是选树依据。增加高质量数据、处理错误标签也有帮助。
+3. 用独立验证集或交叉验证选择树的复杂度；用未参与拟合的数据检查泛化表现。增加高质量数据、处理错误标签也有帮助。
 
 复杂度惩罚示例 $R_\alpha(T)=R(T)+\alpha|Leaves(T)|$，α 越大越偏向小树；这里是说明一种剪枝准则，不表示 C5.0 就直接采用这条公式。
 
 ### English answer pattern
 
 Overfitting means fitting noise in the training data and generalizing poorly. Use pre-pruning or post-pruning and select complexity on validation data.
+
+过拟合指拟合训练噪声，泛化表现差。采用预剪枝或后剪枝，并用验证数据选择复杂度。
 
 
 ---
@@ -45,13 +45,11 @@ Overfitting means fitting noise in the training data and generalizing poorly. Us
 
 状态：完整；形式：历年简答。
 
-### 原题 / 转录整理
+### 原文
 
 A neural network classifier may consist of multiple hidden layers. How to overcome overfitting in a neural network classifier?
 
-### 第一步：中文翻译与条件
-
-多隐藏层网络如何避免过拟合？结合机制说明，不只列英文名词。
+神经网络分类器可能包含多个隐藏层。怎样克服神经网络分类器的过拟合？
 
 ### 逐步解答
 
@@ -69,6 +67,8 @@ A neural network classifier may consist of multiple hidden layers. How to overco
 
 Use weight regularization, early stopping, capacity control, appropriate data augmentation or dropout, with hyperparameters selected on validation data.
 
+使用权重正则化、提前停止、容量控制、适当的数据增强或 Dropout，并在验证数据上选择超参数。
+
 
 ---
 
@@ -80,13 +80,11 @@ Use weight regularization, early stopping, capacity control, appropriate data au
 
 状态：完整；形式：作业提炼 / 评估。
 
-### 原题 / 转录整理
+### 原文
 
 Build PEP decision trees with minimum records per child 56,15,10; compare validation confusion matrices and choose a model for holdout scoring. Current pruning severity is 70; the older homework uses 75.
 
-### 第一步：中文翻译与条件
-
-在验证数据上比较三棵不同最小子分支样本数的树；选择模型给新数据打分。当前和往届剪枝参数不同，不把两者实验结果混用。
+分别以每个子节点最少记录数 56、15、10 构建 PEP 决策树；比较验证集混淆矩阵，选择模型为留出集打分。当前剪枝严重度为 70，往届作业使用 75。
 
 ### 逐步解答
 
@@ -94,11 +92,13 @@ Build PEP decision trees with minimum records per child 56,15,10; compare valida
 
 **自设小变式，非作业原始输出：**模型 A 的 (TP,FP,FN,TN)=(30,10,20,140)，B=(38,22,12,128)。A Accuracy=.85、Precision=.75、Recall=.6；B Accuracy=.83、Precision≈.6333、Recall=.76。若只按准确率选 A；若漏掉潜在购买者代价更高，可能按成本 $C_{FN}FN+C_{FP}FP$ 选 B。
 
-不靠“树越大越好”选模型。当前完整实验输出在原 HW3 results/bank 中；本题仅将可考部分压缩为可以手算的变式，不冒充完整软件重跑。
+根据验证集混淆矩阵和业务成本选择模型。将不同模型的漏判与误报分别比较，再用选定模型给留出集打分。
 
 ### English answer pattern
 
 Select on validation performance and business costs, not training accuracy or tree size alone.
+
+根据验证表现与业务成本选择模型，不能只看训练准确率或树大小。
 
 
 ---
@@ -111,13 +111,11 @@ Select on validation performance and business costs, not training accuracy or tr
 
 状态：完整；形式：作业提炼 / 读树。
 
-### 原题 / 转录整理
+### 原文
 
 Build a C5.0 tree for pasta, predict 20 rollout customers, and report positive purchase rules up to the fifth level with the root counted as level 1.
 
-### 第一步：中文翻译与条件
-
-从已训练树为新顾客预测，并将通往正类叶子的路径转成规则；层数根为 1。
+为 pasta 构建 C5.0 树，预测 20 位推广顾客，并报告到第五层为止的正类购买规则，根计为第 1 层。
 
 ### 逐步解答
 
@@ -125,11 +123,13 @@ Build a C5.0 tree for pasta, predict 20 rollout customers, and report positive p
 
 **自设路径示例：**根 level1 测 beer；beer=1 后 level2 测 cheese；cheese=0 到 level3 yes 叶，得到 beer=1 AND cheese=0 ⇒ pasta=yes。对 (beer=1,cheese=0) 预测 yes。
 
-第五层范围不是“最多五个条件”：根到 level5 叶通常只有四条边。若 level5 节点仍有子树，不能未经说明将它当 yes 叶输出；可注明截断后多数类与原完整树预测不同。原题的软件参数和 20 条 rollout 属于实验结果，题库提炼的是读树与路径规则能力。
+根计为第 1 层时，从根到第 5 层叶共有四条边，因此路径规则最多包含四次分支测试。若 level5 节点仍有子树，不能未经说明将它当 yes 叶输出；可注明截断后多数类与原完整树预测不同。原题的软件参数和 20 条 rollout 属于实验结果，题库提炼的是读树与路径规则能力。
 
 ### English answer pattern
 
 Conjoin the edge tests along each root-to-positive-leaf path. Count the root as level one.
+
+将每条根到正类叶路径上的边条件作合取。根计为第 1 层。
 
 
 ---
@@ -142,13 +142,11 @@ Conjoin the edge tests along each root-to-positive-leaf path. Count the root as 
 
 状态：实验题提炼；未重跑软件；形式：作业提炼 / 设计。
 
-### 原题 / 转录整理
+### 原文
 
 Predict final-exam pass/fail from online learning behavior. Training data have 873 records and the supplied test data 461 records. Try decision trees, neural networks or logistic regression with different parameters and report a confusion matrix.
 
-### 第一步：中文翻译与条件
-
-根据在线学习时长、阅读次数、模拟考试等行为预测期末及格与否，比较模型参数并汇报混淆矩阵。这里提炼的是实验中可转成笔试的设计与评价步骤。
+根据在线学习行为预测期末考试通过或不通过。训练数据有 873 条，所给测试数据有 461 条。尝试不同参数的决策树、神经网络或逻辑回归，并报告混淆矩阵。
 
 ### 逐步解答
 
@@ -165,6 +163,8 @@ Predict final-exam pass/fail from online learning behavior. Training data have 8
 ### English answer pattern
 
 Tune on training/validation data, prevent temporal leakage, and evaluate the selected model on held-out records with a clearly defined positive class.
+
+在训练或验证数据上调参，防止时间泄漏；明确正类后，在留出记录上评价选定模型。
 
 ### 易错点与约定
 
@@ -193,17 +193,19 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 **(a)** What is overfitting? Explain its typical effect on training and validation performance.
 
+**(a)** 什么是过拟合？解释它对训练和验证表现的典型影响。
+
 **(b)** Describe at least three methods for reducing overfitting in a neural network classifier. Explain the mechanism of each method.
+
+**(b)** 描述至少三种减轻神经网络分类器过拟合的方法。解释每种方法的机制。
 
 **(c)** State how regularization strengths and the stopping epoch should be selected without using the test set for repeated tuning.
 
-### 第一步：中文翻译与条件
-
-先定义过拟合并联系泛化；再给至少三项神经网络防过拟合方法，每项解释原理；最后说明调参、早停和测试集的职责。
+**(c)** 说明怎样选择正则化强度与停止训练的轮次，同时不反复使用测试集调参。
 
 ### 小问要求与完成标准
 
@@ -221,7 +223,7 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 #### 2. 选择三项以上并解释机理
 
-| Method | Mechanism / 机理 | 如何使用 |
+| 方法 | Mechanism / 机理 | 如何使用 |
 | --- | --- | --- |
 | L2 regularization | 优化 $\mathcal L_{data}+\lambda\lVert W\rVert_F^2$，惩罚过大权重。 | 用验证集选 λ。 |
 | Early stopping | 在验证性能不再改善时停止，恢复验证最优轮次。 | 不能监看测试集来早停。 |
@@ -241,6 +243,8 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 Overfitting occurs when a model learns noise or accidental details in the training set and generalizes poorly. Training loss may keep decreasing while validation loss increases. L2 regularization penalizes large weights; early stopping restores the model at the best validation epoch; dropout reduces co-adaptation of hidden units. Reducing unnecessary model capacity and adding representative, label-preserving training data can also help. Select hyperparameters on validation data or cross-validation, and reserve the test set for final evaluation.
 
+模型学习训练噪声或偶然细节、泛化表现差时，发生过拟合。训练损失可能继续下降，而验证损失上升。L2 正则化惩罚大权重；提前停止恢复验证表现最佳轮次的模型；Dropout 减少隐藏单元共同适应。减少多余模型容量，增加有代表性且保持标签的训练数据，也有帮助。用验证集或交叉验证选择超参数，保留测试集用于最终评价。
+
 ### 易错点与约定
 
-本题问的是防治机制，不是要求画网络或计算梯度。Batch normalization 与输入缩放不能保证消除过拟合。
+每种方法要说明它怎样限制拟合噪声，并交代如何用验证数据选择设置。Batch normalization 与输入缩放不能保证消除过拟合。

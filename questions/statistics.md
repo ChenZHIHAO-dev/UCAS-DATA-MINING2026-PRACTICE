@@ -12,15 +12,13 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Determine outliers in the age data by five-number summary.
 
+利用五数概括确定年龄数据中的离群值。
+
 20, 13, 15, 16, 25, 35, 36, 40, 45, 46, 52, 25, 25, 30, 21, 22, 22, 33, 33, 35, 35, 70, 19, 20
-
-### 第一步：中文翻译与条件
-
-用五数概括和箱线图的 1.5 IQR 规则找年龄离群值。
 
 ### 逐步解答
 
@@ -38,6 +36,8 @@ $IQR=35.5-20.5=15$，下界 $20.5-1.5\times15=-2$，上界 $35.5+1.5\times15=58$
 
 The upper fence is 58, so 70 is an outlier. The upper whisker ends at 52, the largest observed non-outlier.
 
+上界为 58，因此 70 是离群值。上须止于最大的非离群实际观测 52。
+
 ### 易错点与约定
 
 某些软件四分位数插值不同；应给出计算约定。本题即使采用常见线性插值也不改变 70 为唯一离群的结论。
@@ -53,7 +53,7 @@ The upper fence is 58, so 70 is an outlier. The upper whisker ends at 52, the la
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 A: 21, 16, 19, 24, 27, 23, 22, 21, 20, 17, 16, 20, 23, 22, 18, 24, 26, 25, 20, 26
 
@@ -61,9 +61,7 @@ B: 38, 24, 38, 45, 46, 44, 42, 34, 40, 30, 31, 40, 40, 32, 36, 42, 50, 47, 46, 5
 
 Calculate mean, median, standard deviation of A; draw its boxplot; compute the correlation coefficient of A and B and draw a scatter plot.
 
-### 第一步：中文翻译与条件
-
-计算商品 A 的均值、中位数和标准差，画箱线图；按同一个月份配对 A、B，计算 Pearson 并解释散点趋势。
+计算 A 的均值、中位数、标准差；画出其箱线图；计算 A、B 的相关系数，并画散点图。
 
 ### 逐步解答
 
@@ -82,6 +80,8 @@ $$r=\frac{\sum_i(A_i-\bar A)(B_i-\bar B)}{\sqrt{\sum_i(A_i-\bar A)^2\sum_i(B_i-\
 ### English answer pattern
 
 The paired monthly sales are positively correlated. State whether standard deviation uses N or N−1.
+
+配对月销量正相关。应说明标准差使用 N 还是 N−1。
 
 ### 易错点与约定
 
@@ -102,9 +102,11 @@ The paired monthly sales are positively correlated. State whether standard devia
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Suppose a hospital tested age and body fat for 16 adults. Calculate mean, median, standard deviation; draw boxplots and scatter plot; normalize using z-score; calculate Pearson correlation.
+
+假设医院测量了 16 位成年人的年龄和体脂率。计算均值、中位数、标准差；绘制箱线图和散点图；用 z 分数归一化；计算 Pearson 相关系数。
 
 | age | %fat |
 | --- | --- |
@@ -125,10 +127,6 @@ Suppose a hospital tested age and body fat for 16 adults. Calculate mean, median
 | 56 | 36 |
 | 57 | 30.9 |
 
-### 第一步：中文翻译与条件
-
-对两列分别做描述统计、箱线图和 z-score；按每个人的两项指标配对做散点与 Pearson。
-
 ### 逐步解答
 
 | Variable | Mean | Median | Population SD | Sample SD | Five-number summary |
@@ -143,3 +141,5 @@ Pearson $r=0.809086$，为正相关。箱线图按各自五数与 $1.5IQR$ 界�
 ### English answer pattern
 
 Standardize each variable with its own mean and standard deviation, and retain paired records for correlation.
+
+各变量用自己的均值和标准差标准化；计算相关性时保留配对记录。

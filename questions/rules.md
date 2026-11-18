@@ -12,19 +12,19 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Using the resulting frequent itemsets, find all strong associations matching buys(x,item1) AND buys(x,item2) ⇒ buys(x,item3). min_support=50%; min_confidence=75% in 2016 and 70% in 2020. Use the ten-transaction table from the FP-growth question.
 
-### 第一步：中文翻译与条件
-
-要求前件两个商品、后件一个商品，所以只从频繁三项集产生 2⇒1 规则；2016 置信阈值 .75，2020 为 .70。
+利用所得频繁项集，找出全部符合“购买物品 1 且购买物品 2⇒购买物品 3”的强关联。最小支持度为 50%；2016 年最小置信度为 75%，2020 年为 70%。使用 FP-growth 题的十笔事务表。
 
 ### 逐步解答
 
+每条规则的支持度用并集计数除以总事务数，置信度用并集计数除以前件计数。前件改变时，置信度的分母也随之改变。
+
 频繁三项集只有 abe，计数 5。三个方向分别检验：
 
-| Rule | Union count | Antecedent count | Confidence |
+| Rule | 共同计数 | 前件计数 | 置信度 Confidence |
 | --- | --- | --- | --- |
 | ab ⇒ e | 5 | 6 | 5/6=.833333 |
 | ae ⇒ b | 5 | 6 | 5/6=.833333 |
@@ -35,6 +35,8 @@ Using the resulting frequent itemsets, find all strong associations matching buy
 ### English answer pattern
 
 All three directions have support 0.5, but their confidences differ. The 70% threshold admits one more rule than 75%.
+
+三个方向支持度均为 0.5，但置信度不同。70% 阈值比 75% 多接纳一条规则。
 
 
 ---
@@ -47,21 +49,21 @@ All three directions have support 0.5, but their confidences differ. The 70% thr
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 For the four transactions and min_sup=60%,min_conf=70%, compute confidence for {A,B}⇒{C} and {C}⇒{A,B}. Is confidence symmetric? List all strong rules matching two items ⇒ one item.
 
-### 第一步：中文翻译与条件
-
-计算两个反向规则并说明置信度是否对称；再列出满足阈值和元规则的全部强规则。
+对四笔事务，最小支持度 60%、最小置信度 70%，计算 {A,B}⇒{C} 与 {C}⇒{A,B} 的置信度。置信度是否对称？列出全部“两项⇒一项”形式的强规则。
 
 ### 逐步解答
 
-count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=1，不对称；两条支持度都 .5，低于 .6，均不是本阈值下强规则。
+count(X) 表示同时包含项集 X 中全部物品的事务数。对 X⇒Y，先数同时包含 X、Y 的事务，再除以包含 X 的事务数，得到置信度。
+
+count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=1，不对称；两条支持度都 .5，低于 .6，均未通过该支持度阈值。
 
 满足支持度的三项集只有 ABD，count=3：
 
-| Rule | Support | Confidence |
+| Rule | 支持度 Support | 置信度 Confidence |
 | --- | --- | --- |
 | AB ⇒ D | 3/4 | 3/4 = 0.75 |
 | AD ⇒ B | 3/4 | 3/3 = 1 |
@@ -72,6 +74,8 @@ count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=
 ### English answer pattern
 
 Confidence is directional because it conditions on the antecedent. High confidence alone does not make a strong rule.
+
+置信度以给定前件为条件，因此有方向性。仅有高置信度不足以构成强规则。
 
 
 ---
@@ -84,19 +88,17 @@ Confidence is directional because it conditions on the antecedent. High confiden
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Using the five transactions, min_sup=40%,min_conf=40%, present confidence for all rules generated from 3-frequent itemsets, then list rules matching two items ⇒ one item.
 
-### 第一步：中文翻译与条件
-
-置信度是规则的属性，不是项集本身的属性。唯一频繁三项集 EKO，应枚举其六个非空前件方向，再筛元规则。
+使用五笔事务，最小支持度 40%、最小置信度 40%，给出由频繁三项集生成的所有规则的置信度，再列出“两项⇒一项”的规则。
 
 ### 逐步解答
 
 count(EKO)=4、count(E)=4、count(K)=5、count(O)=4，EK/EO/KO 的计数都为 4。
 
-| Rule | Support | Confidence |
+| Rule | 支持度 Support | 置信度 Confidence |
 | --- | --- | --- |
 | C ⇒ K | 2/5 | 2/2 = 1 |
 | K ⇒ C | 2/5 | 2/5 = 0.4 |
@@ -113,11 +115,13 @@ count(EKO)=4、count(E)=4、count(K)=5、count(O)=4，EK/EO/KO 的计数都为 4
 | EO ⇒ K | 4/5 | 4/4 = 1 |
 | KO ⇒ E | 4/5 | 4/4 = 1 |
 
-上表包含全部频繁项集产生的强规则。题目“由三项集产生的规则”只取并集为 EKO 的六条：E⇒KO、K⇒EO、O⇒EK、EK⇒O、EO⇒K、KO⇒E。它们置信度依次 1、.8、1、1、1、1，支持度均 .8。元规则再只留最后三条。原同学解的元规则清单漏写 KO⇒E，本题库补齐。
+上表包含全部频繁项集产生的强规则。题目“由三项集产生的规则”只取并集为 EKO 的六条：E⇒KO、K⇒EO、O⇒EK、EK⇒O、EO⇒K、KO⇒E。它们置信度依次 1、.8、1、1、1、1，支持度均 .8。元规则再只留最后三条。
 
 ### English answer pattern
 
 Enumerate all six directions from EKO, then keep only the three 2-to-1 rules required by the metarule.
+
+枚举 EKO 的六个方向，再只保留元规则要求的三条“两项到一项”规则。
 
 
 ---
@@ -130,13 +134,11 @@ Enumerate all six directions from EKO, then keep only the three 2-to-1 rules req
 
 状态：完整；形式：作业提炼 / 规则比较。
 
-### 原题 / 转录整理
+### 原文
 
 Current lab: minimum antecedent support 7%, confidence 45%, maximum antecedents 4. Older lab: 5%,50%,5. Sort rules by lift, support and confidence and remove redundant ones.
 
-### 第一步：中文翻译与条件
-
-分清实验软件的前件支持度与标准规则支持度，理解不同排序和冗余；当前/往届参数不一样。
+当前实验：最小前件支持度 7%、置信度 45%、最大前件数 4。往届实验：5%、50%、5。分别按提升度、支持度和置信度给规则排序，并删除冗余规则。
 
 ### 逐步解答
 
@@ -144,10 +146,12 @@ Current lab: minimum antecedent support 7%, confidence 45%, maximum antecedents 
 
 另规则 C⇒D：count(C)=100,count(D)=100,count(CD)=30，confidence=.3、support=.03、lift=3；提升度更高但覆盖与命中率更低，不能只凭一个指标说绝对更好。
 
-最大前件数 4 表示 |X|≤4，不是 |X∪Y|≤4。Minimum antecedent support=.07 比较 count(X)/N；若 confidence≥.45，则规则支持可低至 .0315，并不等于 .07。
+最大前件数 4 表示规则左侧项集满足 |X|≤4。Minimum antecedent support=.07 比较 count(X)/N；若 confidence≥.45，则规则支持可低至 .0315，；应与前件支持度分别计算。
 
 冗余检查：若 X⇒Y 和 XZ⇒Y 的置信度/提升度相同、后者没有新增解释或有用覆盖，可考虑省去更复杂规则；“前件不同”不意味着逻辑上完全不重复。剔除标准须声明，不把所有包含关系规则一概删去。
 
 ### English answer pattern
 
 Antecedent support is P(X); rule support is P(X∪Y). Lift compares confidence with the consequent baseline.
+
+前件支持度为 P(X)，规则支持度为 P(X∪Y)。Lift 把置信度与后件基准比较。

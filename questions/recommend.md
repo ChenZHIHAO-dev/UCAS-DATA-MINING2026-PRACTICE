@@ -12,9 +12,11 @@
 
 状态：题面未指定预测公式；列出两种口径；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 List the top 2 most similar users of User 2 based on Euclidean distance. Predict User 2’s rating for Product 2.
+
+基于欧氏距离，列出与用户 2 最相似的两个用户。预测用户 2 对商品 2 的评分。
 
 | User | Product1 | Product2 | Product3 | Product4 |
 | --- | --- | --- | --- | --- |
@@ -23,10 +25,6 @@ List the top 2 most similar users of User 2 based on Euclidean distance. Predict
 | 3 | 1 | 3 | 2 | 1 |
 | 4 | 4 | 3 | 2 | 1 |
 | 5 | 2 | 2 | 2 | 4 |
-
-### 第一步：中文翻译与条件
-
-用共同评分 Product1/3/4 计算 User2 与其余用户距离，选最近两位，再预测 Product2。题面没有明确评分聚合式，因此给出两种常见口径。
 
 ### 逐步解答
 
@@ -47,6 +45,8 @@ List the top 2 most similar users of User 2 based on Euclidean distance. Predict
 
 Use only Product1, Product3 and Product4 to compare users. State how neighbor ratings are aggregated.
 
+只使用商品 1、3、4 比较用户。说明怎样聚合邻居评分。
+
 ### 易错点与约定
 
 问号不填0参与距离。原题只指定 Euclidean 邻居，未唯一规定评分聚合方法。
@@ -62,9 +62,11 @@ Use only Product1, Product3 and Product4 to compare users. State how neighbor ra
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 List the top 2 most similar students of Student1 based on Euclidean distance. Which item should be recommended, item2 or item5? Assume similarity=1/distance.
+
+基于欧氏距离，列出与学生 1 最相似的两个学生。应该推荐 item2 还是 item5？假设相似度等于距离的倒数。
 
 | Student | item1 | item2 | item3 | item4 | item5 |
 | --- | --- | --- | --- | --- | --- |
@@ -72,10 +74,6 @@ List the top 2 most similar students of Student1 based on Euclidean distance. Wh
 | 2 | 1 | 2 | 4 | 3 | 2 |
 | 3 | 3 | 3 | 1 | 5 | 4 |
 | 4 | 2 | 1 | 3 | 4 | 1 |
-
-### 第一步：中文翻译与条件
-
-Student1 的 item2、item5 未评分。用其已知 item1/3/4 计算距离，取两最近学生；按 1/d 加权预测两个候选分数，再选更高者。原题文字说 four items，但表列了五件，以表为准。
 
 ### 逐步解答
 
@@ -95,9 +93,11 @@ Student1 的 item2、item5 未评分。用其已知 item1/3/4 计算距离，取
 
 The two nearest students are 3 and 4. Equal inverse-distance weights give 2 for item2 and 2.5 for item5, so recommend item5.
 
+最近的两个学生为 3、4。相同的距离倒数权重给出 item2 评分 2、item5 评分 2.5，因此推荐 item5。
+
 ### 易错点与约定
 
-Student2 距离 √14≈3.741657，不是最近邻；不要用缺失列 item2/item5 求相似度。
+Student2 距离 √14≈3.741657，应按距离排序后选择最近两人；不要用缺失列 item2/item5 求相似度。
 
 
 ---
@@ -119,9 +119,11 @@ Student2 距离 √14≈3.741657，不是最近邻；不要用缺失列 item2/it
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 The table contains ratings on a 1–5 scale. A question mark denotes a missing rating.
+
+表中为 1—5 分尺度的评分。问号表示评分缺失。
 
 | User | item1 | item2 | item3 | item4 | item5 |
 | --- | --- | --- | --- | --- | --- |
@@ -133,24 +135,22 @@ The table contains ratings on a 1–5 scale. A question mark denotes a missing r
 
 **(a)** Compute cosine similarity between U2 and every other user on the co-rated items. Select the two users with the largest similarities; break similarity ties by the smaller user ID.
 
+**(a)** 在共同评分物品上，计算 U2 与其他各用户的余弦相似度。选择相似度最大的两个用户；相似度相同时，取用户编号较小者。
+
 **(b)** Use these two neighbors to predict U2’s ratings on item2 and item5 with the formula
+
+**(b)** 用这两个邻居，按下式预测 U2 对 item2 和 item5 的评分。
 
 $$\hat r_{2i}=\bar r_2+
 \frac{\sum_{v\in N_2}s(2,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_2}s(2,v)}.$$
 
 Here each $\bar r_u$ is the mean of all observed ratings of user u; similarities are uncentered cosines on co-rated items. Both selected users rate both candidates. Do not round intermediate values.
 
+这里每个用户均值取其全部已观测评分的平均；相似度是共同评分物品上未经中心化的余弦。两位已选用户都评过两个候选物品。中间结果不要舍入。
+
 **(c)** Recommend only one of item2 and item5. Report both predicted ratings to six decimal places and explain the selection.
 
-### 第一步：中文翻译与条件
-
-评分范围为 1—5，问号表示未知评分。对 U2 做基于用户的协同过滤：
-
-(a) 用共同评分列算 U2 与另外四位用户的**未中心化余弦相似度**，并选相似度最高的两位；相似度平局按较小用户编号。
-
-(b) 用这两位邻居及题给均值修正公式预测 item2、item5。每个用户的均值取其**全部已知评分**；两位邻居均对两个候选有评分。计算相似度与计算均值时用的列集合不同，中间步骤不要舍入。
-
-(c) 两个预测值最终各保留 6 位小数，只推荐其中分数较高的一件，并说明选择。
+**(c)** 在 item2、item5 中只推荐一个。将两个预测评分保留六位小数，并解释选择。
 
 ### 小问要求与完成标准
 
@@ -214,6 +214,8 @@ $$\hat r_{2,5}=2+\frac{1\times(-0.4)+s\times1.8}{1+s}
 
 The two cosine neighbors are U1 and U3. With the specified mean-centered formula, the predicted ratings are 2.270968 for item2 and 2.644239 for item5. Recommend item5.
 
+两个余弦近邻为 U1、U3。按指定去均值公式，item2 预测为 2.270968，item5 为 2.644239。推荐 item5。
+
 ### 易错点与约定
 
 相似度的共同列与计算用户均值的全部已知列是两套集合；问号不进入任何均值或内积。
@@ -233,13 +235,11 @@ The two cosine neighbors are U1 and U3. With the specified mean-centered formula
 
 状态：完整；形式：补充变式。
 
-### 原题 / 转录整理
+### 原文
 
 Target U has known ratings (1,2) on shared items A,B. Three neighbors have A,B ratings V=(2,4), W=(2,1), Z=(0,3). Their ratings on candidate C,D are V=(5,1), W=(4,2), Z=(2,5). Use top-2 cosine neighbors and raw weighted prediction.
 
-### 第一步：中文翻译与条件
-
-目标用户已知评分 (1,2)，用余弦选两邻居并预测 C/D。这里明确使用原评分加权。
+目标用户 U 在共同物品 A、B 上的已知评分为 (1,2)。三个邻居在 A、B 上的评分为 V=(2,4)、W=(2,1)、Z=(0,3)。他们对候选 C、D 的评分为 V=(5,1)、W=(4,2)、Z=(2,5)。使用余弦相似度最高的两个邻居，并用原始评分加权预测。
 
 ### 逐步解答
 
@@ -253,6 +253,8 @@ Z 与 U 的向量长度不同但方向比较接近；欧氏最近邻排序不一
 
 Select V and Z by cosine similarity, then normalize the weighted rating sum.
 
+按余弦选择 V、Z，再对加权评分和归一化。
+
 
 ---
 
@@ -264,9 +266,11 @@ Select V and Z by cosine similarity, then normalize the weighted rating sum.
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Predict Jane’s Aladdin rating using top-2 cosine neighbors and the mean-centered prediction formula. Zero is a valid rating; ? is missing.
+
+使用余弦相似度最高的两个邻居及均值中心化预测公式，预测 Jane 对 Aladdin 的评分。0 是有效评分；问号表示缺失。
 
 | User | Lion King | Aladdin | Mulan | Anastasia |
 | --- | --- | --- | --- | --- |
@@ -275,10 +279,6 @@ Predict Jane’s Aladdin rating using top-2 cosine neighbors and the mean-center
 | Jill | 1 | 2 | 4 | 2 |
 | Jane | 3 | ? | 1 | 0 |
 | Jorge | 2 | 2 | 0 | 1 |
-
-### 第一步：中文翻译与条件
-
-按课件 Jane 例题，用共同评分余弦选邻居，再用均值修正计算；0 是有效评分，只有 ? 缺失。
 
 ### 逐步解答
 
@@ -291,3 +291,5 @@ Jane 均值4/3，Joe=2.75，Jorge=1.25。预测 $4/3+[s_{Joe}(4−2.75)+s_{Jorge
 ### English answer pattern
 
 Use cosine weights with the stated mean-centered prediction rule; that does not turn the weights into Pearson correlations.
+
+使用余弦权重及规定的去均值预测规则；这些权重仍是余弦相似度。

@@ -12,9 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using Apriori, with min_support=50%. Present candidates and frequent itemsets at each level.
+
+用 Apriori 找出全部频繁项集，最小支持度为 50%。给出每层候选项集与频繁项集。
 
 | TID | Items |
 | --- | --- |
@@ -28,10 +30,6 @@ Find all frequent itemsets using Apriori, with min_support=50%. Present candidat
 | 8 | a, b, c |
 | 9 | a, b, e |
 | 10 | a, b, e |
-
-### 第一步：中文翻译与条件
-
-将每笔事务当作集合；把支持比例变为整数计数阈值，列出每一层候选及频繁项集。
 
 ### 逐步解答
 
@@ -49,6 +47,8 @@ Find all frequent itemsets using Apriori, with min_support=50%. Present candidat
 ### English answer pattern
 
 Join frequent itemsets, prune candidates with infrequent subsets, count candidates, and retain those meeting the support threshold.
+
+连接频繁项集，剪去含不频繁子集的候选，给候选计数，保留达到支持阈值者。
 
 ### 易错点与约定
 
@@ -69,9 +69,11 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using Apriori, with min_support=60%. Present candidates and frequent itemsets at each level.
+
+用 Apriori 找出全部频繁项集，最小支持度为 60%。给出每层候选项集与频繁项集。
 
 | TID | Items |
 | --- | --- |
@@ -79,10 +81,6 @@ Find all frequent itemsets using Apriori, with min_support=60%. Present candidat
 | 2 | A, B, C, D, E |
 | 3 | A, B, E |
 | 4 | A, B, D |
-
-### 第一步：中文翻译与条件
-
-将每笔事务当作集合；把支持比例变为整数计数阈值，列出每一层候选及频繁项集。
 
 ### 逐步解答
 
@@ -100,6 +98,8 @@ Find all frequent itemsets using Apriori, with min_support=60%. Present candidat
 ### English answer pattern
 
 Join frequent itemsets, prune candidates with infrequent subsets, count candidates, and retain those meeting the support threshold.
+
+连接频繁项集，剪去含不频繁子集的候选，给候选计数，保留达到支持阈值者。
 
 ### 易错点与约定
 
@@ -120,9 +120,11 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using Apriori, with min_support=40%. Present candidates and frequent itemsets at each level.
+
+用 Apriori 找出全部频繁项集，最小支持度为 40%。给出每层候选项集与频繁项集。
 
 | TID | Items |
 | --- | --- |
@@ -131,10 +133,6 @@ Find all frequent itemsets using Apriori, with min_support=40%. Present candidat
 | 3 | A, E, K, O |
 | 4 | C, K, M, U |
 | 5 | C, E, I, K, O |
-
-### 第一步：中文翻译与条件
-
-将每笔事务当作集合；把支持比例变为整数计数阈值，列出每一层候选及频繁项集。
 
 ### 逐步解答
 
@@ -152,6 +150,8 @@ Find all frequent itemsets using Apriori, with min_support=40%. Present candidat
 ### English answer pattern
 
 Join frequent itemsets, prune candidates with infrequent subsets, count candidates, and retain those meeting the support threshold.
+
+连接频繁项集，剪去含不频繁子集的候选，给候选计数，保留达到支持阈值者。
 
 ### 易错点与约定
 

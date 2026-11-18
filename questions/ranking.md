@@ -12,13 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Predicted ratings are (1,2,3,4,4), true ratings (3,5,3,2,1). Compute MAE,NMAE and RMSE on a 1–5 scale.
 
-### 第一步：中文翻译与条件
-
-对五个预测-真实评分对，计算平均绝对误差、按评分范围标准化的误差和均方根误差。
+预测评分为 (1,2,3,4,4)，真实评分为 (3,5,3,2,1)。在 1—5 分尺度上计算 MAE、NMAE、RMSE。
 
 ### 逐步解答
 
@@ -26,11 +24,13 @@ Predicted ratings are (1,2,3,4,4), true ratings (3,5,3,2,1). Compute MAE,NMAE an
 
 平方误差 (4,9,0,4,9)，和26，RMSE=√(26/5)=2.280351。
 
-分母5是测试评分对数，不是物品总数乘用户总数；未知评分不得当0加入。RMSE≥MAE，可作为自检。
+分母 5 表示已知真实值与预测值的五对评分；未知评分不得当0加入。RMSE≥MAE，可作为自检。
 
 ### English answer pattern
 
 MAE=2, NMAE=0.5 and RMSE≈2.280351.
+
+MAE=2，NMAE=0.5，RMSE≈2.280351。
 
 
 ---
@@ -43,13 +43,11 @@ MAE=2, NMAE=0.5 and RMSE≈2.280351.
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 For the same items i1,i2,i3,i4, predicted ranks are (1,2,3,4), true ranks (1,4,2,3). Compute Spearman ρ and Kendall τ.
 
-### 第一步：中文翻译与条件
-
-每个物品对应一个预测名次和真实名次。先对齐物品，再算秩差和一致/逆序对。
+对相同物品 i1、i2、i3、i4，预测排名为 (1,2,3,4)，真实排名为 (1,4,2,3)。计算 Spearman ρ 与 Kendall τ。
 
 ### 逐步解答
 
@@ -63,6 +61,8 @@ For the same items i1,i2,i3,i4, predicted ranks are (1,2,3,4), true ranks (1,4,2
 
 Spearman ρ=0.4; Kendall τ=1/3. The two discordant pairs both involve i2.
 
+Spearman ρ=0.4，Kendall τ=1/3。两对不一致物品对都涉及 i2。
+
 
 ---
 
@@ -74,13 +74,11 @@ Spearman ρ=0.4; Kendall τ=1/3. The two discordant pairs both involve i2.
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Selected relevant=9, selected irrelevant=3, not-selected relevant=15, not-selected irrelevant=13. Compute precision, recall and F1.
 
-### 第一步：中文翻译与条件
-
-推荐12件中命中9件；全部24件相关物品中找到9件。计算精确率、召回率与F1。
+选中且相关 9 个，选中但不相关 3 个，未选中但相关 15 个，未选中且不相关 13 个。计算精确率、召回率和 F1。
 
 ### 逐步解答
 
@@ -89,3 +87,5 @@ Precision=9/(9+3)=.75；Recall=9/(9+15)=.375；F1=2×.75×.375/(.75+.375)=.5。�
 ### English answer pattern
 
 Precision is 0.75, recall is 0.375 and F1 is 0.5.
+
+精确率 0.75，召回率 0.375，F1 为 0.5。

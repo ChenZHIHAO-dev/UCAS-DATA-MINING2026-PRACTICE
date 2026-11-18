@@ -12,27 +12,27 @@
 
 状态：完整；形式：补充变式 / 内存。
 
-### 原题 / 转录整理
+### 原文
 
 Estimate storage for: (a) a full float64 pairwise matrix for N=10^6; (b) uncompressed bitmaps for N=10^8,K=10^4; (c) top-50 user neighbors for 10^6 users, 4-byte IDs and 4-byte weights.
 
-### 第一步：中文翻译与条件
-
-分别估计全对距离矩阵、未压缩位图与定长邻居列表的字段内存，区分字节和比特。
+估计以下存储：（a）N=10⁶ 的完整 float64 两两矩阵；（b）N=10⁸、K=10⁴ 的未压缩位图；（c）为 10⁶ 个用户分别保存前 50 个邻居，编号与权重各占 4 字节。
 
 ### 逐步解答
 
 (a) $8N^2=8×10^{12}$ B=8 TB；下三角约4 TB，不含容器开销。
 
-(b) $NK$ bits，转为字节 $NK/8=1.25×10^{11}$ B=125 GB。位图不是每个值只存一个bit，而是每个值存 N 个bit。
+(b) $NK$ bits，转为字节 $NK/8=1.25×10^{11}$ B=125 GB。每个不同取值对应一条长 N 位的向量，所以共有 NK 位。
 
 (c) $10^6×50×(4+4)=4×10^8$ B=400 MB。完整 float32 用户相似度矩阵则需4 TB；Top-K降低存储，但精确构建邻居仍可能耗费大量计算。
 
-十进制 GB=10^9 B，GiB=2^30 B。Python对象、指针、对齐、索引与临时工作区会额外占空间，字段估算不是进程实际峰值。
+十进制 GB=10^9 B，GiB=2^30 B。Python对象、指针、对齐、索引与临时工作区会额外占空间，估计进程峰值时也要计入这些结构。
 
 ### English answer pattern
 
 Convert bits to bytes explicitly and separate numeric payloads from implementation overhead.
+
+明确将位转换为字节，并区分数值有效载荷与实现开销。
 
 
 ---
@@ -45,13 +45,11 @@ Convert bits to bytes explicitly and separate numeric payloads from implementati
 
 状态：完整；形式：补充变式 / 复杂度。
 
-### 原题 / 转录整理
+### 原文
 
 With m=10,000 frequent singleton items, how many candidate pairs are possible? If each pair counter record uses 16 bytes, estimate its payload. Explain why FP-growth is not guaranteed to use tiny memory.
 
-### 第一步：中文翻译与条件
-
-计算所有二项候选数量与存储，并解释 FP-growth 的最坏空间与输出压力。
+m=10000 个频繁单项时，可能有多少候选对？若每对的计数记录使用 16 字节，估计其有效载荷。解释为何不能保证 FP-growth 内存很小。
 
 ### 逐步解答
 
@@ -64,3 +62,5 @@ FP-tree 主树节点最多接近保留后所有事务总长度；共享前缀少
 ### English answer pattern
 
 Candidate generation and output can be exponential. Two database scans do not imply linear total computation.
+
+候选生成和输出可能呈指数规模。数据库扫描两次不能推出总计算量为线性。

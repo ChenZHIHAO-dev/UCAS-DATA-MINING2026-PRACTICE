@@ -12,13 +12,11 @@
 
 状态：原卷点数矛盾；按可见六点解；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Given 8 sample points, perform K-means to generate 3 clusters, initially using points 1,2,3 as centers. List clusters at each iteration. The visible table contains only: (1,1),(1,2),(2,1),(3,4),(3,5),(4,5).
 
-### 第一步：中文翻译与条件
-
-原题写 8 个点，但扫描表仅列 6 行。以下只解可见的六点版本，不虚构第 7、8 点。初始中心为 (1,1),(1,2),(2,1)。
+给定 8 个样本点，用 K-means 生成 3 个簇，初始使用点 1、2、3 为中心。列出每轮的簇。可见表只包含 (1,1)、(1,2)、(2,1)、(3,4)、(3,5)、(4,5)。
 
 ### 逐步解答
 
@@ -34,6 +32,8 @@ Given 8 sample points, perform K-means to generate 3 clusters, initially using p
 
 The scanned table has six points despite the statement saying eight. Under the stated tie rule, update all centroids after completing each assignment pass.
 
+题干说八点，扫描表实际只有六点。按规定平局规则，完成每次分配后再更新全部质心。
+
 
 ---
 
@@ -45,9 +45,11 @@ The scanned table has six points despite the statement saying eight. Under the s
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Cluster the ten 3D points into three clusters using Euclidean distance, initialized at A1,B1,C1. Show first-round centroids and final clusters.
+
+用欧氏距离将十个三维点聚为三个簇，初始中心为 A1、B1、C1。给出第一轮质心及最终簇。
 
 | Point | x | y | z |
 | --- | --- | --- | --- |
@@ -61,10 +63,6 @@ Cluster the ten 3D points into three clusters using Euclidean distance, initiali
 | C2 | 1 | 4 | 6 |
 | C3 | 9 | 1 | 7 |
 | C4 | 5 | 6 | 7 |
-
-### 第一步：中文翻译与条件
-
-使用 A1、B1、C1 为初始中心，计算首轮中心，再迭代至分配稳定。
 
 ### 逐步解答
 
@@ -88,11 +86,13 @@ Cluster the ten 3D points into three clusters using Euclidean distance, initiali
 
 第一轮中心为 (4.5,4.5,41/6)、(1.5,2,1.5)、(10.5,7,2)。第二轮分配不变，给定初始点下达到稳定。表中用平方距离比较，结果等同于比较欧氏距离，且省去开方。
 
-初始 A/B/C 只是点名，不是目标类别；C3 最终在第一簇是正常现象。
+A/B/C 前缀用于命名数据点。最终簇由坐标距离确定，所以 C3 可以分入以 A1 初始化的簇。
 
 ### English answer pattern
 
 Assign by squared Euclidean distance and recompute coordinate-wise means. The second pass leaves assignments unchanged.
+
+按平方欧氏距离分配，再逐坐标重算均值。第二遍分配保持不变。
 
 ### 计算与内存分析
 
@@ -118,21 +118,21 @@ Assign by squared Euclidean distance and recompute coordinate-wise means. The se
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 Use K-means to divide the one-dimensional points
+
+用 K-means 将以下一维点
 
 $$2,3,5,7,11,13,17,19,23,29$$
 
 into two clusters. Initialize the centers at $\mu_1^{(0)}=0$ and $\mu_2^{(0)}=11$. Use Euclidean distance; squared distance may be used for comparisons. Break distance ties by the smaller cluster index.
 
+分成两个簇。初始中心为 0 和 11。使用欧氏距离，比较时可使用平方距离。距离相同时，选择簇编号较小者。
+
 Show **exactly two complete iterations**. In each iteration, assign all points using the old centers, then update both centers. Report the memberships from the second assignment pass and the centers after the second update. Do not iterate to convergence.
 
-### 第一步：中文翻译与条件
-
-把上方十个一维质数分为两簇，初始中心为 0 和 11。使用欧氏距离，比较时可用平方距离；若等距，分到编号较小的簇。
-
-恰好做两轮“先用旧中心分配全部点、后统一更新均值”。每轮写成员和更新中心；最后报告第二轮分配产生的成员及第二次更新后的中心，不继续算到收敛。
+展示**恰好两次完整迭代**。每轮使用旧中心分配所有点，再更新两个中心。报告第二次分配后的成员，以及第二次更新后的中心。不要迭代至收敛。
 
 ### 小问要求与完成标准
 
@@ -194,15 +194,17 @@ $$\boxed{\mu_2^{(2)}=\frac{112}{6}=\frac{56}{3}\approx18.666667.}$$
 
 #### 3. 按题目要求停止
 
-上面是第二轮分配得到的成员与第二轮更新得到的中心。用新中心再算中点并移动点属于**第三轮**，不是修正第二轮答案；此题不要求那个步骤。
+上面是第二轮分配得到的成员与第二轮更新得到的中心。再用新中心重新分配就进入**第三轮**。本题在第二次更新后停止。
 
 ### English answer pattern
 
 After the first update the centers are 10/3 and 17. After the second assignment, C1={2,3,5,7} and C2={11,13,17,19,23,29}; the updated centers are 17/4 and 56/3. Stop after these two iterations.
 
+第一轮更新后中心为 10/3、17。第二次分配后，C1={2,3,5,7}、C2={11,13,17,19,23,29}；更新后的中心为 17/4、56/3。在这两轮之后停止。
+
 ### 易错点与约定
 
-不要边处理某个点边更新中心，那是另一种在线过程。第二轮结果不等于已经收敛。
+不要边处理某个点边更新中心，那是另一种在线过程。题目只要求两轮；判断收敛需要继续检查分配是否改变。
 
 ### 计算与内存分析
 
@@ -219,13 +221,11 @@ After the first update the centers are 10/3 and 17. After the second assignment,
 
 状态：完整；形式：作业提炼 / 算法选择。
 
-### 原题 / 转录整理
+### 原文
 
 5435 pulse signals have arrival time, frequency, pulse width and arrival angle. Use K-means, excluding arrival time. Try numbers of clusters, iterations and change tolerances; choose K by mean distortions and report assignments.
 
-### 第一步：中文翻译与条件
-
-原任务要求到达时间不参与聚类。对频率、脉宽、到达角做预处理与参数搜索，解释如何选 K。
+5435 个脉冲信号具有到达时间、频率、脉宽和到达角。使用 K-means，排除到达时间。尝试不同簇数、迭代次数和变化容差；通过平均失真选择 K，并报告分配结果。
 
 ### 逐步解答
 
@@ -240,3 +240,5 @@ After the first update the centers are 10/3 and 17. After the second assignment,
 ### English answer pattern
 
 Use comparable scales, exclude the specified field, and distinguish mean distance from mean squared distance.
+
+采用可比较尺度，排除指定字段，并区分平均距离与平均平方距离。

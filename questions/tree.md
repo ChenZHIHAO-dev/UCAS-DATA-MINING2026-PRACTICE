@@ -12,9 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Given attributes {A,B,C} and classes {C1,C2}, build a decision tree using information gain to select the split attribute.
+
+给定属性 {A,B,C} 和类别 {C1,C2}，构建决策树，使用信息增益选择分裂属性。
 
 | ID | A | B | C | Class |
 | --- | --- | --- | --- | --- |
@@ -28,10 +30,6 @@ Given attributes {A,B,C} and classes {C1,C2}, build a decision tree using inform
 | 8 | 1 | 0 | 1 | C1 |
 | 9 | 1 | 1 | 0 | C2 |
 | 10 | 1 | 1 | 0 | C2 |
-
-### 第一步：中文翻译与条件
-
-按信息增益选择每一层分裂属性，构造能解释训练样本的决策树。
 
 ### 逐步解答
 
@@ -68,9 +66,11 @@ B?
 
 Choose B at the root and recursively recompute information gain on the B=1 subset.
 
+根节点选 B，在 B=1 子集中重新计算信息增益并递归。
+
 ### 易错点与约定
 
-分支权重是样本数，不是属性不同取值数。某子集上已用属性 B 的增益为 0，不应再次选择。
+分支权重取该分支样本数占当前节点样本总数的比例。某子集上已用属性 B 的增益为 0，不应再次选择。
 
 
 ---
@@ -83,9 +83,11 @@ Choose B at the root and recursively recompute information gain on the B=1 subse
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Compute information gain for Height, Hair and Eye, then construct a decision tree.
+
+计算身高、发色和眼睛颜色的信息增益，再构建决策树。
 
 | ID | Height | Hair | Eye | Class |
 | --- | --- | --- | --- | --- |
@@ -99,9 +101,7 @@ Compute information gain for Height, Hair and Eye, then construct a decision tre
 | 8 | Short | Blond | Blue | C2 |
 | 9 | Medium | Dark | Blue | C2 |
 
-### 第一步：中文翻译与条件
-
-先计算三个属性的根节点信息增益，再递归重算子集，构造决策树。
+表中 Tall、Short、Medium 为高、矮、中等；Blond、Dark、Red 为金色、深色、红色；Brown、Blue 为棕色、蓝色。
 
 ### 逐步解答
 
@@ -133,6 +133,8 @@ Eye
 
 Eye has the largest root information gain. Recompute gains within the Blue subset and split by Hair.
 
+Eye 在根节点的信息增益最大。在 Blue 子集内重算增益，按 Hair 分裂。
+
 ### 易错点与约定
 
 当前 HW2 网络题 Q3 的第 8、9 条标签是 C3，这个建树题中仍是 C2。
@@ -157,9 +159,11 @@ Eye has the largest root information gain. Recompute gains within the Blue subse
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 Each row below represents multiple samples. Columns C1 and C2 are class **counts**, not input attributes. Logs are base 2.
+
+下表每行代表多个样本。C1、C2 列是类别**计数**，不是输入属性。对数以 2 为底。
 
 | X | Y | Z | C1 | C2 |
 | --- | --- | --- | --- | --- |
@@ -174,19 +178,15 @@ Each row below represents multiple samples. Columns C1 and C2 are class **counts
 
 **(a)** Compute the information gain for splitting on X. Show the total sample size, class counts, parent entropy and weighted child entropy.
 
+**(a)** 计算按 X 分裂的信息增益。给出总样本数、类别计数、父熵与加权子熵。
+
 **(b)** Compute the gains for Y and Z and choose the root attribute.
+
+**(b)** 计算 Y、Z 的信息增益，并选择根属性。
 
 **(c)** Draw **only the first split**: the root and its two child nodes. Annotate each child with its C1/C2 counts. If stopping at this depth, label each child by majority class. Do not recursively grow the full tree.
 
-### 第一步：中文翻译与条件
-
-每行表示若干样本，C1、C2 是该属性组合的两类样本数量，**不是输入属性**；全部对数以 2 为底。
-
-(a) 计算 X 分裂的信息增益，必须给总样本量、总类频数、父熵和加权子熵。
-
-(b) 计算 Y、Z 的增益，与 X 比较后选根。
-
-(c) 只画根的一次分裂，标两子结点的 C1/C2 频数。若在此深度停止，以多数类作为预测；不要求递归建整棵树。
+**(c)** 只画**第一次分裂**，即根及两个子节点。在各子节点标出 C1、C2 计数。若在此深度停止，按多数类给子节点标记。不要递归生长完整树。
 
 ### 小问要求与完成标准
 
@@ -198,12 +198,12 @@ Each row below represents multiple samples. Columns C1 and C2 are class **counts
 
 ### 逐步解答
 
-#### 1. 汇总频数而不是行数
+#### 1. 按类别频数计算样本量
 
 $$N=280,\qquad n_{C_1}=140,\qquad n_{C_2}=140.$$
 $$H(D)=-\tfrac12\log_2\tfrac12-\tfrac12\log_2\tfrac12=1\ \text{bit}.$$
 
-某行如 $(X,Y,Z)=(0,0,0)$ 代表 $5+35=40$ 个样本；总共有 280 个样本，不是 8 个。
+某行如 $(X,Y,Z)=(0,0,0)$ 代表 $5+35=40$ 个样本；将八行的类别计数全部相加，得到 280 个样本。
 
 #### 2. 展开 X 的加权熵
 
@@ -232,15 +232,17 @@ Y 的两组都是类比例 1:1，Z 也一样，所以条件熵都为 1，增益 
 
 ![X 的一次分裂与子结点频数](../assets/diagrams/recall2025-stump.svg)
 
-X=0 预测 C2，X=1 预测 C1。两个子结点并不纯，这张图是题目指定的**一层截断树**，不是声称数据已经完全分开。完成这张图即可结束本题。
+X=0 预测 C2，X=1 预测 C1。两个子节点仍包含两类样本；按各节点多数类标记，即完成题目要求的**一层截断树**。
 
 ### English answer pattern
 
 The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. Select X and draw only its two children, labeled C2 and C1 by majority vote.
 
+数据集有 280 个样本。Gain(X)=0.136879431，Gain(Y)=Gain(Z)=0。选 X，只画两个子节点；按多数投票分别标为 C2、C1。
+
 ### 易错点与约定
 
-类频数不能当作模型输入；组熵必须乘该组样本比例。根分裂之后的多数类标签不等于该结点已纯。
+类频数不能当作模型输入；组熵必须乘该组样本比例。多数类标签用于预测；节点是否纯，要检查另一类计数是否为 0。
 
 ### 计算与内存分析
 
@@ -257,13 +259,11 @@ The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. 
 
 状态：完整；形式：历年简答。
 
-### 原题 / 转录整理
+### 原文
 
 Please present an attribute selection method in a decision tree.
 
-### 第一步：中文翻译与条件
-
-给出一种决策树属性选择方法，并说明计算与选择标准。
+请给出一种决策树的属性选择方法。
 
 ### 逐步解答
 
@@ -276,3 +276,5 @@ Please present an attribute selection method in a decision tree.
 ### English answer pattern
 
 Select the attribute with maximum information gain, recomputed from class proportions at the current node.
+
+选择信息增益最大的属性；在当前节点上根据类别比例重新计算。

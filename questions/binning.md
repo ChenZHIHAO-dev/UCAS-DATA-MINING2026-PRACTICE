@@ -12,17 +12,15 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Use smoothing by bin means on the age data with bin depth 6. Then partition age into 3 bins by equal-width partitioning and smooth each bin by bin boundaries.
+
+对年龄数据使用箱均值平滑，箱深为 6。随后采用等宽划分，将年龄分为 3 个箱，并对各箱使用箱边界平滑。
 
 | age | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | values | 39 | 57 | 41 | 58 | 47 | 58 | 49 | 60 | 50 | 61 | 23 | 52 | 23 | 54 | 27 | 54 | 27 | 56 |
-
-### 第一步：中文翻译与条件
-
-将给定 18 个年龄排序，先按每箱 6 个做均值平滑，再分为 3 个等宽箱并用最近箱内端点平滑。
 
 ### 逐步解答
 
@@ -42,11 +40,13 @@ Use smoothing by bin means on the age data with bin depth 6. Then partition age 
 | 2 | 39,41,47 | 39,39,47 |
 | 3 | 49,50,52,54,54,56,57,58,58,60,61 | 49,49,49,49,49,61,61,61,61,61,61 |
 
-边界平滑用**每箱实际最小和最大观测**，不是机械替换成区间切点。最近端点距离相同取较小端点，本例等宽末箱无 55 的端点平局。
+边界平滑用**每箱实际最小和最大观测**。逐个比较观测到这两个端点的距离。最近端点距离相同取较小端点，本例等宽末箱无 55 的端点平局。
 
 ### English answer pattern
 
 Sort first for equal-depth bins. Equal-width bins have equal numeric ranges, not equal record counts.
+
+等深分箱前先排序。等宽箱的数值范围相同，记录数可以不同。
 
 ### 易错点与约定
 
@@ -67,15 +67,13 @@ Sort first for equal-depth bins. Equal-width bins have equal numeric ranges, not
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Use smoothing by bin means to smooth the age data, using a bin depth of 6.
 
+使用箱均值平滑年龄数据，箱深为 6。
+
 20, 13, 15, 16, 25, 35, 36, 40, 45, 46, 52, 25, 25, 30, 21, 22, 22, 33, 33, 35, 35, 70, 19, 20
-
-### 第一步：中文翻译与条件
-
-将 24 个年龄排序，按每箱 6 个分组，用每组均值替换该组。
 
 ### 逐步解答
 
@@ -92,6 +90,8 @@ Use smoothing by bin means to smooth the age data, using a bin depth of 6.
 
 Bin depth is a record count. Sorting is required before forming equal-depth bins.
 
+箱深是记录数量。形成等深箱前需要排序。
+
 ### 计算与内存分析
 
 O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
@@ -107,15 +107,15 @@ O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 对商品 A 的 20 个月销量做深度为 5 的 Equal-depth binning，分别使用 bin median 和 bin boundaries 平滑。
 
+
+
 21, 16, 19, 24, 27, 23, 22, 21, 20, 17, 16, 20, 23, 22, 18, 24, 26, 25, 20, 26
-
-### 第一步：中文翻译与条件
-
-原题为中文。排序后分四箱，每箱五个。分别用中位数和最近实际端点替换。
 
 ### 逐步解答
 
@@ -143,6 +143,8 @@ O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
 
 Replace all values in each bin with its median, or with the nearer observed bin boundary.
 
+将各箱所有值替换为箱中位数，或较近的实际观测边界。
+
 
 ---
 
@@ -154,13 +156,11 @@ Replace all values in each bin with its median, or with the nearer observed bin 
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
+
+
 
 对 23,23,27,27,39,41,47,49,50,52,53,53,54,55,56,57 做：(a) 深度 4 的 median 平滑；(b) 深度 4 的 boundaries 平滑；(c) 四个等宽箱的 mean 平滑。
-
-### 第一步：中文翻译与条件
-
-原题为中文。前两问每箱四个观测；第三问每个区间宽度相同。
 
 ### 逐步解答
 
@@ -191,11 +191,13 @@ Replace all values in each bin with its median, or with the nearer observed bin 
 | 3 | 41,47 | 44 |
 | 4 | 49,50,52,53,53,54,55,56,57 | 53.222222 |
 
-第三问最后一个箱包含九个观测，不是四个。
+第三问使用等宽区间，最后一箱落入九个观测。
 
 ### English answer pattern
 
 Equal-depth and equal-width partitioning solve different constraints.
+
+等深与等宽划分满足不同约束。
 
 
 ---
@@ -217,21 +219,19 @@ Equal-depth and equal-width partitioning solve different constraints.
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 Consider the observations $1,2,3,4,5,20$.
 
+考虑观测值 1、2、3、4、5、20。
+
 **(a)** Smooth the data by bin boundaries using equal-depth bins of depth 3. Show the bins and all smoothed values. If a value is equally close to both observed boundaries, use the lower one.
+
+**(a)** 使用箱深为 3 的等深箱，按箱边界平滑。给出各箱及全部平滑值。若某值到两个实际观测边界等距，取较低边界。
 
 **(b)** For the **original observations**, compute the five-number summary and draw a box plot. Use the medians of the lower and upper halves for $Q_1,Q_3$, and the $1.5IQR$ rule for outliers. Label the whisker endpoints and identify every outlier.
 
-### 第一步：中文翻译与条件
-
-已知六个观测 1、2、3、4、5、20。
-
-(a) 将数据排序，每箱恰有 3 个观测，用各箱实际最小值或最大值中更近的一个替换。平局向小端。写出两个箱及全部平滑值。
-
-(b) 对原始六数求五数概括，按 1.5IQR 规则画箱线图并标异常点；这里不是对平滑结果作图。
+**(b)** 对**原始观测**计算五数概括并绘制箱线图。Q1、Q3 使用下半组与上半组的中位数；离群值使用 1.5IQR 规则。标出须的端点，并识别每个离群值。
 
 ### 小问要求与完成标准
 
@@ -286,6 +286,8 @@ UF&=5+1.5\times3=9.5.
 ### English answer pattern
 
 The smoothed sequence is (1,1,3,4,4,20). For the original data, Q1=2, median=3.5, Q3=5 and IQR=3. The fences are −2.5 and 9.5; 20 is the only outlier.
+
+平滑序列为 (1,1,3,4,4,20)。原始数据的 Q1=2、中位数=3.5、Q3=5、IQR=3。界限为 -2.5、9.5；20 是唯一离群值。
 
 ### 易错点与约定
 

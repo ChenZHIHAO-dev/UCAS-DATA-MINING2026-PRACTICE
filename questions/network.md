@@ -12,13 +12,11 @@
 
 状态：原卷公式不一致；给出两种明确口径；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 A 2–2–1 network has learning rate l=0.9 and all biases initially 0. The printed activation is f(x)=x if x≥1, and 1 if x<1. Input x1=1,x2=0, target z=1. Initial weights: w11=0,w12=2,w21=2,w22=1, output weights T1=T2=1. Compute the forward output and updated weights using the printed error formulas Err_j=O_j(1−O_j)(T_j−O_j), Err_j=O_j(1−O_j)Σ Err_k w_jk.
 
-### 第一步：中文翻译与条件
-
-两输入、两隐藏、一输出网络，学习率 .9、初始偏置全零。先按图算前向，再按题给公式更新。需要特别注意：分段激活 f=max(1,x) 与题给 sigmoid 导数 O(1−O) 不一致。
+一个 2–2–1 网络的学习率为 0.9，所有偏置初始为 0。印出的激活函数为：x≥1 时 f(x)=x，x<1 时 f(x)=1。输入 x1=1、x2=0，目标 z=1。初始权重 w11=0、w12=2、w21=2、w22=1，输出权重 T1=T2=1。使用印出的输出层和隐藏层误差公式，计算前向输出及更新后的权重。
 
 ### 逐步解答
 
@@ -43,9 +41,11 @@ A 2–2–1 network has learning rate l=0.9 and all biases initially 0. The prin
 
 The printed piecewise activation is inconsistent with the supplied sigmoid derivative. State the convention before computing the update.
 
+印出的分段激活函数与给定 Sigmoid 导数不一致。计算更新前，先说明采用哪种约定。
+
 ### 易错点与约定
 
-偏置“初始为零”不等于训练时永远固定零。当前题只要求四个输入权重时，其他权重/偏置可作为补充检查。
+初始偏置为零，更新时仍按偏置梯度计算增量。当前题只要求四个输入权重时，其他权重/偏置可作为补充检查。
 
 
 ---
@@ -58,19 +58,17 @@ The printed piecewise activation is inconsistent with the supplied sigmoid deriv
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Design a one-hidden-layer feed-forward network for Height/Hair/Eye with classes C1,C2,C3. For (Tall,Red,Brown,C3), compute forward outputs and updated weights and biases. State initial values and learning rate.
 
-### 第一步：中文翻译与条件
-
-设计一隐藏层分类网络，说明输入/输出含义；针对 Tall,Red,Brown,C3 做一次前向与反向，初值和学习率可以自行给出，但必须完整声明。
+针对身高、发色、眼睛颜色及 C1、C2、C3 三类，设计单隐藏层前馈网络。对（高、红发、棕眼、C3），计算前向输出以及更新后的权重和偏置。说明初始值与学习率。
 
 ### 逐步解答
 
 Height 三类、Hair 三类、Eye 两类，采用独热输入 $x=(Tall,Medium,Short,Blond,Dark,Red,Brown,Blue)=(1,0,0,0,0,1,1,0)$，输出目标 $t=(0,0,1)$。隐藏层取 2 个神经元，得到 8–2–3 网络。
 
-**为便于逐项核算，自设初值**：所有输入→隐藏权重为 .1，隐藏偏置 0；所有隐藏→输出权重为 .1，输出偏置 0；sigmoid 激活、平方误差、η=.1。这是本题允许的一个演算初值，不是唯一解。
+**为便于逐项核算，自设初值**：所有输入→隐藏权重为 .1，隐藏偏置 0；所有隐藏→输出权重为 .1，输出偏置 0；sigmoid 激活、平方误差、η=.1。下面按这套初值逐项计算。
 
 $h_1=h_2=\sigma(.3)=.574442517$；三个输出均为 $o=\sigma(.1h_1+.1h_2)=.528690575$。输出误差使用 $\delta_k=o_k(1-o_k)(t_k-o_k)$，前两类约 −.131737，第三类约 .117439；精确值以计算验证表为准。
 
@@ -96,6 +94,8 @@ $h_1=h_2=\sigma(.3)=.574442517$；三个输出均为 $o=\sigma(.1h_1+.1h_2)=.528
 
 Use one-hot inputs, declare the initialization and loss, compute all deltas with old weights, then update all weights and biases.
 
+采用独热输入，声明初始参数和损失；使用旧权重计算全部误差信号，再更新全部权重和偏置。
+
 ### 易错点与约定
 
 本题 C3 标签与建树题不同。当前网络三输出；不要拿往届的二分类网络目标直接套用。
@@ -115,13 +115,11 @@ Use one-hot inputs, declare the initialization and loss, compute all deltas with
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Design a one-hidden-layer network for Q1. Show one backpropagation update for (Medium,Blond,Blue,C1), stating initial weights, biases and learning rate.
 
-### 第一步：中文翻译与条件
-
-沿用往届 HW2 的 C1/C2 两类数据，设计网络并对 Medium,Blond,Blue,C1 更新一次。它与当前三分类网络题不同。
+为 Q1 设计单隐藏层网络。对（中等身高、金发、蓝眼、C1），展示一次反向传播更新，并说明初始权重、偏置和学习率。
 
 ### 逐步解答
 
@@ -138,3 +136,5 @@ Design a one-hidden-layer network for Q1. Show one backpropagation update for (M
 ### English answer pattern
 
 The older assignment is binary. One sigmoid output is sufficient when C1 is encoded as 1.
+
+往届作业是二分类。把 C1 编码为 1 时，一个 Sigmoid 输出已足够。

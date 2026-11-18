@@ -12,9 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Compute the dissimilarity matrix for nominal Test-1, ordinal Test-2 and ratio Test-3.
+
+计算由名义型 Test-1、有序型 Test-2、比率尺度型 Test-3 组成的数据的相异度矩阵。
 
 | ID | Test-1 | Test-2 | Test-3 |
 | --- | --- | --- | --- |
@@ -23,15 +25,13 @@ Compute the dissimilarity matrix for nominal Test-1, ordinal Test-2 and ratio Te
 | 3 | C | good | 164 |
 | 4 | A | excellent | 1210 |
 
-### 第一步：中文翻译与条件
-
-类别用不匹配距离；等级映射 fair=0、good=.5、excellent=1；比例属性先对数并 min-max，再平均。
+Test-2 的取值 excellent、fair、good 分别为优秀、一般、良好。
 
 ### 逐步解答
 
 用课件先行舍入的第三属性 (.75,0,.5,1) 时，得到：
 
-|  | 1 | 2 | 3 | 4 |
+|| 1 | 2 | 3 | 4 |
 | --- | --- | --- | --- | --- |
 | 1 | 0 | 11/12 | 7/12 | 1/12 |
 | 2 | 11/12 | 0 | 2/3 | 1 |
@@ -43,6 +43,8 @@ Compute the dissimilarity matrix for nominal Test-1, ordinal Test-2 and ratio Te
 ### English answer pattern
 
 Normalize attribute-specific dissimilarities to comparable scales before averaging.
+
+先把各属性相异度归一化到可比较尺度，再取平均。
 
 ### 计算与内存分析
 

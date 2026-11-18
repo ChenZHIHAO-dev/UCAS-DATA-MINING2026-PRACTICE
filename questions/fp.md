@@ -12,9 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=50%.
+
+用 FP-growth 找出全部频繁项集。给出 FP 树，以及每个物品的条件模式基和条件 FP 树。最小支持度为 50%。
 
 | TID | Items |
 | --- | --- |
@@ -28,10 +30,6 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 | 8 | a, b, c |
 | 9 | a, b, e |
 | 10 | a, b, e |
-
-### 第一步：中文翻译与条件
-
-先筛频繁单项、确定全局顺序、建立主树，再从后往前依次取带权前缀、剪去条件不频繁项并递归。
 
 ### 逐步解答
 
@@ -65,6 +63,8 @@ root
 
 A conditional pattern base contains weighted prefix paths leading to the suffix item. Keep the original minimum support count in conditional mining.
 
+条件模式基包含通向后缀项的带权前缀路径。条件挖掘保持原始最小支持计数。
+
 ### 易错点与约定
 
 同频项顺序可能不同，树形可变，但支持计数与最终频繁项集必须一致。
@@ -84,9 +84,11 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=30%.
+
+用 FP-growth 找出全部频繁项集。给出 FP 树，以及每个物品的条件模式基和条件 FP 树。最小支持度为 30%。
 
 | TID | Items |
 | --- | --- |
@@ -100,10 +102,6 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 | 8 | a, b, c |
 | 9 | a, d |
 | 10 | b, d |
-
-### 第一步：中文翻译与条件
-
-先筛频繁单项、确定全局顺序、建立主树，再从后往前依次取带权前缀、剪去条件不频繁项并递归。
 
 ### 逐步解答
 
@@ -136,6 +134,8 @@ root
 
 A conditional pattern base contains weighted prefix paths leading to the suffix item. Keep the original minimum support count in conditional mining.
 
+条件模式基包含通向后缀项的带权前缀路径。条件挖掘保持原始最小支持计数。
+
 ### 易错点与约定
 
 同频项顺序可能不同，树形可变，但支持计数与最终频繁项集必须一致。
@@ -155,9 +155,11 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=60%.
+
+用 FP-growth 找出全部频繁项集。给出 FP 树，以及每个物品的条件模式基和条件 FP 树。最小支持度为 60%。
 
 | TID | Items |
 | --- | --- |
@@ -165,10 +167,6 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 | 2 | A, B, C, D, E |
 | 3 | A, B, E |
 | 4 | A, B, D |
-
-### 第一步：中文翻译与条件
-
-先筛频繁单项、确定全局顺序、建立主树，再从后往前依次取带权前缀、剪去条件不频繁项并递归。
 
 ### 逐步解答
 
@@ -193,6 +191,8 @@ root
 
 A conditional pattern base contains weighted prefix paths leading to the suffix item. Keep the original minimum support count in conditional mining.
 
+条件模式基包含通向后缀项的带权前缀路径。条件挖掘保持原始最小支持计数。
+
 ### 易错点与约定
 
 同频项顺序可能不同，树形可变，但支持计数与最终频繁项集必须一致。
@@ -212,9 +212,11 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=40%.
+
+用 FP-growth 找出全部频繁项集。给出 FP 树，以及每个物品的条件模式基和条件 FP 树。最小支持度为 40%。
 
 | TID | Items |
 | --- | --- |
@@ -223,10 +225,6 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 | 3 | A, E, K, O |
 | 4 | C, K, M, U |
 | 5 | C, E, I, K, O |
-
-### 第一步：中文翻译与条件
-
-先筛频繁单项、确定全局顺序、建立主树，再从后往前依次取带权前缀、剪去条件不频繁项并递归。
 
 ### 逐步解答
 
@@ -253,6 +251,8 @@ root
 ### English answer pattern
 
 A conditional pattern base contains weighted prefix paths leading to the suffix item. Keep the original minimum support count in conditional mining.
+
+条件模式基包含通向后缀项的带权前缀路径。条件挖掘保持原始最小支持计数。
 
 ### 易错点与约定
 
@@ -282,9 +282,11 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 The transaction database is given below. Let $min\_sup=50\%$ and count transactions, not item occurrences. Use a descending singleton-frequency order; break equal frequencies alphabetically.
+
+事务数据库如下。最小支持度为 50%，按事务计数，不按物品出现次数计数。使用单项频数降序；频数相同时按字母顺序。
 
 | TID | Items |
 | --- | --- |
@@ -297,19 +299,15 @@ The transaction database is given below. Let $min\_sup=50\%$ and count transacti
 
 **(a)** Use FP-growth to find **all nonempty frequent itemsets**. Show singleton counts, the filtered/ordered transactions, the main FP-tree and header counts, every conditional pattern base and conditional FP-tree, and the final itemsets with support counts. Continue conditional mining where needed.
 
+**(a)** 用 FP-growth 找出**全部非空频繁项集**。给出单项计数、过滤并排序的事务、主 FP 树及头表计数、每个条件模式基和条件 FP 树，以及最终项集及支持计数。需要时继续条件挖掘。
+
 **(b)** Compare Apriori and FP-growth in candidate generation, original-database scans and memory use. State a case where compression is weak.
+
+**(b)** 从候选生成、原始数据库扫描、内存使用方面比较 Apriori 和 FP-growth。给出一种压缩较弱的情况。
 
 **(c)** Calculate $conf(\{A,B\}\Rightarrow\{C\})$ and interpret it. No minimum confidence is specified; you are not asked to generate all rules.
 
-### 第一步：中文翻译与条件
-
-事务库如上表，最小支持比例为 50%，统计的是包含某项集的**事务数**，不是商品出现的总次数。单项按频数降序，同频按字母序。
-
-(a) 用 FP-growth 挖全部非空频繁项集：写单项频数、过滤排序后的事务、主树与头表、每个条件模式基和条件树，并递归到输出完成。最终列项集及支持计数。
-
-(b) 从候选生成、原库扫描和内存比较 Apriori 与 FP-growth，说明何时共享前缀少、压缩较弱。
-
-(c) 只计算给定 AB⇒C 的置信度并解释其含义。题目没有 min_conf，不要求自行生成全部规则。
+**(c)** 计算并解释 $conf(\{A,B\}\Rightarrow\{C\})$。没有指定最小置信度；本问不要求生成全部规则。
 
 ### 小问要求与完成标准
 
@@ -376,7 +374,7 @@ C 条件树中的 B 总支持是 $3+1=4$，因此保留**两个** B 结点，即
 
 #### 4. 汇总所有频繁项集
 
-| Size | Itemset : count | Support |
+| Size | Itemset : count | 支持度 Support |
 | --- | --- | --- |
 | 1 | A:5, B:5, C:5 | 均为 $5/6$ |
 | 2 | AB:4, AC:4, BC:4 | 均为 $4/6=2/3$ |
@@ -399,11 +397,13 @@ C 条件树中的 B 总支持是 $3+1=4$，因此保留**两个** B 结点，即
 
 $$conf(AB\Rightarrow C)=\frac{count(ABC)}{count(AB)}=\frac34=\boxed{75\%}.$$
 
-读作：在购买 A 和 B 的事务中，有 75% 也购买 C。该规则的支持度为 $3/6=50\%$，不是 75%；题目没有 min_conf，因此到数值和解释即可停止。
+读作：在购买 A 和 B 的事务中，有 75% 也购买 C。该规则的支持度按全部六笔事务计算，为 $3/6=50\%$；题目没有 min_conf，因此到数值和解释即可停止。
 
 ### English answer pattern
 
 There are seven frequent itemsets: A, B, C, AB, AC, BC and ABC, with counts 5,5,5,4,4,4,3. The confidence of AB⇒C is 3/4=75%.
+
+共有七个频繁项集：A、B、C、AB、AC、BC、ABC，计数分别为 5、5、5、4、4、4、3。AB⇒C 的置信度为 3/4=75%。
 
 ### 易错点与约定
 

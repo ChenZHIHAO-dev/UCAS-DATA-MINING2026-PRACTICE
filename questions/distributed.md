@@ -12,13 +12,11 @@
 
 状态：完整；形式：算法设计 / 证明。
 
-### 原题 / 转录整理
+### 原文
 
 A large store has transaction databases at four locations. Propose an efficient algorithm to mine global association rules without shipping all data to one site or causing excessive network communication.
 
-### 第一步：中文翻译与条件
-
-四个站点保存同格式事务，设计分布式全局频繁项集/规则算法；原始数据留在本地，控制通信。
+大型商店在四个地点保存事务数据库。提出高效算法，在不将全部数据运到单站点、且不造成过大网络通信的情况下，挖掘全局关联规则。
 
 ### 逐步解答
 
@@ -45,6 +43,8 @@ generate rules from L and filter by min_conf
 
 Union all locally frequent itemsets, count that union globally, then generate rules from global counts. Every globally frequent itemset is locally frequent somewhere.
 
+合并全部局部频繁项集，对并集进行全局计数，再根据全局计数生成规则。每个全局频繁项集必在某个站点局部频繁。
+
 ### 易错点与约定
 
 局部频繁不保证全局频繁；第二阶段精确验证不能省。局部挖掘可能需要多轮内存操作，不能称整个算法只有两次 CPU 操作。
@@ -64,13 +64,11 @@ Union all locally frequent itemsets, count that union globally, then generate ru
 
 状态：完整；形式：算法设计 / 伪代码。
 
-### 原题 / 转录整理
+### 原文
 
 A large database is distributed among four locations. Propose an efficient K-means algorithm in pseudocode without moving all data to one site or excessive network overhead.
 
-### 第一步：中文翻译与条件
-
-各站点保留本地数据，协调者只收发聚类统计量，得到等价于集中式同轮分配的中心更新。
+大型数据库分布于四个地点。用伪代码提出高效 K-means 算法，避免把全部数据移到单站点或造成过大网络开销。
 
 ### 逐步解答
 
@@ -94,11 +92,13 @@ repeat:
 until centroid shift <= tolerance or max_iterations reached
 ```
 
-更新全局中心时用点数加权：ΣNp,j μp,j /ΣNp,j。直接平均局部均值错误，例如站点A一人均值0、站点B九人均值10，全局为9，不是5。各站点不能各自收敛后直接合并中心，否则不同局部簇编号与分配条件可能不一致。
+更新全局中心时用点数加权：ΣNp,j μp,j /ΣNp,j。直接平均局部均值错误，例如站点A一人均值0、站点B九人均值10，全局均值为 (1×0+9×10)/(1+9)=9。各站点不能各自收敛后直接合并中心，否则不同局部簇编号与分配条件可能不一致。
 
 ### English answer pattern
 
 Broadcast shared centroids and reduce per-cluster counts and coordinate sums. Compute weighted global means.
+
+广播共享质心，归约各簇的计数和坐标和，计算加权全局均值。
 
 ### 计算与内存分析
 
@@ -115,13 +115,11 @@ t轮：站点p计算 O(tNp kd)，每轮总通信 O(Pkd) 个数；每站工作区
 
 状态：完整；形式：算法设计 / 伪代码。
 
-### 原题 / 转录整理
+### 原文
 
 A data stream is continuous, ordered, fast-changing and possibly infinite. Present a K-means-based efficient single-scan clustering algorithm that discovers clusters and provides their evolution, in pseudocode.
 
-### 第一步：中文翻译与条件
-
-数据只能看一遍，且可能无限。设计基于 K-means 的在线聚类，并记录簇随时间变化；不能无限保存所有历史点。
+数据流连续、有序、快速变化，且可能无限。用伪代码给出一种基于 K-means 的高效单遍聚类算法，发现簇并提供簇的演化。
 
 ### 逐步解答
 
@@ -150,6 +148,8 @@ for each arriving (x,t):
 
 Maintain bounded cluster summaries, update each incoming point once, and retain bounded time snapshots to track evolution.
 
+维护有界簇摘要，每个新点更新一次；保留有界时间快照来跟踪演化。
+
 ### 易错点与约定
 
 “超过阈值就新建簇”若没有簇数上限，遇无限异常流会无限占用内存，不能算完整大数据方案。
@@ -177,17 +177,19 @@ Maintain bounded cluster summaries, update each incoming point once, and retain 
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 完整英文题干 / Reconstructed problem
+### 原文
 
 A store’s transaction database is horizontally distributed among four sites $D_1,\ldots,D_4$ with the same item universe. Site p contains $N_p>0$ transactions; $N=\sum_{p=1}^{4}N_p$. Let the minimum support be $s\in(0,1]$ and minimum confidence be $c\in(0,1]$. Thresholds include equality.
 
+商店事务数据库水平分布在四个站点，各站物品全集相同。第 p 站包含 $N_p>0$ 笔事务，总数 $N=\sum_{p=1}^{4}N_p$。最小支持度为 $s\in(0,1]$，最小置信度为 $c\in(0,1]$。阈值包含等号。
+
 Design an algorithm that outputs all globally frequent itemsets and all global association rules meeting these thresholds, without shipping all raw transactions to a central site.
+
+设计算法，在不把全部原始事务传到中心站点的情况下，输出全部全局频繁项集及满足阈值的全部全局关联规则。
 
 Give **(a)** pseudocode with local and global thresholds, **(b)** a correctness argument, and **(c)** an explanation of the communicated data, database access and candidate-memory costs. It is sufficient to present an algorithm outline; no numerical transaction database is required.
 
-### 第一步：中文翻译与条件
-
-四站点按事务横向分库，商品编码一致。给出在本地挖掘、全局精确验证并生成强规则的算法，证明不会漏掉全局频繁集，最后分析通信、扫描和候选内存。
+给出 **(a)** 包含局部与全局阈值的伪代码，**(b)** 正确性论证，**(c)** 通信数据、数据库访问和候选内存成本的说明。给出算法纲要即可，不要求提供数值事务数据库。
 
 ### 小问要求与完成标准
 
@@ -242,9 +244,9 @@ $$n(X)=\sum_pn_p(X)<s\sum_pN_p=sN,$$
 
 #### 4. 通信、扫描与内存
 
-| Resource | What is actually needed |
+| 资源 | 所需数据与工作 |
 | --- | --- |
-| 上传候选 | 发送 $L_p$ 的项集编码与本地库大小；不是每笔事务。 |
+| 上传候选 | 发送 $L_p$ 的项集编码与本地库大小。 |
 | 广播 | 全局并集 C 的项集编码；候选多时可以按长度分批。 |
 | 上传计数 | 每站点对 C 的精确计数向量，共约 $4\|C\|$ 个计数。 |
 | 内存 | 每站点需本地挖掘工作区及候选/计数器；协调者需 C、全局计数和输出。 |
@@ -266,6 +268,8 @@ conf(A\Rightarrow H)&=\frac{n(A\cup H)}{n(A)}.
 ### English answer pattern
 
 Mine locally with threshold ceil(sNp), union the local frequent itemsets, and recount every candidate globally. Any globally frequent itemset must be frequent at some site. Generate rules from global counts, and communicate itemsets and count vectors rather than raw transactions.
+
+按 ceil(sNp) 阈值进行本地挖掘，合并本地频繁项集，再对每个候选进行全局计数。每个全局频繁项集必在某站点频繁。根据全局计数生成规则，通信传送项集和计数向量，无须传输原始事务。
 
 ### 易错点与约定
 

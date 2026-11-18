@@ -12,9 +12,11 @@
 
 状态：完整；形式：计算 / 推导。
 
-### 原题 / 转录整理
+### 原文
 
 Use the following similarity matrix to perform AGNES clustering. Draw a dendrogram showing the merge order. Numbers indicate similarities.
+
+使用下列相似度矩阵进行 AGNES 聚类。绘制显示合并顺序的树状图。数值表示相似度。
 
 |  | P1 | P2 | P3 | P4 | P5 |
 | --- | --- | --- | --- | --- | --- |
@@ -23,10 +25,6 @@ Use the following similarity matrix to perform AGNES clustering. Draw a dendrogr
 | P3 | 0.41 | 0.64 | 1.0 | 0.44 | 0.85 |
 | P4 | 0.55 | 0.47 | 0.44 | 1.0 | 0.76 |
 | P5 | 0.35 | 0.98 | 0.85 | 0.76 | 1.0 |
-
-### 第一步：中文翻译与条件
-
-表中是相似度，越大越近。按课件 AGNES 的 single-link 口径，画合并层次并标明合并相似度。
 
 ### 逐步解答
 
@@ -46,11 +44,13 @@ height=.45 ─┬─ P1
                               └─ .02 ─┬─ P2
                                        └─ P5
 ```
-选择最小的非对角相似度 .10 合并 P1/P2 是把表读反；扫描上的手写批注不是标准答案。若使用 complete/average-link，会得到别的结果，须先声明 linkage；本题按课件 single-link 解。
+选择最小的非对角相似度 .10 合并 P1/P2 是把表读反；若使用 complete/average-link，会得到别的结果，须先声明 linkage；本题按课件 single-link 解。
 
 ### English answer pattern
 
 Merge the largest similarity. With single linkage, the merges occur at .98, .85, .76 and .55.
+
+合并相似度最大的簇。单链接下的合并值依次为 0.98、0.85、0.76、0.55。
 
 ### 计算与内存分析
 
@@ -67,13 +67,11 @@ Merge the largest similarity. With single linkage, the merges occur at .98, .85,
 
 状态：完整；形式：补充变式。
 
-### 原题 / 转录整理
+### 原文
 
 Given distances d(a,b)=2,d(a,c)=7,d(b,c)=5, compute the agglomerative merge heights under single and complete linkage.
 
-### 第一步：中文翻译与条件
-
-给三个距离，分别用最近链接与最远链接合并，说明树状图高度为何不同。
+给定距离 d(a,b)=2、d(a,c)=7、d(b,c)=5，计算单链接与全链接凝聚聚类的合并高度。
 
 ### 逐步解答
 
@@ -82,3 +80,5 @@ Given distances d(a,b)=2,d(a,c)=7,d(b,c)=5, compute the agglomerative merge heig
 ### English answer pattern
 
 Single linkage uses the closest pair; complete linkage uses the farthest pair.
+
+单链接使用最近点对，全链接使用最远点对。
