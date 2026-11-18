@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="26.0.0">
+  <diagram name="recall2025-star">
+    <mxGraphModel dx="1170" dy="780" grid="1" gridSize="10" guides="1" page="0" pageScale="1" pageWidth="1170" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="DimVehicle" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;swimlane;startSize=36;horizontal=1;container=1;collapsible=0;fontStyle=1;align=center;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="430" y="20" width="310" height="126" />
+        </mxCell>
+        <mxCell id="3" value="PK  vehicle_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="2">
+          <mxGeometry as="geometry" x="10" y="40" width="290" height="28" />
+        </mxCell>
+        <mxCell id="4" value="plate_no" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="2">
+          <mxGeometry as="geometry" x="10" y="68" width="290" height="28" />
+        </mxCell>
+        <mxCell id="5" value="is_rental" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="2">
+          <mxGeometry as="geometry" x="10" y="96" width="290" height="28" />
+        </mxCell>
+        <mxCell id="6" value="FactParkingDay" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;swimlane;startSize=36;horizontal=1;container=1;collapsible=0;fontStyle=1;align=center;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="430" y="290" width="310" height="210" />
+        </mxCell>
+        <mxCell id="7" value="PK, FK  date_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="40" width="290" height="28" />
+        </mxCell>
+        <mxCell id="8" value="PK, FK  vehicle_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="68" width="290" height="28" />
+        </mxCell>
+        <mxCell id="9" value="FK  lot_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="96" width="290" height="28" />
+        </mxCell>
+        <mxCell id="10" value="FK  provider_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="124" width="290" height="28" />
+        </mxCell>
+        <mxCell id="11" value="daily_rent" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="152" width="290" height="28" />
+        </mxCell>
+        <mxCell id="12" value="parked_count = 1" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="6">
+          <mxGeometry as="geometry" x="10" y="180" width="290" height="28" />
+        </mxCell>
+        <mxCell id="13" value="DimDate" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;swimlane;startSize=36;horizontal=1;container=1;collapsible=0;fontStyle=1;align=center;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="20" y="310" width="280" height="154" />
+        </mxCell>
+        <mxCell id="14" value="PK  date_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="13">
+          <mxGeometry as="geometry" x="10" y="40" width="260" height="28" />
+        </mxCell>
+        <mxCell id="15" value="full_date, day" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="13">
+          <mxGeometry as="geometry" x="10" y="68" width="260" height="28" />
+        </mxCell>
+        <mxCell id="16" value="iso_week, week_year" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="13">
+          <mxGeometry as="geometry" x="10" y="96" width="260" height="28" />
+        </mxCell>
+        <mxCell id="17" value="calendar_year" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="13">
+          <mxGeometry as="geometry" x="10" y="124" width="260" height="28" />
+        </mxCell>
+        <mxCell id="18" value="DimLot" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;swimlane;startSize=36;horizontal=1;container=1;collapsible=0;fontStyle=1;align=center;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="880" y="330" width="250" height="126" />
+        </mxCell>
+        <mxCell id="19" value="PK  lot_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="18">
+          <mxGeometry as="geometry" x="10" y="40" width="230" height="28" />
+        </mxCell>
+        <mxCell id="20" value="lot_id" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="18">
+          <mxGeometry as="geometry" x="10" y="68" width="230" height="28" />
+        </mxCell>
+        <mxCell id="21" value="city, state" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="18">
+          <mxGeometry as="geometry" x="10" y="96" width="230" height="28" />
+        </mxCell>
+        <mxCell id="22" value="DimProvider" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;swimlane;startSize=36;horizontal=1;container=1;collapsible=0;fontStyle=1;align=center;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="430" y="640" width="310" height="98" />
+        </mxCell>
+        <mxCell id="23" value="PK  provider_key" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="22">
+          <mxGeometry as="geometry" x="10" y="40" width="290" height="28" />
+        </mxCell>
+        <mxCell id="24" value="provider_id, provider_name" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;align=left;fontSize=17;" vertex="1" parent="22">
+          <mxGeometry as="geometry" x="10" y="68" width="290" height="28" />
+        </mxCell>
+        <mxCell id="25" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="26" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="13" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="27" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="18" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="28" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="22" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="29" value="Grain: one vehicle on one recorded parking day." style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=20;align=left;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="20" y="20" width="350" height="70" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

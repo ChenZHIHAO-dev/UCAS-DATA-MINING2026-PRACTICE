@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="26.0.0">
+  <diagram name="recall2025-stump">
+    <mxGraphModel dx="880" dy="450" grid="1" gridSize="10" guides="1" page="0" pageScale="1" pageWidth="880" pageHeight="450" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Split on X&lt;br&gt;N = 280&lt;br&gt;C1 : 140; C2 : 140" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="310" y="20" width="260" height="100" />
+        </mxCell>
+        <mxCell id="3" value="N = 140&lt;br&gt;C1 : 40; C2 : 100&lt;br&gt;Prediction: C2" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="260" width="280" height="110" />
+        </mxCell>
+        <mxCell id="4" value="N = 140&lt;br&gt;C1 : 100; C2 : 40&lt;br&gt;Prediction: C1" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="560" y="260" width="280" height="110" />
+        </mxCell>
+        <mxCell id="5" value="X = 0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="6" value="X = 1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.4;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="2" target="4">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="7" value="Stop after the root split. The children are not pure." style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.4;fillColor=#ffffff;shadow=0;rounded=0;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="100" y="400" width="680" height="40" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
