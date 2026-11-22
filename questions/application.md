@@ -20,7 +20,7 @@ Please briefly describe the major types of data mining techniques and their corr
 
 ### 逐步解答
 
-| Technique | What it produces | Application |
+| 技术 Technique | 主要输出 | 应用 Application |
 | --- | --- | --- |
 | Characterization / discrimination | 一类的概况与类间区别 | 对比常客与非活跃客户特征 |
 | Association / frequent patterns | 经常共同出现的商品或事件 | 购物篮捆绑、交叉销售 |
@@ -30,7 +30,7 @@ Please briefly describe the major types of data mining techniques and their corr
 | Outlier analysis | 偏离主体的稀有对象 | 欺诈交易、异常设备 |
 | Evolution / sequential analysis | 时间变化、顺序和周期 | 点击序列、购买顺序、季节趋势 |
 
-回答连接“输入、输出、应用”，不要只把七个名称抄成列表。
+作答时按“技术名称 → 主要输出 → 具体应用”各写一行。分类使用已标注类别训练，聚类按相似性组织未标注对象；关联分析找共现，序列分析还考虑先后顺序。推荐系统（recommender systems）把用户偏好预测与物品排序结合，用于生成个性化推荐列表。
 
 ### English answer pattern
 
@@ -57,11 +57,39 @@ Suppose you have roughly classified previous e-mails as junk, unimportant or nor
 
 ### 逐步解答
 
-1. 明确标签和标注规则，建立已标注训练集，保留时间上较晚或独立的测试集。
-2. 解析发件人、标题、正文与链接等特征；文本分词、词袋/TF-IDF，编码是否含可疑链接。词表与IDF只在训练集拟合，避免泄漏。
-3. 训练朴素贝叶斯、决策树或其他分类器。若选朴素贝叶斯，估计类别先验及词的类条件概率，对未见词用平滑。
-4. 验证调参，用每类 precision/recall 和混淆矩阵评价；误判重要邮件为垃圾通常代价高，应关注这一类错误。
-5. 将相同特征变换应用到新邮件后预测，可对低置信样本转人工复核，并用新标注定期更新以应对垃圾邮件模式漂移。
+#### 明确分类任务和数据划分
+
+输入为已标注的历史邮件，类别为 junk（垃圾）、unimportant（不重要）、normal/important（正常或重要）；输出为新邮件的一个类别。训练集拟合模型，验证集选参数，独立测试集评价选好的模型。邮件随时间变化时，可把较晚邮件留作验证和测试。
+
+#### 构造统一的特征表示
+
+提取发件人、标题、正文及链接信息。以词频向量为例，先在训练集建立词表 $V$，令 $x_w$ 为邮件中词 $w$ 的出现次数。对每封新邮件沿用相同词表和处理规则。
+
+#### 用朴素贝叶斯训练和预测
+
+给出一种完整可行方案：多项式朴素贝叶斯（multinomial Naïve Bayes）。设训练邮件数为 $N$，第 $c$ 类邮件数为 $N_c$，第 $c$ 类中词 $w$ 的总次数为 $n_{wc}$。使用加一平滑：
+
+$$\begin{aligned}
+P(c)&=\frac{N_c}{N},\\
+P(w\mid c)&=\frac{n_{wc}+1}{\sum_{v\in V}n_{vc}+|V|},\\
+score(c\mid x)&=\log P(c)+\sum_{w\in V}x_w\log P(w\mid c),\\
+\hat c&=\arg\max_c score(c\mid x).
+\end{aligned}$$
+
+先验 $P(c)$ 表示各类的常见程度；词概率表示某类邮件使用该词的倾向；加一平滑为训练中未出现的词保留正概率。取对数把大量小概率的连乘转成求和，预测仍选得分最高的类别。
+
+#### 评估并应用到新邮件
+
+用验证集比较词表规模、平滑参数等选择，并观察逐类混淆矩阵。对任一类别，把该类看作正类：
+
+$$Precision=\frac{TP}{TP+FP},\qquad Recall=\frac{TP}{TP+FN}.$$
+
+例如，把重要邮件误判为垃圾会影响正常通信，应结合这种错误的代价选择策略。最终在独立测试集报告性能，再用已确定的处理流程分类新邮件。持续收集新标注可应对垃圾邮件模式变化。
+
+#### 最终作答要点
+
+标注历史邮件 → 提取特征 → 训练分类器 → 验证选参 → 测试评价 → 同样处理新邮件并预测。题面未给具体训练计数，答案应写清流程及估计、预测方法。
+
 
 ### English answer pattern
 
@@ -88,12 +116,73 @@ Build features from labeled messages, fit a supervised classifier, validate with
 
 ### 逐步解答
 
-位图适合分析型、读多写少且较低基数属性，多条件可按位交并；高基数及频繁更新是局限。原笔记称“一定减少空间/I/O”过强，应加上数据分布、压缩和查询条件。
+#### 1. 位图如何组合分析条件
 
-OLTP 偏向当前事务、细粒度、短小读写和一致性；OLAP 偏向历史集成数据、主题分析、复杂聚合与大范围扫描。按主要工作负载比较两者：事务库侧重及时处理业务，仓库侧重集成历史分析。
+对 N 行数据的某属性，每个取值保存 N 位向量。`city=Beijing AND year=2025` 可将两条位图按位 AND；“城市 A 或 B”可按位 OR。适合读多写少、较低基数的分析属性。
+
+若属性有 K 个取值，未压缩位图载荷为
+
+$$M=NK\ \mathrm{bits}=\frac{NK}{8}\ \mathrm{bytes}.$$
+
+实际收益取决于压缩、分布、查询选择性和更新频率；K 很大或频繁写入时，维护与空间开销会增加。
+
+#### 2. 对照主要工作负载
+
+| 比较项 | OLTP 事务数据库 | OLAP 数据仓库 |
+| --- | --- | --- |
+| 目标 | 及时记录和处理业务 | 集成历史数据并支持分析 |
+| 常见粒度 | 当前、细粒度事务记录 | 历史明细与汇总层次 |
+| 典型操作 | 单笔查询、插入、修改、删除 | 多表分析、分组聚合、大范围扫描 |
+| 例子 | 插入一条订单明细 | 按地区、产品和年份分析销量 |
+
+回答时先说明任务，再给一个实际操作例子，即可将数据库结构与查询目的联系起来。
+
 
 ### English answer pattern
 
 OLTP supports operational transactions; OLAP supports integrated historical analysis. Bitmap suitability depends on cardinality and update patterns.
 
 OLTP 支持业务事务；OLAP 支持集成历史分析。位图适用性取决于基数与更新模式。
+
+
+---
+
+<a id="PPT-INTRO45"></a>
+
+## PPT-INTRO45 · 课件 · 补充一种可挖掘知识并说明应用
+
+来源：当前完整七讲课件 · Intro.pdf · Exercises 1；页内印刷号 46 · PDF p.45
+
+状态：完整课件练习；形式：课件开放题 / 应用。
+
+### 原文
+
+Can you describe other possible kind of knowledge that needs to be discovered by data mining methods but not been mentioned in class yet?
+
+你能描述其他需要用数据挖掘方法发现、但课堂上尚未提到的知识类型吗？
+
+### 逐步解答
+
+#### 1. 给出一项具体任务
+
+例如“设备故障前的时间先后模式”：从设备传感器时间序列中，发现“温度持续升高 → 振动增强 → 一定时间内发生故障”的模式，用于提前预警和安排维护。
+
+#### 2. 把输入、输出与用途接起来
+
+| 部分 | 本例写法 |
+| --- | --- |
+| 输入 | 带时间戳的温度、振动、运行负载及历史故障事件 |
+| 挖掘知识 | 事件发生顺序及时间间隔约束，例如升温后 2 小时内出现振动异常 |
+| 可选方法 | 序列模式挖掘；若预测是否即将故障，也可训练分类器 |
+| 验证 | 在较晚时间段检查预警精确率、召回率及提前量 |
+| 用途 | 在设备失效前检查，减少停机损失 |
+
+#### 3. 开放题通用写法
+
+用“数据是什么 → 想发现什么关系或模式 → 用哪类方法 → 如何验证 → 对谁有什么用”组织一段答案。题目要求课堂未提到的知识；考试时可选老师尚未举过的具体场景，并明确该场景中新知识的形式。
+
+### English answer pattern
+
+One example is a time-constrained precursor pattern for equipment failures. Mine sensor-event sequences, validate the patterns on future periods, and use them for early maintenance.
+
+一个例子是带时间约束的设备故障前兆模式。挖掘传感器事件序列，在未来时间段验证模式，并用于提前维护。

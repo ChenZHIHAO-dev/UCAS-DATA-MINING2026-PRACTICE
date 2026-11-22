@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="26.0.0">
+  <diagram name="detail-complete-link">
+    <mxGraphModel page="0" pageWidth="840" pageHeight="420">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Complete linkage: farthest cross-cluster pair" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=22;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="260.0" y="5" width="320" height="32" />
+        </mxCell>
+        <mxCell id="3" value="a" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=20;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="-80.0" y="357" width="320" height="30" />
+        </mxCell>
+        <mxCell id="4" value="b" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=20;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="260.0" y="357" width="320" height="30" />
+        </mxCell>
+        <mxCell id="5" value="c" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=20;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="600.0" y="357" width="320" height="30" />
+        </mxCell>
+        <mxCell id="6" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="80.0" y="345" />
+            <mxPoint as="targetPoint" x="80.0" y="265.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="420.0" y="345" />
+            <mxPoint as="targetPoint" x="420.0" y="265.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="80.0" y="265.0" />
+            <mxPoint as="targetPoint" x="420.0" y="265.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9" value="2" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="287.0" y="253.0" width="320" height="27" />
+        </mxCell>
+        <mxCell id="10" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="250.0" y="265.0" />
+            <mxPoint as="targetPoint" x="250.0" y="65.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="760.0" y="345" />
+            <mxPoint as="targetPoint" x="760.0" y="65.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="250.0" y="65.0" />
+            <mxPoint as="targetPoint" x="760.0" y="65.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" value="7" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=17;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="627.0" y="53.0" width="320" height="27" />
+        </mxCell>
+        <mxCell id="14" value="Merge distance (height)" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="260" y="387" width="320" height="28" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

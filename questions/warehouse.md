@@ -20,19 +20,33 @@
 
 ### 逐步解答
 
-1. **先定粒度。** FactTravel 一行表示一名旅客在一次具体航班航段上的乘坐事实；不能只写“一个航班”却又在事实里存多位旅客。
-2. 旅行事实键：passenger_key, flight_leg_key, departure_date_key, route_key；度量 passenger_count=1、fare（有题目数据时）。Passenger 记录常客层级；Route 可保存始发/到达机场及城市、国家；Date 为 day→month→quarter→year，另有 season 属性。
-3. **餐饮另设事实表** FactCatering，一行表示一次航段中某旅客对某食品/饮料的一条消费记录，增加 product_key、quantity、amount（有价格时）。它和旅行事实共享旅客、航段、日期维，形成事实星座；如果只有航班总消费，改为 flight_leg×product 粒度并明确无法回溯到个人。
-4. 季节客流：按 route、year、season 聚合 passenger_count；餐饮供应：按 route、season、product 聚合 quantity。旅客增长率由相邻期间客流计算，不能把各月增长率直接求和。
+#### 1. 先确定两种业务事实的粒度
 
-```text
-DimPassenger ─ FactTravel ─ DimDate
-                 │
-            DimFlightLeg / DimRoute
-                 │
-DimProduct ─ FactCatering ─ DimDate
-```
-三张共享维可分别连接两个事实，图是结构摘要；建模时需显式标出每个事实外键。
+旅行事实表 $FactTravel$ 的一行表示“一名旅客乘坐某次具体航班航段”。餐饮事实表 $FactCatering$ 的一行表示“该旅客在该航段消费某种食品或饮料的一条记录”。分开保存这两个粒度，便于分别统计客流和餐饮量。
+
+![航空公司事实星座：旅行与餐饮共享旅客、日期和航段维度](../assets/solutions/detail-airline-constellation.svg)
+
+#### 2. 写出维度、外键和度量
+
+| 事实表 | 外键所连接的维度 | 度量 |
+| --- | --- | --- |
+| FactTravel | Passenger、Date、FlightLeg、Route | $passenger\_count=1$；票价可用时记录 $fare$。 |
+| FactCatering | Passenger、Date、FlightLeg、Product | 消费数量 $quantity$；价格可用时记录金额 $amount$。 |
+
+旅客维保存常客等级；路线维保存始发与到达机场、城市、国家；日期维保存年、季节、月、日。两个事实共享维度，构成事实星座（fact constellation）。若原始系统只记录航班餐饮总量，则餐饮粒度用“航段×商品”，按此粒度建键即可。
+
+#### 3. 用聚合回答业务问题
+
+- 旅客出行趋势：按旅客或常客等级、路线、年/月，对 $passenger\_count$ 求和。
+- 航线季节变化：按路线、年份、季节汇总客流，再比较相同季节。
+- 餐饮需求：按航段、路线、季节、商品汇总 $quantity$。
+
+若本期客流为 $V_t$、上期为 $V_{t-1}>0$，增长率为
+
+$$g_t=\frac{V_t-V_{t-1}}{V_{t-1}}\times100\%.$$
+
+先聚合得到两个时期的总客流，再计算增长率。增长率本身通常不按月份直接求和。
+
 
 ### English answer pattern
 
@@ -63,11 +77,22 @@ An e-mail database stores a large number of electronic mail messages. How can su
 
 ### 逐步解答
 
+#### 1. 消息粒度和维度
+
+![邮件仓库：消息事实、共享维度与收件人桥表](../assets/solutions/detail-email-schema.svg)
+
 先定一封邮件一行的 FactMessage，含 message_key、sender_key、subject_key、sent_time_key、message_count=1、size_bytes（若可得）。维度为 Sender、Subject、Time；Time 可有 hour→day→month→year。正文单独存储或建立全文索引。
 
 一封邮件可能有多个收件人。可用 BridgeMessageRecipient(message_key,recipient_key,recipient_type) 连接接收者维；此时跨收件人统计“邮件数”须 COUNT(DISTINCT message_key)，不能让同一邮件因多收件人而重复。若事实粒度改为邮件×收件人，则须明确 message_count 的含义。
 
 主题关键词或话题标签也可能多值；要区分原始 subject 文本、可检索的词项和经过归类的主题维。
+
+#### 2. 如何执行多维查询
+
+发件人、主题、时间条件通过对应维度筛选消息；收件人条件先从桥表找到 message_key，再筛选事实。若查询“某月某主题的邮件数”，按月份和主题分组，对去重后的 message_key 计数。
+
+桥表允许一封邮件连接多个收件人。收件人信息可由 recipient_key 进一步连接 DimRecipient；与事实一封邮件一行的粒度配合，既支持按收件人检索，也支持正确统计独立邮件数。
+
 
 ### English answer pattern
 
@@ -224,7 +249,13 @@ Use a vehicle-day fact grain. Slice to Beijing and calendar year 2025, retain th
 
 ### 逐步解答
 
+#### 1. 星型模式与事实粒度
+
+![销售仓库星型模式：事实表连接四个维度](../assets/solutions/detail-sales-star.svg)
+
 事实粒度：date×product×vendor×location 的销售汇总。一张 FactSales 保存四个外键和两个度量，连接 DimDate、DimProduct、DimVendor、DimLocation。
+
+#### 2. OLAP 与对应 SQL
 
 OLAP：Slice(location.city=Los Angeles)；date Roll-up 到 year；product Roll-up 到 ALL；保留 vendor；对 sales_volume 求 SUM。
 
@@ -237,7 +268,16 @@ JOIN DimLocation l ON f.location_key = l.location_key
 WHERE l.city = 'Los Angeles'
 GROUP BY d.year, v.vendor_name;
 ```
+#### 3. 位图索引为什么适合组合查询
+
+对每个属性值保存一条位向量，第 $i$ 位表示第 $i$ 行是否满足该值。`city=Los Angeles AND year=2025` 可以将两条位向量逐位 AND，再聚合选中的事实。
+
+设 $N$ 为事实行数、$K$ 为该属性的不同值个数，未压缩数据位的估算式为
+
+$$M=\frac{NK}{8}\ \text{bytes}.$$
+
 位图可为 city、year 等低基数属性每个值保存一个长度为 N 的 bit 向量，以 AND/OR 组合查询。未压缩大小约 NK/8 字节；高基数 K、频繁写入与并发更新会增加代价，不能说位图总比普通索引省空间。
+
 
 ### English answer pattern
 
@@ -268,11 +308,30 @@ Design a data warehouse for a regional weather bureau with about 1000 land/ocean
 
 ### 逐步解答
 
+#### 1. 星型模式
+
+![气象仓库：每个探针每小时一条事实记录](../assets/solutions/detail-weather-star.svg)
+
 FactWeather 一行是一探针一小时的观测，键 probe_key,time_key，度量 pressure、temperature、precipitation。Probe 维保存海陆类型、坐标、所属区域；Time 为 hour→day→month→quarter→year，另存季节。地点层次可用 station→region→ALL；海域需采用适用的海区层次，不能强行 city→state。
 
-气温和气压不对时间直接 SUM，通常取平均、最小、最大；为正确合并平均数，保留 sum 与有效观测 count。降水量若表示该小时累计降水，在**不重叠时间段**可求和；不同地点降水深度不能未经面积权重解释就当总水量累加。
+#### 2. 度量如何上卷
+
+平均温度由有效观测计算：
+
+$$\bar T=\frac{\sum_i T_i}{n_{\mathrm{valid}}}.$$
+
+若多个分区已分别保存温度总和 $S_p$ 和有效数量 $n_p$，合并后的均值为
+
+$$\bar T=\frac{\sum_pS_p}{\sum_p n_p}.$$
+
+这样可处理不同探针缺失数量不同的情况。气温和气压不对时间直接 SUM，通常取平均、最小、最大；为正确合并平均数，保留 sum 与有效观测 count。降水量若表示该小时累计降水，在**不重叠时间段**可求和；不同地点降水深度不能未经面积权重解释就当总水量累加。
+
+#### 3. OLAP 与数据规模
 
 按年、月或地区做 Roll-up，按某探针或海陆类型 Slice；按小时 Drill-down。可按时间分区，以 probe/time 建索引，常用日/月汇总做物化视图。
+
+以每年 365 天粗估，十年约 $1000\times24\times365\times10=87{,}600{,}000$ 条观测。按时间分区与物化日/月汇总，可以减少重复扫描的明细行数。
+
 
 ### English answer pattern
 
@@ -307,7 +366,15 @@ Use a probe-hour grain. Store additive precipitation intervals carefully and agg
 
 ### 逐步解答
 
-星型与当前 HW1 相同。Slice(vendor=A)；date Roll-up 至 year；product、location Roll-up 至 ALL；按 year 对 sales_volume 求 SUM。
+#### 1. 星型模式
+
+![销售仓库星型模式：事实表连接四个维度](../assets/solutions/detail-sales-star.svg)
+
+事实粒度为 date×product×vendor×location；四个维度键连接 FactSales，保存销售量和销售成本。
+
+#### 2. 先筛选、再上卷
+
+Slice(vendor=A)；date Roll-up 至 year；product、location Roll-up 至 ALL；按 year 对 sales_volume 求 SUM。
 
 ```sql
 SELECT d.year, SUM(f.sales_volume)
@@ -317,7 +384,8 @@ JOIN DimVendor v ON f.vendor_key=v.vendor_key
 WHERE v.vendor_name='A'
 GROUP BY d.year;
 ```
-比较练习：把当前 HW1 的 WHERE city 条件和 GROUP BY year,vendor 改成这里的 WHERE vendor 条件与 GROUP BY year，说明查询粒度为什么改变。
+最终结果一行对应一个 year，度量为该年 vendor A 在全部产品、全部地点的销售量。`WHERE` 选择 vendor A，`GROUP BY year` 决定输出粒度。
+
 
 ### English answer pattern
 
@@ -344,14 +412,218 @@ Slice vendor to A and roll up all dimensions except year.
 
 ### 逐步解答
 
+#### 1. 用互动事件定义事实粒度
+
+![社交平台仓库：按互动事件确定事实粒度](../assets/solutions/detail-social-star.svg)
+
 可选“内容互动”作为业务过程，FactInteraction 一行为一次用户对内容的互动事件。维度：Time、ActorUser、Content、InteractionType、Device/Location（可获得时）；度量 event_count=1、watch_seconds（仅观看事件可得）。作者可作为 User 的另一角色维。
 
 时间 hour→day→month→year；内容 video→topic→category 仅在主题关系严格适用时才做层次。统计每月每类内容的观看时长、某地区转发数等。
 
 点赞事件数、浏览次数、独立用户数不同：前两者可在对应粒度求和，独立用户跨日不能直接相加。推荐/流失预测需要从按时间窗口聚合的行为特征中学习，并以未来数据评价。
 
+#### 2. 用例说明查询流程
+
+查询“每月各类内容的互动次数”时：Time 上卷至 month，Content 上卷至 category，ActorUser 上卷至 ALL，对 $event\_count$ 求和。若只统计转发，先在 InteractionType 上 slice 到 share。
+
+独立用户数使用 $COUNT(DISTINCT\ actor\_key)$；事件数使用 $SUM(event\_count)$。同一个用户一天发生多次互动，正好说明这两个度量为什么应分别计算。
+
+
 ### English answer pattern
 
 Choose an interaction-event grain and distinguish event counts from distinct-user measures.
 
 选择交互事件粒度，区分事件计数与去重用户度量。
+
+
+---
+
+<a id="PPT-DW27"></a>
+
+## PPT-DW27 · 课件 · 医生就诊仓库：星型模式与 1999 年汇总
+
+来源：当前完整七讲课件 · Data_Warehouse.pdf · Exercise 1(1) · PDF p.27；当前完整七讲课件 · Data_Warehouse.pdf · Exercise 1(2) · PDF p.37
+
+状态：完整课件练习；形式：课件设计 / OLAP。
+
+### 原文
+
+Suppose that a data warehouse consists of three dimensions time, doctor, and patient, and two measures count and charge, where charge is the fee that a doctor charges a patient for a visit.
+
+假设一个数据仓库由时间、医生、病人三个维度，以及 count 和 charge 两个度量组成，其中 charge 是医生向病人一次就诊收取的费用。
+
+(1) Draw a schema diagram for the data warehouse.
+
+(1) 为该数据仓库画出模式图。
+
+(2) Starting with the base cuboid [day, doctor, patient], what OLAP operations should be performed in order to list the total fee collected by each doctor in 1999?
+
+(2) 从基本方体 [日、医生、病人] 出发，要列出各医生在 1999 年收取的总费用，应执行哪些 OLAP 操作？
+
+### 逐步解答
+
+#### 1. 定义事实粒度并画图
+
+一条事实是一次医生为病人提供的就诊服务；同一天的多次就诊用不同 $visit\_key$ 区分。$count=1$，$charge$ 为本次费用。
+
+![就诊事实与三个维表的星型模式](../assets/solutions/ppt-hospital-star.svg)
+
+#### 2. 从基本方体做 OLAP
+
+保留 doctor；日期从 day 上卷（roll-up）到 year，并切片（slice）为 1999；patient 上卷到 ALL。费用按 SUM 聚合：
+
+$$\operatorname{TotalCharge}(d,1999)=\sum_{v:\,doctor(v)=d,\,year(v)=1999}charge(v).$$
+
+#### 3. 写出等价查询与最终输出含义
+
+```sql
+SELECT d.doctor_id, SUM(f.charge) AS total_charge
+FROM FactVisit f
+JOIN DimDoctor d ON d.doctor_key=f.doctor_key
+JOIN DimTime t ON t.date_key=f.date_key
+WHERE t.year=1999
+GROUP BY d.doctor_id;
+```
+
+输出每位医生一行，列为医生编号和该年总费用。题目没有给就诊记录，因此答案写到模式、OLAP 操作和聚合式即可。
+
+### English answer pattern
+
+Use a visit-level fact with time, doctor and patient dimensions. Roll up day to year, slice year 1999, roll up patient to ALL, and sum charge by doctor.
+
+使用就诊级事实及时间、医生、病人维度。将日上卷到年，切片为 1999 年，将病人上卷到 ALL，按医生求费用总和。
+
+### 计算与内存分析
+
+扫描 $N$ 条就诊事实并按医生哈希聚合约需 $O(N)$ 时间、$O(g)$ 分组空间，$g$ 为医生数。
+
+
+---
+
+<a id="PPT-DW53"></a>
+
+## PPT-DW53 · 课件 · 大学雪花模式、课程查询与方体数量
+
+来源：当前完整七讲课件 · Data_Warehouse.pdf · Exercise 1(a–d) · PDF p.53
+
+状态：完整课件练习；形式：课件设计 / OLAP / 位图。
+
+### 原文
+
+Suppose a data warehouse for university consists of four dimensions student, course, semester, and instructor, and two measures count and score.
+
+假设大学数据仓库由学生、课程、学期、教师四个维度，以及 count 和 score 两个度量组成。
+
+(a) Draw a snowflake schema diagram for this data warehouse.
+
+(a) 为该数据仓库画出雪花模式图。
+
+(b) Starting with the base cuboid [student, course, semester, instructor], what specific OLAP operations should you perform to list the number of CS courses for each Big_University student?
+
+(b) 从基本方体 [学生、课程、学期、教师] 出发，要列出 Big_University 每位学生的 CS 课程数，应执行哪些具体 OLAP 操作？
+
+(c) If each dimension has five concept levels (including all), such as “student < major < status < university < all”, how many cuboids will this cube contain?
+
+(c) 如果每个维度都有五个概念层次（包括 all），例如“学生 < 专业 < 身份 < 大学 < all”，该立方体包含多少个方体？
+
+(d) Taking this cube as an example, discuss advantages and problems of using a bitmap index structure.
+
+(d) 以此立方体为例，讨论使用位图索引结构的优点和问题。
+
+### 逐步解答
+
+#### 1. 雪花模式与粒度
+
+事实表保存一条学生在某学期、某教师所授课程中的选课记录；维表中的院系、专业、大学等信息进一步规范化。
+
+![大学选课事实的雪花模式](../assets/solutions/ppt-university-snowflake.svg)
+
+#### 2. 明确筛选与聚合
+
+在 student 维筛选 university=Big_University，在 course 维筛选 department=CS；保留 student，将 semester、instructor 上卷到 ALL，再汇总课程。
+
+若 count 表示选课记录数，计算 $\sum count$；若“课程数”要求同一学生跨学期修同一课程只计一次，则用 $\operatorname{COUNT(DISTINCT\ course\_key)}$。考试中写清采用哪种口径。本题按不同课程数给出：
+
+```sql
+SELECT s.student_key, COUNT(DISTINCT f.course_key) AS cs_courses
+FROM FactEnrollment f
+JOIN DimStudent s ON s.student_key=f.student_key
+JOIN DimUniversity u ON u.university_key=s.university_key
+JOIN DimCourse c ON c.course_key=f.course_key
+JOIN DimDepartment d ON d.department_key=c.department_key
+WHERE u.university='Big_University' AND d.department_name='CS'
+GROUP BY s.student_key;
+```
+
+#### 3. 方体数：各维的层次选择相乘
+
+每个方体为每个维度选择一个层次。四个维度各有 5 种选择：
+
+$$\#\text{cuboids}=\prod_{i=1}^{4}L_i=5^4=\boxed{625}.$$
+
+这里 $L_i$ 已包含 ALL；因此无需再加一个层次。
+
+#### 4. 位图索引的优点与成本
+
+对 semester、department 等取值较少的属性，每个值保存一条长度为事实行数 $N$ 的位图。两个条件用 AND 求交，多个可选值用 OR，最后计数置位位数。这样的按位运算可并行处理多个记录。
+
+若不同值共有 $V$ 个，未压缩位图约需 $VN/8$ 字节。student 或 course 的取值很多时，空间及更新成本上升；适用于相对稳定、分析查询较多的仓库。
+
+### English answer pattern
+
+Use normalized dimensions for a snowflake schema. Filter Big_University and CS, retain each student, and aggregate over semester and instructor. The cube contains 5^4=625 cuboids.
+
+使用规范化维表构成雪花模式。筛选 Big_University 和 CS，保留每位学生，跨学期与教师聚合。该立方体包含 5^4=625 个方体。
+
+
+---
+
+<a id="PPT-DW54"></a>
+
+## PPT-DW54 · 课件 · 20 维仓库：部分物化与钻透
+
+来源：当前完整七讲课件 · Data_Warehouse.pdf · Exercise 2(a–b) · PDF p.54
+
+状态：完整课件练习；形式：课件设计 / 物化策略。
+
+### 原文
+
+Suppose a data warehouse has 20 dimensions, each with five concept levels.
+
+假设一个数据仓库有 20 个维度，每个维度有五个概念层次。
+
+(a) Users are mainly interested in four particular dimensions, each having three frequently accessed levels for rolling up and drilling down. How would you design a data cube to efficiently support this preference?
+
+(a) 用户主要关注四个特定维度，每个维度有三个经常访问、用于上卷和下钻的层次。你会怎样设计数据立方体来高效支持这种偏好？
+
+(b) Occasionally, a user may want to drill through the cube down to its raw relational database for one or two particular dimensions. How would you support this feature?
+
+(b) 用户偶尔可能希望沿一两个特定维度，从立方体钻透到原始关系数据库。你会怎样支持这一功能？
+
+### 逐步解答
+
+#### 1. 先比较全部物化与重点物化
+
+全部 20 维各选 5 个层次，共有
+
+$$5^{20}=95\,367\,431\,640\,625$$
+
+种层次组合。用户频繁访问的四维子空间，只涉及 $3^4=81$ 种常用层次组合。
+
+#### 2. 给出设计
+
+对 16 个非常用维度先汇总到 ALL，形成四维子立方体；优先物化四个常用维度的高频组合及可复用聚合。保留基本事实表，低频组合按需从基本表或合适的已有聚合计算。81 是待考虑的层次组合数，具体是否全部物化还需结合实际单元格数量与预算。
+
+#### 3. 怎样钻透
+
+在事实表保存通向原关系记录的稳定键，并保存维度代理键与原业务键的映射。用户请求明细时，把当前切片条件翻译为 WHERE 和 JOIN，从原始表取回对应记录。聚合表保留筛选维度键，便于确定应回到哪些原始记录。
+
+#### 4. 这一类题的答题顺序
+
+先写候选组合数，再写物化范围，最后说明如何回到明细。上卷后被合并的单条记录无法仅由 SUM/COUNT 唯一恢复，钻透需要访问基本表。
+
+### English answer pattern
+
+Materialize a workload-oriented four-dimensional subcube and retain base facts for less frequent queries. Support drill-through through dimension keys and links to relational detail records.
+
+物化面向工作负载的四维子立方体，保留基本事实以支持低频查询。通过维度键和关系明细记录链接支持钻透。

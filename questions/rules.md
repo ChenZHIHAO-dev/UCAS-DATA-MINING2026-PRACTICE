@@ -20,6 +20,19 @@ Using the resulting frequent itemsets, find all strong associations matching buy
 
 ### 逐步解答
 
+#### 本题公式
+
+对不相交的非空项集 $X,Y$，$count(X)$ 是包含 X 中全部物品的事务数：
+
+$$\begin{aligned}
+supp(X\Rightarrow Y)&=\frac{count(X\cup Y)}{N},\\
+conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
+\end{aligned}$$
+
+支持度以全部事务为分母，衡量规则覆盖；置信度以前件事务为分母，衡量已知 X 时 Y 的命中比例。强规则需要两个阈值同时满足。
+
+#### 2. 代入计数，逐方向检验
+
 每条规则的支持度用并集计数除以总事务数，置信度用并集计数除以前件计数。前件改变时，置信度的分母也随之改变。
 
 频繁三项集只有 abe，计数 5。三个方向分别检验：
@@ -31,6 +44,7 @@ Using the resulting frequent itemsets, find all strong associations matching buy
 | be ⇒ a | 5 | 7 | 5/7=.714286 |
 
 所以 2016 通过前两条，2020 三条都通过；支持度均 5/10=.5。把 .70 误记成 .75 会漏掉 2020 的 be⇒a。
+
 
 ### English answer pattern
 
@@ -57,6 +71,19 @@ For the four transactions and min_sup=60%,min_conf=70%, compute confidence for {
 
 ### 逐步解答
 
+#### 本题公式
+
+对不相交的非空项集 $X,Y$，$count(X)$ 是包含 X 中全部物品的事务数：
+
+$$\begin{aligned}
+supp(X\Rightarrow Y)&=\frac{count(X\cup Y)}{N},\\
+conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
+\end{aligned}$$
+
+支持度以全部事务为分母，衡量规则覆盖；置信度以前件事务为分母，衡量已知 X 时 Y 的命中比例。强规则需要两个阈值同时满足。
+
+#### 2. 代入计数，逐方向检验
+
 count(X) 表示同时包含项集 X 中全部物品的事务数。对 X⇒Y，先数同时包含 X、Y 的事务，再除以包含 X 的事务数，得到置信度。
 
 count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=1，不对称；两条支持度都 .5，低于 .6，均未通过该支持度阈值。
@@ -70,6 +97,7 @@ count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=
 | BD ⇒ A | 3/4 | 3/3 = 1 |
 
 元规则只允许两项前件与单项后件，不把 A⇒BD 等加入这个答案。
+
 
 ### English answer pattern
 
@@ -96,26 +124,40 @@ Using the five transactions, min_sup=40%,min_conf=40%, present confidence for al
 
 ### 逐步解答
 
-count(EKO)=4、count(E)=4、count(K)=5、count(O)=4，EK/EO/KO 的计数都为 4。
+#### 本题公式
 
-| Rule | 支持度 Support | 置信度 Confidence |
-| --- | --- | --- |
-| C ⇒ K | 2/5 | 2/2 = 1 |
-| K ⇒ C | 2/5 | 2/5 = 0.4 |
-| E ⇒ K | 4/5 | 4/4 = 1 |
-| K ⇒ E | 4/5 | 4/5 = 0.8 |
-| E ⇒ O | 4/5 | 4/4 = 1 |
-| O ⇒ E | 4/5 | 4/4 = 1 |
-| K ⇒ O | 4/5 | 4/5 = 0.8 |
-| O ⇒ K | 4/5 | 4/4 = 1 |
-| E ⇒ KO | 4/5 | 4/4 = 1 |
-| K ⇒ EO | 4/5 | 4/5 = 0.8 |
-| O ⇒ EK | 4/5 | 4/4 = 1 |
-| EK ⇒ O | 4/5 | 4/4 = 1 |
-| EO ⇒ K | 4/5 | 4/4 = 1 |
-| KO ⇒ E | 4/5 | 4/4 = 1 |
+对不相交的非空项集 $X,Y$，$count(X)$ 是包含 X 中全部物品的事务数：
 
-上表包含全部频繁项集产生的强规则。题目“由三项集产生的规则”只取并集为 EKO 的六条：E⇒KO、K⇒EO、O⇒EK、EK⇒O、EO⇒K、KO⇒E。它们置信度依次 1、.8、1、1、1、1，支持度均 .8。元规则再只留最后三条。
+$$\begin{aligned}
+supp(X\Rightarrow Y)&=\frac{count(X\cup Y)}{N},\\
+conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
+\end{aligned}$$
+
+支持度以全部事务为分母，衡量规则覆盖；置信度以前件事务为分母，衡量已知 X 时 Y 的命中比例。强规则需要两个阈值同时满足。
+
+#### 2. 代入计数，逐方向检验
+
+频繁三项集只有 $F=\{E,K,O\}$，$count(F)=4$；单项计数为 E:4、K:5、O:4，二项 EK、EO、KO 的计数均为 4。枚举非空真子集作为前件，三项集产生 $2^3-2=6$ 条规则。
+
+| 规则 | 支持度 | 置信度 | 达标 |
+| --- | --- | --- | --- |
+| $E\Rightarrow KO$ | $4/5=0.8$ | $4/4=1$ | 是 |
+| $K\Rightarrow EO$ | $4/5=0.8$ | $4/5=0.8$ | 是 |
+| $O\Rightarrow EK$ | $4/5=0.8$ | $4/4=1$ | 是 |
+| $EK\Rightarrow O$ | $4/5=0.8$ | $4/4=1$ | 是 |
+| $EO\Rightarrow K$ | $4/5=0.8$ | $4/4=1$ | 是 |
+| $KO\Rightarrow E$ | $4/5=0.8$ | $4/4=1$ | 是 |
+
+例如 $K\Rightarrow EO$ 的分母是 K 出现的五笔事务，其中四笔还包含 E 和 O，所以置信度为 80%；其余五个方向的前件计数都是 4，置信度均为 100%。六条均满足 40% 的支持度和置信度阈值。
+
+#### 3. 按元规则筛选最终答案
+
+“两项前件⇒一项后件”要求 $|X|=2,|Y|=1$，因此最终保留
+
+$$\boxed{EK\Rightarrow O,\quad EO\Rightarrow K,\quad KO\Rightarrow E}.$$
+
+它们的支持度均为 $0.8$，置信度均为 $1$。前件只有一个物品的前三条用于完整回答“三项集产生的全部规则”，不计入这一元规则的最终列表。
+
 
 ### English answer pattern
 
@@ -142,13 +184,36 @@ Current lab: minimum antecedent support 7%, confidence 45%, maximum antecedents 
 
 ### 逐步解答
 
-设 N=1000，count(A)=100、count(B)=800、count(AB)=80。规则 A⇒B 的前件支持度 .1、规则支持度 .08、置信度 .8、lift=.8/.8=1。虽然 confidence 高，B 本来就常见，A 没提供相对提升。
+#### 1. 四个指标分别计算
 
-另规则 C⇒D：count(C)=100,count(D)=100,count(CD)=30，confidence=.3、support=.03、lift=3；提升度更高但覆盖与命中率更低，不能只凭一个指标说绝对更好。
+$$\begin{aligned}
+supp(X)&=\frac{count(X)}N, &supp(X\Rightarrow Y)&=\frac{count(X\cup Y)}N,\\
+conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)},&lift(X\Rightarrow Y)&=\frac{conf(X\Rightarrow Y)}{supp(Y)}.
+\end{aligned}$$
 
-最大前件数 4 表示规则左侧项集满足 |X|≤4。Minimum antecedent support=.07 比较 count(X)/N；若 confidence≥.45，则规则支持可低至 .0315，；应与前件支持度分别计算。
+Lift 把条件命中率与 Y 本来的出现率比较；$lift=1$ 表示在该指标下没有相对提升。
 
-冗余检查：若 X⇒Y 和 XZ⇒Y 的置信度/提升度相同、后者没有新增解释或有用覆盖，可考虑省去更复杂规则；“前件不同”不意味着逻辑上完全不重复。剔除标准须声明，不把所有包含关系规则一概删去。
+#### 2. 将题目参数与指标对应
+
+当前作业设置要求 $supp(X)\ge0.07$、$conf(X\Rightarrow Y)\ge0.45$、$|X|\le4$；往届参数为 5%、50%、5。前件支持度的分子是 $count(X)$。
+
+$$supp(X\Rightarrow Y)=supp(X)\,conf(X\Rightarrow Y)\ge0.07\times0.45=0.0315.$$
+
+#### 3. 计算比较示例
+
+以下为便于手算的补充数据，总事务数 $N=1000$。
+
+| 规则 | 前件计数 | 后件计数 | 共同计数 | 前件支持度 | 规则支持度 | 置信度 | Lift |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| $A\Rightarrow B$ | 100 | 800 | 80 | 0.10 | 0.08 | 0.80 | $0.80/0.80=1$ |
+| $C\Rightarrow D$ | 100 | 100 | 30 | 0.10 | 0.03 | 0.30 | $0.30/0.10=3$ |
+
+第一条通过当前阈值；第二条虽有较高 lift，但置信度 0.30 未达到 0.45，先过滤，再排序。排序时分别观察覆盖、命中和相对提升，可解释三个指标为何给出不同顺序。
+
+#### 4. 冗余规则检查
+
+若 $X\Rightarrow Y$ 与 $XZ\Rightarrow Y$ 的置信度、lift 相同，且增加 Z 没有带来有用细分，可以保留较简单规则。使用这个标准时要同时检查对应覆盖和任务需求。
+
 
 ### English answer pattern
 

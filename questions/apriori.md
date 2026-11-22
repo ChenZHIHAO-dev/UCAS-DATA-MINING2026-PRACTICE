@@ -33,6 +33,14 @@ Find all frequent itemsets using Apriori, with min_support=50%. Present candidat
 
 ### 逐步解答
 
+#### 1. 阈值与 Apriori 剪枝
+
+$$supp(X)=\frac{count(X)}{N},\qquad count(X)\ge q=\left\lceil N\times min\_sup\right\rceil.$$
+
+若某个 $(k-1)$ 项子集不频繁，其 $k$ 项超集也不频繁，因为同时包含更多物品的事务数不会增加。因此先由 $L_{k-1}$ 连接得到候选，再检查全部 $(k-1)$ 项子集，保留下来的 $C_k$ 才扫描计数。
+
+#### 2. 逐层候选与频繁项集
+
 计数阈值 $q=\lceil 10\times 0.5\rceil=5$。先生成候选、用子集性质剪枝，再扫描计数。
 
 | k | Candidates Ck with counts | Frequent Lk |
@@ -43,6 +51,13 @@ Find all frequent itemsets using Apriori, with min_support=50%. Present candidat
 | 4 | ∅ | ∅ |
 
 一共 8 个非空频繁项集。表中候选是**子集剪枝后实际计数**的候选。
+
+#### 3. 展开一次剪枝和计数
+
+单项 $d$ 的计数为 4，小于阈值 5，所以后续候选均不含 $d$。三项候选 $\{a,b,e\}$ 的三个二项子集 $ab,ae,be$ 都在 $L_2$ 中；它出现在 T1、T2、T3、T9、T10，共 5 笔，支持度 $5/10=50\%$，故进入 $L_3$。
+
+下一层无法由两个具有相同前缀的频繁三项集连接得到新候选，算法停止；将全部非空 $L_k$ 合并作为答案。
+
 
 ### English answer pattern
 
@@ -84,6 +99,14 @@ Find all frequent itemsets using Apriori, with min_support=60%. Present candidat
 
 ### 逐步解答
 
+#### 1. 阈值与 Apriori 剪枝
+
+$$supp(X)=\frac{count(X)}{N},\qquad count(X)\ge q=\left\lceil N\times min\_sup\right\rceil.$$
+
+若某个 $(k-1)$ 项子集不频繁，其 $k$ 项超集也不频繁，因为同时包含更多物品的事务数不会增加。因此先由 $L_{k-1}$ 连接得到候选，再检查全部 $(k-1)$ 项子集，保留下来的 $C_k$ 才扫描计数。
+
+#### 2. 逐层候选与频繁项集
+
 计数阈值 $q=\lceil 4\times 0.6\rceil=3$。先生成候选、用子集性质剪枝，再扫描计数。
 
 | k | Candidates Ck with counts | Frequent Lk |
@@ -94,6 +117,13 @@ Find all frequent itemsets using Apriori, with min_support=60%. Present candidat
 | 4 | ∅ | ∅ |
 
 一共 7 个非空频繁项集。表中候选是**子集剪枝后实际计数**的候选。
+
+#### 3. 展开一次剪枝和计数
+
+$C,E$ 的单项计数均为 2，小于阈值 3，所以只用 $A,B,D$ 连接。$AB,AD,BD$ 均频繁，生成 $ABD$；它出现在 T1、T2、T4，共 3 笔，支持度 $3/4=75\%\ge60\%$。这里阈值向上取整，所以计数 2 对应的 50% 不能达标。
+
+下一层无法由两个具有相同前缀的频繁三项集连接得到新候选，算法停止；将全部非空 $L_k$ 合并作为答案。
+
 
 ### English answer pattern
 
@@ -136,6 +166,14 @@ Find all frequent itemsets using Apriori, with min_support=40%. Present candidat
 
 ### 逐步解答
 
+#### 1. 阈值与 Apriori 剪枝
+
+$$supp(X)=\frac{count(X)}{N},\qquad count(X)\ge q=\left\lceil N\times min\_sup\right\rceil.$$
+
+若某个 $(k-1)$ 项子集不频繁，其 $k$ 项超集也不频繁，因为同时包含更多物品的事务数不会增加。因此先由 $L_{k-1}$ 连接得到候选，再检查全部 $(k-1)$ 项子集，保留下来的 $C_k$ 才扫描计数。
+
+#### 2. 逐层候选与频繁项集
+
 计数阈值 $q=\lceil 5\times 0.4\rceil=2$。先生成候选、用子集性质剪枝，再扫描计数。
 
 | k | Candidates Ck with counts | Frequent Lk |
@@ -146,6 +184,13 @@ Find all frequent itemsets using Apriori, with min_support=40%. Present candidat
 | 4 | ∅ | ∅ |
 
 一共 9 个非空频繁项集。表中候选是**子集剪枝后实际计数**的候选。
+
+#### 3. 展开一次剪枝和计数
+
+$CE$ 与 $CO$ 的计数均为 1，所以包含它们的三项候选会被剪去。例如 $CEK$ 的子集 $CE\notin L_2$，无需再次扫描计数。$EKO$ 的全部二项子集 $EK,EO,KO$ 都频繁，计数为 4，支持度 $4/5=80\%$，进入 $L_3$。
+
+下一层无法由两个具有相同前缀的频繁三项集连接得到新候选，算法停止；将全部非空 $L_k$ 合并作为答案。
+
 
 ### English answer pattern
 
@@ -160,3 +205,174 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 ### 计算与内存分析
 
 标准逐层方法通常每层扫库一次。候选数最坏指数级；候选集合与计数器可能先耗尽内存。
+
+
+---
+
+<a id="PPT-ARM25"></a>
+
+## PPT-ARM25 · 课件 · 九笔事务的全部 Apriori 候选与频繁项集
+
+来源：当前完整七讲课件 · ARM.pdf · Exercise 1 · PDF p.25
+
+状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 原文
+
+A database has 9 transactions. Let min_sup = 20%. Please present all the candidates and frequent itemsets at each iteration.
+
+数据库有 9 笔事务。设最小支持度为 20%。请给出每轮的全部候选项集和频繁项集。
+
+| TID | List of items_IDs |
+| --- | --- |
+| T100 | I1,I2,I5 |
+| T200 | I2,I4 |
+| T300 | I2,I3 |
+| T400 | I1,I2,I4 |
+| T500 | I1,I3 |
+| T600 | I2,I3 |
+| T700 | I1,I3 |
+| T800 | I1,I2,I3,I5 |
+| T900 | I1,I2,I3 |
+
+### 逐步解答
+
+#### 1. 将比例换为整数计数阈值
+
+$$q=\lceil N\cdot min\_sup\rceil=\lceil9(0.2)\rceil=\boxed{2}.$$
+
+支持计数 $count(X)$ 是包含整个项集 $X$ 的事务数；支持度 $supp(X)=count(X)/9$。每轮先连接生成候选，利用“频繁项集的每个子集也频繁”剪枝，再扫描计数。
+
+#### 2. 第一轮：全部单项候选
+
+| 候选 $C_1$ | $\{I_1\}$ | $\{I_2\}$ | $\{I_3\}$ | $\{I_4\}$ | $\{I_5\}$ |
+| --- | --- | --- | --- | --- | --- |
+| 计数 | 6 | 7 | 6 | 2 | 2 |
+
+五个计数均达到 2，所以 $L_1=C_1$。
+
+#### 3. 第二轮：逐个列出 10 个候选
+
+| 候选 $C_2$ | 计数 | 是否进入 $L_2$ |
+| --- | --- | --- |
+| $\{I_1,I_2\}$ | 4 | 保留 |
+| $\{I_1,I_3\}$ | 4 | 保留 |
+| $\{I_1,I_4\}$ | 1 | 删除 |
+| $\{I_1,I_5\}$ | 2 | 保留 |
+| $\{I_2,I_3\}$ | 4 | 保留 |
+| $\{I_2,I_4\}$ | 2 | 保留 |
+| $\{I_2,I_5\}$ | 2 | 保留 |
+| $\{I_3,I_4\}$ | 0 | 删除 |
+| $\{I_3,I_5\}$ | 1 | 删除 |
+| $\{I_4,I_5\}$ | 0 | 删除 |
+
+#### 4. 第三轮：连接后检查所有二子集
+
+| 连接得到的三项集 | 子集检查 | 处理 |
+| --- | --- | --- |
+| $\{I_1,I_2,I_3\}$ | 12、13、23 都频繁 | 保留到 $C_3$ |
+| $\{I_1,I_2,I_5\}$ | 12、15、25 都频繁 | 保留到 $C_3$ |
+| $\{I_1,I_3,I_5\}$ | 35 不频繁 | 剪枝 |
+| $\{I_2,I_3,I_4\}$ | 34 不频繁 | 剪枝 |
+| $\{I_2,I_3,I_5\}$ | 35 不频繁 | 剪枝 |
+| $\{I_2,I_4,I_5\}$ | 45 不频繁 | 剪枝 |
+
+保留下来的两个候选计数均为 2：
+
+$$C_3=L_3=\{\{I_1,I_2,I_3\}:2,\ \{I_1,I_2,I_5\}:2\}.$$
+
+#### 5. 第四轮与最终答案
+
+123 与 125 可连接为 1235，但其三子集 135、235 不在 $L_3$，故剪枝后 $C_4=\varnothing$，停止。
+
+最终输出 $L_1\cup L_2\cup L_3$，共 $5+6+2=\boxed{13}$ 个频繁项集。若将连接结果称为“未剪枝候选”，应同时写明哪些在计数前被剪掉。
+
+### English answer pattern
+
+The minimum count is 2. L1 has 5 itemsets, L2 has 6, and L3 contains {I1,I2,I3} and {I1,I2,I5}, each with count 2. C4 is empty after subset pruning.
+
+最小计数为 2。L1 有 5 个项集，L2 有 6 个，L3 包含 {I1,I2,I3} 和 {I1,I2,I5}，各计数为 2。子集剪枝后 C4 为空。
+
+### 计算与内存分析
+
+第 k 轮朴素计数可对每个事务测试全部 $|C_k|$ 候选，约 $O(N|C_k|k)$；需保存候选及计数，约 $O(|C_k|k)$。本题只需三次完整计数扫描。
+
+
+---
+
+<a id="PPT-ARM39"></a>
+
+## PPT-ARM39 · 课件 · DIC 分三块：第一遍扫描时的状态
+
+来源：当前完整七讲课件 · ARM.pdf · Exercise 2 · PDF p.39
+
+状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 原文
+
+A database has 9 transactions. Let min_sup = 20%. Please present all the frequent itemsets generated by DIC in the first iteration. (Note: partition the data into 3 blocks)
+
+数据库有 9 笔事务。设最小支持度为 20%。请给出 DIC 在第一轮产生的全部频繁项集。（注意：将数据分成 3 块。）
+
+| TID | List of items_IDs |
+| --- | --- |
+| T100 | I1,I2,I5 |
+| T200 | I2,I4 |
+| T300 | I2,I3 |
+| T400 | I1,I2,I4 |
+| T500 | I1,I3 |
+| T600 | I2,I3 |
+| T700 | I1,I3 |
+| T800 | I1,I2,I3,I5 |
+| T900 | I1,I2,I3 |
+
+### 逐步解答
+
+#### 1. 写清检查点与四种状态
+
+三个块按原顺序为 T100–T300、T400–T600、T700–T900，每块 3 笔。使用全库最小计数 $q=\lceil9\times0.2\rceil=2$。本题“第一轮”按首次从 T100 扫描到 T900 解释。
+
+虚线圆表示“未达到 2，且还未计满完整数据库”；虚线方表示“已达到 2，但尚未计满完整数据库”；计满完整数据库后转为实线圆或实线方。每到检查点，若某候选的所有直接子集均已是方形状态，则启动它的计数，下一块开始统计。
+
+#### 2. 三个检查点的单项计数
+
+| 已处理事务 | $I_1$ | $I_2$ | $I_3$ | $I_4$ | $I_5$ | 可启动的新候选 |
+| --- | --- | --- | --- | --- | --- | --- |
+| T100–T300 | 1 | 3 | 1 | 1 | 1 | 只有 $I_2$ 达标，暂不能生成二项候选 |
+| T100–T600 | 3 | 5 | 3 | 2 | 1 | 启动 12、13、14、23、24、34 |
+| T100–T900 | 6 | 7 | 6 | 2 | 2 | 新启动 15、25、35、45，以及 123 |
+
+上表用 12 简记 $\{I_1,I_2\}$，其他同理。
+
+#### 3. 在第 6 笔以后启动的二项候选
+
+这些候选在本遍只统计了 T700、T800、T900：
+
+| 候选 | 12 | 13 | 14 | 23 | 24 | 34 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 本遍累计数 | 2 | 3 | 0 | 2 | 0 | 0 |
+| 第 9 笔状态 | 虚线方 | 虚线方 | 虚线圆 | 虚线方 | 虚线圆 | 虚线圆 |
+
+12、13、23 都已成为方形，因此可在第 9 笔检查点启动 123，其初始计数为 0。新启动的 15、25、35、45 同样尚未计数。
+
+#### 4. 第一遍结束到底能报告什么
+
+已完成全库计数并确认的频繁项集是五个单项：
+
+$$\{I_1\}:6,\ \{I_2\}:7,\ \{I_3\}:6,\ \{I_4\}:2,\ \{I_5\}:2.$$
+
+12、13、23 已达到门槛，说明它们确实频繁，但当前局部计数还不是全库支持计数；它们继续循环计数。14、24、34 本遍的 0 只来自最后一块。例如 24 在前两块出现两次，所以第一遍结束时不能把它删掉。后续运行到全部候选均计满全库，最终频繁项集与 Apriori 相同，共 13 个。
+
+#### 5. 本题关键点
+
+DIC 在数据库扫描途中动态启动新候选，让不同长度的候选重叠计数。判断是否计满一圈时，从该候选自己的启动位置计起。
+
+### English answer pattern
+
+After the first full pass, all five singletons are confirmed frequent. Pairs 12,13,23 have already reached the count threshold but have only been counted over the final block. Continue circular counting to obtain complete supports.
+
+第一遍完整扫描后，五个单项都已确认为频繁。二项集 12、13、23 已达到计数阈值，但只统计了最后一块。继续循环计数才能得到完整支持计数。
+
+### 计算与内存分析
+
+块长控制检查频率和候选的同时驻留量。需保存每个活动候选的计数、状态、起始检查点与已扫描长度；减少全库遍数通常以更多同时活动候选为代价。

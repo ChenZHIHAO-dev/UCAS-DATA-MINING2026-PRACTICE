@@ -33,6 +33,18 @@ Use Naïve Bayesian Classifier to predict the class of (A=0,B=1,C=0).
 
 ### 逐步解答
 
+#### 1. 先数先验，再数类内比例
+
+对待预测样本 $x=(x_1,\ldots,x_d)$，朴素贝叶斯采用“给定类别后，各属性条件独立”的假设：
+
+$$score(C_c)=P(C_c)\prod_{j=1}^dP(x_j\mid C_c).$$
+
+其中 $P(C_c)=n_c/N$，$P(x_j\mid C_c)$ 的分母是该类的样本数。分类选择分数最大者；要求后验概率时再归一化：
+
+$$P(C_c\mid x)=\frac{score(C_c)}{\sum_k score(C_k)}.$$
+
+#### 2. 从原表填写条件概率
+
 | Class | Prior | P(A=0\ | class) | P(B=1\ | class) | P(C=0\ | class) | Unnormalized score |
 | --- | --- | --- | --- | --- | --- |
 | C1 | 5/10 | 2/5 | 1/5 | 1/5 | 0.008 |
@@ -41,6 +53,14 @@ Use Naïve Bayesian Classifier to predict the class of (A=0,B=1,C=0).
 后验：C1=1, C2=0。预测 C1。
 
 先计算未归一化分数 $P(class)\prod_jP(x_j|class)$；需要后验概率时，再除以各类分数之和。C2 的 C=0 没出现，未平滑分数为 0。若使用二元属性 Laplace +1 平滑：C1 分数 $(1/2)(3/7)(2/7)(2/7)=6/343$；C2 为 $(1/2)(4/7)(2/7)(1/7)=4/343$，归一后 C1=.6、C2=.4，分类不变。
+
+
+#### 3. 代入得到类别
+
+$$score(C_1)=\frac5{10}\frac25\frac15\frac15=0.008,\qquad score(C_2)=\frac5{10}\frac35\frac15\frac05=0.$$
+
+归一化后 $P(C_1\mid x)=0.008/(0.008+0)=1$，所以预测 **C1**。零分数来自 C2 类中没有 C=0 的训练样本；表中结果采用题目未要求额外平滑的频数估计。
+
 
 ### English answer pattern
 
@@ -71,6 +91,18 @@ Using the Q1 training table, what would a naïve Bayesian classifier classify Z=
 
 ### 逐步解答
 
+#### 1. 先数先验，再数类内比例
+
+对待预测样本 $x=(x_1,\ldots,x_d)$，朴素贝叶斯采用“给定类别后，各属性条件独立”的假设：
+
+$$score(C_c)=P(C_c)\prod_{j=1}^dP(x_j\mid C_c).$$
+
+其中 $P(C_c)=n_c/N$，$P(x_j\mid C_c)$ 的分母是该类的样本数。分类选择分数最大者；要求后验概率时再归一化：
+
+$$P(C_c\mid x)=\frac{score(C_c)}{\sum_k score(C_k)}.$$
+
+#### 2. 从原表填写条件概率
+
 | Class | Prior | P(Short\ | class) | P(Blond\ | class) | P(Brown\ | class) | Unnormalized score |
 | --- | --- | --- | --- | --- | --- |
 | C1 | 5/9 | 2/5 | 2/5 | 3/5 | 0.053333 |
@@ -79,6 +111,16 @@ Using the Q1 training table, what would a naïve Bayesian classifier classify Z=
 后验：C1=1, C2=0。预测 C1。
 
 原始数据中 C2 从未出现 Brown，所以未平滑 C2 分数为零。不要把未知样本先放入训练表；也不要因词的大小写不同就当不同类别，本题 blond 与 Blond 同义。
+
+
+#### 3. 展开分数与后验
+
+$$score(C_1)=\frac59\frac25\frac25\frac35=\frac4{75}\approx0.053333.$$
+
+$$score(C_2)=\frac49\frac14\frac24\frac04=0.$$
+
+所以 $P(C_1\mid Z)=1$、$P(C_2\mid Z)=0$，预测 **C1**。例如分子“2”来自 C1 类中两名 Short；分母“5”来自 C1 类总共五名样本。
+
 
 ### English answer pattern
 
@@ -105,13 +147,37 @@ The fraction of undergraduates who smoke is 15%, and the fraction of graduates w
 
 ### 逐步解答
 
-令 G=研究生、U=本科生、S=吸烟、D=住校。
+#### 1. 记号与先验
 
-1. $P(S)=.2\times.23+.8\times.15=.166$，因此 $P(G|S)=.046/.166=23/83\approx.277108$。
-2. 随机抽一学生，P(U)=.8>P(G)=.2，因此本科生更可能；即使已知吸烟，P(U|S)=60/83 仍更大。
-3. 条件独立下，联合分数：G 为 $.2\times.23\times.30=.0138$，U 为 $.8\times.15\times.10=.012$。归一后 $P(G|S,D)=.0138/.0258=23/43\approx.534884$，因此研究生略更可能。
+令 $G,U,S,D$ 分别表示研究生、本科生、吸烟、住校。已知 $P(G)=0.2$、$P(U)=0.8$。
 
-原文 independence 的措辞简略。这里明确假设 $S\perp D\mid class$，因为仅有边缘独立并不足以推出上述类条件乘积。
+#### 2. 已知吸烟时的研究生概率
+
+吸烟者来自两类学生，所以先用全概率公式求分母：
+
+$$P(S)=P(S\mid G)P(G)+P(S\mid U)P(U)=0.23\times0.2+0.15\times0.8=0.166.$$
+
+再用贝叶斯公式：
+
+$$P(G\mid S)=\frac{P(S\mid G)P(G)}{P(S)}=\frac{0.046}{0.166}=\frac{23}{83}\approx\boxed{0.277108}.$$
+
+#### 3. 随机学生属于哪类
+
+未附加条件时，$P(U)=0.8>P(G)=0.2$，因此本科生更可能。即使已知吸烟，本科生的后验仍为 $1-23/83=60/83$，大于研究生。
+
+#### 4. 同时吸烟且住校
+
+按题目独立假设，采用类条件独立 $S\perp D\mid class$。计算两个联合分数：
+
+$$\begin{aligned}
+score(G)&=0.2\times0.23\times0.30=0.0138,\\
+score(U)&=0.8\times0.15\times0.10=0.012.
+\end{aligned}$$
+
+$$P(G\mid S,D)=\frac{0.0138}{0.0138+0.012}=\frac{23}{43}\approx\boxed{0.534884}.$$
+
+因此在同时吸烟且住校的人群中，研究生略更可能。增加“住校”信息后，研究生的较高住校比例提高了它的后验概率。
+
 
 ### English answer pattern
 
@@ -122,3 +188,76 @@ Bayes gives P(G|S)=23/83. Under conditional independence given student status, P
 ### 易错点与约定
 
 P(S|G) 在研究生中数吸烟者，P(G|S) 在吸烟者中数研究生；第三问的独立性应明确是给定类别后的条件独立。
+
+
+---
+
+<a id="PPT-CL38"></a>
+
+## PPT-CL38 · 课件 · 买电脑数据的朴素贝叶斯预测
+
+来源：当前完整七讲课件 · classification.pdf · Exercise；答案见 pp.39–40 · PDF p.38
+
+状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 原文
+
+Predict what class does the data sample X = (age <=30, Income = medium, Student = yes, Credit_rating = Fair) belong to? Class: C1:buys_computer = 'yes'; C2:buys_computer = 'no'.
+
+预测数据样本 X=(age≤30，Income=medium，Student=yes，Credit_rating=Fair) 属于哪个类别？类别 C1 为 buys_computer='yes'，C2 为 buys_computer='no'。
+
+| age | income | student | credit_rating | buys_computer |
+| --- | --- | --- | --- | --- |
+| <=30 | high | no | fair | no |
+| <=30 | high | no | excellent | no |
+| 31..40 | high | no | fair | yes |
+| >40 | medium | no | fair | yes |
+| >40 | low | yes | fair | yes |
+| >40 | low | yes | excellent | no |
+| 31..40 | low | yes | excellent | yes |
+| <=30 | medium | no | fair | no |
+| <=30 | low | yes | fair | yes |
+| >40 | medium | yes | fair | yes |
+| <=30 | medium | yes | excellent | yes |
+| 31..40 | medium | no | excellent | yes |
+| 31..40 | high | yes | fair | yes |
+| >40 | medium | no | excellent | no |
+
+### 逐步解答
+
+#### 1. 写后验比较式
+
+朴素贝叶斯在给定类别后将各属性条件概率相乘：
+
+$$s_c=P(c)\prod_{j=1}^{4}P(x_j\mid c),\qquad \hat c=\arg\max_c s_c.$$
+
+所有类别共享同一个分母 $P(X)$，因此比较未归一化分数 $s_c$ 即可。若题目要求具体后验概率，再除以两类分数之和。
+
+#### 2. 逐项计数
+
+| 项目 | yes 类（9 人） | no 类（5 人） |
+| --- | --- | --- |
+| 先验 | $9/14$ | $5/14$ |
+| $age\le30$ | $2/9$ | $3/5$ |
+| income=medium | $4/9$ | $2/5$ |
+| student=yes | $6/9$ | $1/5$ |
+| credit_rating=fair | $6/9$ | $2/5$ |
+
+每个条件概率的分母是对应类别人数。
+
+#### 3. 相乘并给结论
+
+$$\begin{aligned}
+s_{yes}&=\frac9{14}\frac29\frac49\frac69\frac69=0.0282187,\\
+s_{no}&=\frac5{14}\frac35\frac25\frac15\frac25=0.00685714.
+\end{aligned}$$
+
+$$P_{NB}(yes\mid X)=\frac{0.0282187}{0.0282187+0.00685714}=0.804505.$$
+
+预测为 $\boxed{buys\_computer=yes}$。所有条件计数均非零，本题可直接使用未平滑的频数估计。
+
+### English answer pattern
+
+The unnormalized yes and no scores are 0.0282187 and 0.00685714. The normalized yes probability is approximately 0.804505, so predict buys_computer=yes.
+
+yes 与 no 的未归一化分数分别为 0.0282187 和 0.00685714。归一化后的 yes 概率约为 0.804505，因此预测 buys_computer=yes。

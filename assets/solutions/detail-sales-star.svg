@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="590" viewBox="0 0 1050 590"><rect width="100%" height="100%" fill="white"/><g font-family="Times New Roman,serif" fill="#111"><text x="525.0" y="27" text-anchor="middle" font-size="22" font-weight="bold">Sales warehouse: one fact, four dimensions</text>
+<rect x="385" y="220" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="525.0" y="245" text-anchor="middle" font-size="18">FactSales</text>
+<text x="525.0" y="270" text-anchor="middle" font-size="18">FK date, product, vendor, location</text>
+<text x="525.0" y="295" text-anchor="middle" font-size="18">sales_volume, sales_cost</text>
+<rect x="385" y="65" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="525.0" y="90" text-anchor="middle" font-size="18">DimDate</text>
+<text x="525.0" y="115" text-anchor="middle" font-size="18">date_key (PK)</text>
+<text x="525.0" y="140" text-anchor="middle" font-size="18">day / month / year</text>
+<line x1="525" y1="156" x2="525" y2="220" stroke="#111" stroke-width="1.5"/>
+<rect x="35" y="235" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="175.0" y="260" text-anchor="middle" font-size="18">DimProduct</text>
+<text x="175.0" y="285" text-anchor="middle" font-size="18">product_key (PK)</text>
+<text x="175.0" y="310" text-anchor="middle" font-size="18">product / category</text>
+<line x1="315" y1="280.5" x2="385" y2="265.5" stroke="#111" stroke-width="1.5"/>
+<rect x="735" y="235" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="875.0" y="260" text-anchor="middle" font-size="18">DimVendor</text>
+<text x="875.0" y="285" text-anchor="middle" font-size="18">vendor_key (PK)</text>
+<text x="875.0" y="310" text-anchor="middle" font-size="18">vendor name</text>
+<line x1="665" y1="265.5" x2="735" y2="280.5" stroke="#111" stroke-width="1.5"/>
+<rect x="385" y="450" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="525.0" y="475" text-anchor="middle" font-size="18">DimLocation</text>
+<text x="525.0" y="500" text-anchor="middle" font-size="18">location_key (PK)</text>
+<text x="525.0" y="525" text-anchor="middle" font-size="18">city / state / country</text>
+<line x1="525" y1="311" x2="525" y2="450" stroke="#111" stroke-width="1.5"/></g></svg>

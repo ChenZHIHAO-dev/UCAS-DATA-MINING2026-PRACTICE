@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660"><rect width="100%" height="100%" fill="white"/><g font-family="Times New Roman,serif" fill="#111"><text x="600.0" y="27" text-anchor="middle" font-size="22" font-weight="bold">Airline fact constellation: shared dimensions</text>
+<rect x="460" y="70" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="600.0" y="95" text-anchor="middle" font-size="18">DimPassenger</text>
+<text x="600.0" y="120" text-anchor="middle" font-size="18">passenger_key</text>
+<text x="600.0" y="145" text-anchor="middle" font-size="18">frequent-flyer tier</text>
+<rect x="460" y="265" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="600.0" y="290" text-anchor="middle" font-size="18">DimDate</text>
+<text x="600.0" y="315" text-anchor="middle" font-size="18">date_key</text>
+<text x="600.0" y="340" text-anchor="middle" font-size="18">year, season, month</text>
+<rect x="460" y="460" width="280" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="600.0" y="485" text-anchor="middle" font-size="18">DimFlightLeg / Route</text>
+<text x="600.0" y="510" text-anchor="middle" font-size="18">flight_leg_key, route_key</text>
+<text x="600.0" y="535" text-anchor="middle" font-size="18">origin / destination</text>
+<rect x="20" y="265" width="340" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="190.0" y="290" text-anchor="middle" font-size="18">FactTravel</text>
+<text x="190.0" y="315" text-anchor="middle" font-size="18">passenger / date / leg / route keys</text>
+<text x="190.0" y="340" text-anchor="middle" font-size="18">passenger_count = 1; fare</text>
+<rect x="840" y="265" width="340" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="1010.0" y="290" text-anchor="middle" font-size="18">FactCatering</text>
+<text x="1010.0" y="315" text-anchor="middle" font-size="18">passenger / date / leg keys</text>
+<text x="1010.0" y="340" text-anchor="middle" font-size="18">product_key; quantity; amount</text>
+<rect x="840" y="495" width="340" height="91" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="1010.0" y="520" text-anchor="middle" font-size="18">DimProduct</text>
+<text x="1010.0" y="545" text-anchor="middle" font-size="18">product_key</text>
+<text x="1010.0" y="570" text-anchor="middle" font-size="18">food / drink category</text>
+<line x1="360" y1="310" x2="460" y2="115" stroke="#111" stroke-width="1.5"/>
+<line x1="740" y1="115" x2="840" y2="310" stroke="#111" stroke-width="1.5"/>
+<line x1="360" y1="310" x2="460" y2="310" stroke="#111" stroke-width="1.5"/>
+<line x1="740" y1="310" x2="840" y2="310" stroke="#111" stroke-width="1.5"/>
+<line x1="360" y1="310" x2="460" y2="505" stroke="#111" stroke-width="1.5"/>
+<line x1="740" y1="505" x2="840" y2="310" stroke="#111" stroke-width="1.5"/>
+<line x1="1010" y1="356" x2="1010" y2="495" stroke="#111" stroke-width="1.5"/></g></svg>

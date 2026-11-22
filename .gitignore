@@ -3,3 +3,4 @@ __pycache__/
 .test-results/
 node_modules/
 ucas-dm-progress*.json
+_work/

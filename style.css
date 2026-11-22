@@ -156,3 +156,27 @@ html{scroll-padding-top:calc(var(--header-height) + 16px)}
 
 .answer-translation{font-family:"Microsoft YaHei",sans-serif;font-size:14px;line-height:1.95;margin-top:10px;color:#4e5e54}
 :root[data-theme="dark"] .answer-translation{color:#b8c2ba}
+
+/* Worked answers: formulas, calculation steps and results share one reading edge. */
+.q-meta{font-size:12px;line-height:1.85}
+.source-badge{font-size:11px;font-weight:600;padding:3px 9px}
+.answer{font-size:16px;line-height:1.9}
+.solution-step{padding:24px 0}
+.step-body{padding-left:0}
+.step-body p{margin:0 0 14px}
+.step-body ul,.step-body ol{margin:12px 0 18px}
+.step-body li{margin:7px 0}
+.step-body .katex-display{margin:16px 0!important;padding:9px 6px;font-size:1em}
+.step-body .table-scroll{margin:17px 0 20px}
+.step-body table{margin-inline:0;line-height:1.75}
+.step-body th,.step-body td{padding:9px 12px}
+.solution-step.is-formula,.solution-step.is-result{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:20px 0;background:var(--soft)}
+.solution-step.is-formula>h3,.solution-step.is-result>h3{margin-bottom:12px}
+.solution-step.is-result{border-left:3px solid var(--accent)}
+.solution-step .step-number{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:12px}
+.diagram:has(img[src*="assets/solutions/"]){background:#fff;max-width:100%;margin-inline:auto}
+.diagram img[src*="assets/solutions/"]{max-width:920px;max-height:640px;object-fit:contain}
+:root[data-theme="dark"] .diagram:has(img[src*="assets/solutions/"]){background:#fff}
+:root[data-theme="dark"] .diagram:has(img[src*="assets/solutions/"]) figcaption{color:#46524b;border-color:#ddd}
+@media(max-width:760px){.answer{padding:4px 18px 24px;font-size:15px;line-height:1.9}.solution-step{padding:20px 0}.solution-step>h3{font-size:16px;margin-bottom:14px}.solution-step.is-formula,.solution-step.is-result{padding:15px 13px;margin:17px 0}.step-body .katex-display{font-size:.96em}.step-body th,.step-body td{padding:8px 9px}.q-meta{font-size:11px}}
+@media print{.answer{font-size:10.5pt;line-height:1.75}.solution-step.is-formula,.solution-step.is-result{background:white;border:1px solid #999;border-radius:0;padding:3mm;break-inside:avoid}.step-body .katex-display{font-size:1em;margin:3mm 0!important}.step-body table{font-size:9pt}.source-badge{color:black;background:white;border-color:#aaa}}

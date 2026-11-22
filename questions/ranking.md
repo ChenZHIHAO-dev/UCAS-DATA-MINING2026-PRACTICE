@@ -8,7 +8,7 @@
 
 ## SL-MAE · 课件：MAE、NMAE 与 RMSE
 
-来源：当前完整七讲课件 · recommend.pdf pp.25–26 · PDF p.26
+来源：当前完整七讲课件 · recommend.pdf · Predictive Accuracy Metrics · PDF p.25；当前完整七讲课件 · recommend.pdf · Example：MAE/NMAE · PDF p.26
 
 状态：完整；形式：计算 / 推导。
 
@@ -20,11 +20,33 @@ Predicted ratings are (1,2,3,4,4), true ratings (3,5,3,2,1). Compute MAE,NMAE an
 
 ### 逐步解答
 
-绝对误差 (2,3,0,2,3)，和10，MAE=10/5=2。NMAE=2/(5−1)=.5。
+#### 1. 指标与分母
 
-平方误差 (4,9,0,4,9)，和26，RMSE=√(26/5)=2.280351。
+在 $n$ 对真实/预测评分上，误差为 $e_i=\widehat r_i-r_i$：
 
-分母 5 表示已知真实值与预测值的五对评分；未知评分不得当0加入。RMSE≥MAE，可作为自检。
+$$MAE=\frac1n\sum_i|e_i|,\quad NMAE=\frac{MAE}{r_{max}-r_{min}},\quad RMSE=\sqrt{\frac1n\sum_i e_i^2}.$$
+
+MAE 是平均绝对误差；NMAE 按评分范围归一化；RMSE 对较大的误差惩罚更重。
+
+#### 2. 逐项误差表
+
+| 序号 | 预测 | 真实 | $e_i$ | $|e_i|$ | $e_i^2$ |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 1 | 3 | -2 | 2 | 4 |
+| 2 | 2 | 5 | -3 | 3 | 9 |
+| 3 | 3 | 3 | 0 | 0 | 0 |
+| 4 | 4 | 2 | 2 | 2 | 4 |
+| 5 | 4 | 1 | 3 | 3 | 9 |
+| 总和 | | | | 10 | 26 |
+
+#### 3. 代入并给出结果
+
+$$MAE=\frac{10}5=\boxed{2},\qquad NMAE=\frac2{5-1}=\boxed{0.5}.$$
+
+$$RMSE=\sqrt{\frac{26}5}\approx\boxed{2.280351}.$$
+
+分母 5 是已知真实值与预测值的五对评分。该题满足 $RMSE\ge MAE$，可用于检查计算是否合理。
+
 
 ### English answer pattern
 
@@ -39,7 +61,7 @@ MAE=2，NMAE=0.5，RMSE≈2.280351。
 
 ## SL-RANK · 课件：Spearman 与 Kendall 逐对计算
 
-来源：当前完整七讲课件 · recommend.pdf pp.29–30 · PDF p.30
+来源：当前完整七讲课件 · recommend.pdf · Evaluating Ranking · PDF p.29；当前完整七讲课件 · recommend.pdf · Example：Spearman/Kendall · PDF p.30
 
 状态：完整；形式：计算 / 推导。
 
@@ -51,11 +73,38 @@ For the same items i1,i2,i3,i4, predicted ranks are (1,2,3,4), true ranks (1,4,2
 
 ### 逐步解答
 
-秩差平方 (0,4,1,1)，总和6；$\rho=1−6×6/[4(4²−1)]=.4$。
+#### 1. Spearman：比较每个物品的名次差
 
-六对中 (i2,i3)、(i2,i4) 不一致，另四对一致；$\tau=(4−2)/6=1/3$。
+没有并列名次时，令 $d_i=\widehat R_i-R_i$：
 
-简式适用于无并列名次；有并列应分别用平均秩 Pearson 与 Kendall τ-b 等修正，不能直接照搬。
+$$\rho=1-\frac{6\sum_i d_i^2}{n(n^2-1)}.$$
+
+| 物品 | 预测名次 | 真实名次 | 差 $d_i$ | 差平方 |
+| --- | --- | --- | --- | --- |
+| i1 | 1 | 1 | 0 | 0 |
+| i2 | 2 | 4 | -2 | 4 |
+| i3 | 3 | 2 | 1 | 1 |
+| i4 | 4 | 3 | 1 | 1 |
+
+$$\rho=1-\frac{6\times6}{4(4^2-1)}=1-\frac{36}{60}=\boxed{0.4}.$$
+
+#### 2. Kendall：比较每对物品的先后关系
+
+四个物品共有 $\binom42=6$ 对。若预测与真实都将同一个物品排在前面，则为一致对（concordant）；次序相反则为不一致对（discordant）。
+
+| 物品对 | 预测先后 | 真实先后 | 类型 |
+| --- | --- | --- | --- |
+| i1,i2 | i1 在前 | i1 在前 | 一致 |
+| i1,i3 | i1 在前 | i1 在前 | 一致 |
+| i1,i4 | i1 在前 | i1 在前 | 一致 |
+| i2,i3 | i2 在前 | i3 在前 | 不一致 |
+| i2,i4 | i2 在前 | i4 在前 | 不一致 |
+| i3,i4 | i3 在前 | i3 在前 | 一致 |
+
+$$\tau=\frac{C-D}{\binom n2}=\frac{4-2}6=\boxed{\frac13}.$$
+
+两个值均为正，表示总体排序方向一致，但有两对物品的次序颠倒。以上简式对应无并列情况；并列名次需采用相应修正。
+
 
 ### English answer pattern
 
@@ -70,7 +119,7 @@ Spearman ρ=0.4，Kendall τ=1/3。两对不一致物品对都涉及 i2。
 
 ## SL-PREC · 课件：推荐列表 precision/recall/F1
 
-来源：当前完整七讲课件 · recommend.pdf pp.27–28 · PDF p.28
+来源：当前完整七讲课件 · recommend.pdf · Relevance: Precision and Recall · PDF p.27；当前完整七讲课件 · recommend.pdf · Example：推荐列表 · PDF p.28
 
 状态：完整；形式：计算 / 推导。
 
@@ -82,7 +131,31 @@ Selected relevant=9, selected irrelevant=3, not-selected relevant=15, not-select
 
 ### 逐步解答
 
-Precision=9/(9+3)=.75；Recall=9/(9+15)=.375；F1=2×.75×.375/(.75+.375)=.5。真负例13不进入 precision/recall 分母；“查准”和“查全”不同。
+#### 1. 先把表格对应到 TP、FP、FN、TN
+
+把“相关”作为正类、“被推荐”作为预测正类：
+
+| | 实际相关 | 实际不相关 |
+| --- | --- | --- |
+| 被推荐 selected | $TP=9$ | $FP=3$ |
+| 未被推荐 not selected | $FN=15$ | $TN=13$ |
+
+#### 2. 查准率与查全率
+
+Precision 问“推荐出的 12 个里，多少相关”；Recall 问“全部 24 个相关物品中，找出多少”：
+
+$$P=\frac{TP}{TP+FP}=\frac9{9+3}=\boxed{0.75}.$$
+
+$$R=\frac{TP}{TP+FN}=\frac9{9+15}=\boxed{0.375}.$$
+
+#### 3. F1 综合两者
+
+F1 是查准率和查全率的调和平均：
+
+$$F_1=\frac{2PR}{P+R}=\frac{2\times0.75\times0.375}{0.75+0.375}=\boxed{0.5}.$$
+
+也可直接核算：$F_1=2TP/(2TP+FP+FN)=18/(18+3+15)=0.5$。TN 表示正确未推荐的不相关物品，不进入这三个指标的分母。
+
 
 ### English answer pattern
 

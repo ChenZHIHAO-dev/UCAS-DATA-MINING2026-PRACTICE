@@ -20,24 +20,38 @@ A large store has transaction databases at four locations. Propose an efficient 
 
 ### 逐步解答
 
-采用 partition/SON 思路。设站点 p 的事务数 Np，全局 N=ΣNp，最小支持比例 s。
+#### 本题公式
 
-```text
-for each site p in parallel:
-    Lp = mine_local_frequent_itemsets(Dp, ceil(s*Np))
-    send Lp to coordinator
-C = union_p Lp
-broadcast C to all sites
-for each site p in parallel:
-    countp[X] = exact local transaction count for each X in C
-    send countp to coordinator
-L = {X in C: sum_p countp[X] >= ceil(s*N)}
-generate rules from L and filter by min_conf
-```
+设第 p 站有 $N_p$ 笔事务，总数 N，支持度比例阈值为 s：
 
-**完备性证明：**若 X 在每站点的支持比例都 <s，则 Σcountp(X)<sΣNp，即全局也不频繁。逆否命题：全局频繁项集至少在一处局部频繁，因此候选并集不会漏掉它。局部阈值必须按各站点的 Np 换算；不能给每个站点同一个全局整数阈值。
+$$N=\sum_pN_p,\qquad q_p=\lceil sN_p\rceil,\qquad q=\lceil sN\rceil.$$
 
-只交换项集和计数；若候选太大，可按长度批次、压缩编码、先过滤已知低计数候选，但要保留正确性。生成全局规则需全局支持计数，不能平均各站点 confidence。
+第 p 站的计数为 $n_p(X)$，全局计数为 $n(X)=\sum_p n_p(X)$。规则用全局计数：
+
+$$supp(A\Rightarrow B)=\frac{n(A\cup B)}N,\qquad conf(A\Rightarrow B)=\frac{n(A\cup B)}{n(A)}.$$
+
+#### 1. 两阶段挖掘算法
+
+1. 各站点用本地阈值 $q_p$ 独立挖出 $L_p$，只发送项集编码及 $N_p$。
+2. 协调者取候选并集 $C=\bigcup_p L_p$，广播 C。
+3. 每站重新扫描本地事务，精确统计每个候选的 $n_p(X)$，回传计数向量。
+4. 协调者求和，保留 $L=\{X\in C:n(X)\ge q\}$。
+5. 对每个 $F\in L$ 枚举非空真子集 A，令后件 $B=F\setminus A$；按置信度阈值过滤后输出。
+
+#### 2. 为什么候选不会漏掉全局频繁项集
+
+若 X 在所有站点都低于局部比例阈值，则
+
+$$n(X)=\sum_p n_p(X)<\sum_p sN_p=sN.$$
+
+因此 X 在全局也不频繁。逆否命题说明全局频繁项集至少在一处局部频繁，所以进入并集 C。局部频繁只是候选，第二遍全局精确计数用于排除误入项集。
+
+#### 3. 资源分析与最终输出
+
+四站点上传候选、接收候选并集，再各回传 $|C|$ 个计数；全程原始事务留在本地。设候选平均长度为 $\ell$，候选与计数器载荷约 $O((\ell+1)|C|)$。本地挖掘本身可能需要多轮扫描，另需一次候选重数；候选和规则数量仍可能很大。
+
+输出全局 L 及满足全局支持度、全局置信度的规则。各站点置信度的简单平均不能替代全局计数之比。
+
 
 ### English answer pattern
 
@@ -72,27 +86,38 @@ A large database is distributed among four locations. Propose an efficient K-mea
 
 ### 逐步解答
 
-所有站点必须使用同一组初始中心、同样的缩放与平局规则。
+#### 本题公式
 
-```text
-choose global centroids mu[1..k]
-repeat:
-    broadcast mu to every site
-    for each site p in parallel:
-        countp[j]=0; sump[j]=zero_vector for all j
-        for x in local Dp:
-            j = argmin_j squared_distance(x, mu[j])
-            countp[j] += 1
-            sump[j] += x
-        send countp and sump
-    for j in 1..k:
-        n[j] = sum_p countp[j]
-        if n[j] > 0: new_mu[j] = sum_p sump[j] / n[j]
-        else: apply a declared empty-cluster policy
-until centroid shift <= tolerance or max_iterations reached
-```
+第 p 站对第 j 簇只汇报点数和向量和：
 
-更新全局中心时用点数加权：ΣNp,j μp,j /ΣNp,j。直接平均局部均值错误，例如站点A一人均值0、站点B九人均值10，全局均值为 (1×0+9×10)/(1+9)=9。各站点不能各自收敛后直接合并中心，否则不同局部簇编号与分配条件可能不一致。
+$$n_{pj}=|C_{pj}|,\qquad S_{pj}=\sum_{x\in C_{pj}}x.$$
+
+全局新中心由总和除以总点数：
+
+$$\mu_j^{new}=\frac{\sum_p S_{pj}}{\sum_p n_{pj}}=\frac{\sum_p n_{pj}\mu_{pj}}{\sum_p n_{pj}}.$$
+
+#### 1. 同步迭代算法
+
+1. 初始化同一套 k 个中心，并广播至四站点。各站采用同一尺度、距离与平局规则。
+2. 各站把本地每个点分配到最近的当前中心，同时累计每簇 $n_{pj},S_{pj}$。
+3. 上传这两种摘要；协调者按上式求新的全局中心。
+4. 若全局某簇为空，执行事先声明的保留旧中心或重置策略。
+5. 广播新中心，重复直到中心最大位移不超过 $\varepsilon$，或达到迭代上限：
+
+$$\max_j\|\mu_j^{new}-\mu_j^{old}\|_2\le\varepsilon.$$
+
+#### 2. 为什么需要按点数加权
+
+站点 A 的某簇只有 1 点、局部均值 0；站点 B 有 9 点、均值 10，则
+
+$$\mu^{new}=\frac{1\times0+9\times10}{1+9}=9.$$
+
+局部均值简单平均得到 5，忽略了样本数量。因此要传“和与计数”，并让全部站点用同一轮旧中心完成分配。
+
+#### 3. 通信、计算与内存
+
+每轮每站上传 k 个 d 维和以及 k 个计数，广播 k 个 d 维中心，通信量为 $O(4kd)$。第 p 站计算距离的时间为 $O(N_pk d)$；若数据流式读取，除原始数据外，累计摘要只需 $O(kd)$ 内存。
+
 
 ### English answer pattern
 
@@ -123,6 +148,23 @@ A data stream is continuous, ordered, fast-changing and possibly infinite. Prese
 
 ### 逐步解答
 
+#### 本题公式
+
+每个在线簇维护有效点数 n、向量和 LS、平方和 SS。无衰减时，加入新点 x：
+
+$$\begin{aligned}
+n'&=n+1, &LS'&=LS+x, &SS'&=SS+x\odot x,\\
+\mu'&=\frac{LS'}{n'}=\mu+\frac{x-\mu}{n+1}.
+\end{aligned}$$
+
+这里 $x\odot x$ 表示各坐标分别平方；簇内平方误差可由摘要计算：
+
+$$SSE=\sum_r SS_r-\frac{\|LS\|_2^2}{n}.$$
+
+指数衰减因子为 $a=e^{-\lambda\Delta t}$，将 n、LS、SS 同乘 a，再加入新点；旧数据权重会随时间减小。
+
+#### 1. 单遍处理与固定预算
+
 可给一个固定预算的在线摘要方案。每簇保存 n、LS、SS、last_time，中心 μ=LS/n；用指数衰减适应漂移，用固定长度快照环保存演化。
 
 ```text
@@ -142,7 +184,8 @@ for each arriving (x,t):
 
 每点仅处理一次，空间随 Kmax、维数和快照预算固定。衰减时 n 可以为实数，表示有效权重。若采用窗口则须另说明如何移除过期点；只保留 LS/n 不足以精确删除某个已遗忘样本。
 
-在线更新 μ←μ+(x−μ)/(n+1) 是无衰减固定簇的特例；历史样本不再重新分配，因此与多遍 Lloyd 并不等价。原网上回忆建议的距离阈值只是可行设计方向，这里补上预算、漂移和演化记录。
+在线更新 μ←μ+(x−μ)/(n+1) 是无衰减固定簇的特例；历史样本不再重新分配，因此与多遍 Lloyd 并不等价。固定的摘要数和快照数控制内存；簇 ID、中心轨迹及权重变化用于解释群体的出现、消失和漂移。
+
 
 ### English answer pattern
 
@@ -206,7 +249,7 @@ Give **(a)** pseudocode with local and global thresholds, **(b)** a correctness 
 
 $$N=\sum_{p=1}^{4}N_p,\qquad q_p=\lceil sN_p\rceil,\qquad q=\lceil sN\rceil.$$
 
-局部库大小可能不同，不能给四站点都套全局整数阈值 q。
+其中 $s$ 为支持度比例，$N_p$ 为站点事务数，$q_p$ 为该站点的整数门槛，$q$ 为全局整数门槛。各站点按自己的 $N_p$ 计算 $q_p$。
 
 #### 2. 两阶段伪代码
 
@@ -248,7 +291,7 @@ $$n(X)=\sum_pn_p(X)<s\sum_pN_p=sN,$$
 | --- | --- |
 | 上传候选 | 发送 $L_p$ 的项集编码与本地库大小。 |
 | 广播 | 全局并集 C 的项集编码；候选多时可以按长度分批。 |
-| 上传计数 | 每站点对 C 的精确计数向量，共约 $4\|C\|$ 个计数。 |
+| 上传计数 | 每站点对 C 的精确计数向量，共约 $4\lvert C\rvert$ 个计数。 |
 | 内存 | 每站点需本地挖掘工作区及候选/计数器；协调者需 C、全局计数和输出。 |
 | 扫描 | 第一阶段本地挖掘可能有多轮扫描/内存遍历；第二阶段至少一次本地精确重数，不能把它简化为两次 CPU 运算。 |
 
@@ -263,7 +306,7 @@ supp(A\Rightarrow H)&=\frac{n(A\cup H)}{N},\\[6pt]
 conf(A\Rightarrow H)&=\frac{n(A\cup H)}{n(A)}.
 \end{aligned}$$
 
-不能平均各站点的 confidence 代替这个比例，也不能只让协调者统计“在哪几个站点出现过”。
+先分别累加全局共同计数与全局前件计数，再求二者的比值；这样每笔事务按相同权重参与计算。
 
 ### English answer pattern
 

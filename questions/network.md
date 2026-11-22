@@ -20,22 +20,42 @@ A 2–2–1 network has learning rate l=0.9 and all biases initially 0. The prin
 
 ### 逐步解答
 
-**先固定图上的连接：** $w_{11}:x_1\to y_1$，$w_{12}:x_2\to y_1$，$w_{21}:x_1\to y_2$，$w_{22}:x_2\to y_2$；$T_1,T_2$ 是隐藏到输出的连接权重，与目标值 t=1 分开记。
+#### 1. 连接与前向计算
 
-前向净输入 $a_{y1}=0,a_{y2}=2$，按印刷分段激活得 $y_1=1,y_2=2$，输出净输入 3，故 $z=3$。
+令隐藏单元为 $y_1,y_2$，输出为 z，目标记作 $t=1$。连接约定为 $w_{11}:x_1\to y_1$、$w_{12}:x_2\to y_1$、$w_{21}:x_1\to y_2$、$w_{22}:x_2\to y_2$；隐藏到输出权重为 $T_1,T_2$。
 
-**A. 按题面指定更新式机械代入（不作为正确梯度）：** 输出误差 $\delta_z=3(1-3)(1-3)=12$；隐藏误差 $\delta_{y1}=1(1-1)12=0$、$\delta_{y2}=2(1-2)12=-24$。全部误差先用旧权重计算，再更新：
+$$f(a)=\begin{cases}a,&a\ge1,\\1,&a<1.\end{cases}$$
 
-| Parameter | Updated value |
+$$\begin{aligned}
+a_{y_1}&=0\times1+2\times0=0,&y_1&=f(0)=1,\\
+a_{y_2}&=2\times1+1\times0=2,&y_2&=f(2)=2,\\
+a_z&=1\times1+1\times2=3,&z&=f(3)=\boxed3.
+\end{aligned}$$
+
+#### 2. 按题给误差式代入
+
+题目印刷的误差式为 $\delta_z=z(1-z)(t-z)$、$\delta_j=y_j(1-y_j)\delta_zT_j$；随后用 $w'=w+\eta\delta\,input$、$b'=b+\eta\delta$ 更新。
+
+$$\delta_z=3(1-3)(1-3)=12,\quad\delta_{y_1}=1(1-1)12=0,\quad\delta_{y_2}=2(1-2)12=-24.$$
+
+例如 $w'_{21}=2+0.9(-24)\times1=-19.6$，$T'_2=1+0.9\times12\times2=22.6$。全部误差使用旧权重计算，然后统一更新：
+
+| 参数 | 代入或结果 |
 | --- | --- |
-| w11, w12 | 0, 2 |
-| w21, w22 | −19.6, 1 |
-| T1, T2（若一并更新） | 11.8, 22.6 |
-| hidden biases, output bias（若一并更新） | 0, −21.6; 10.8 |
+| $w'_{11},w'_{12}$ | $0,2$ |
+| $w'_{21},w'_{22}$ | $-19.6,1$ |
+| $T'_1,T'_2$ | $11.8,22.6$ |
+| 隐藏偏置 | $0,-21.6$ |
+| 输出偏置 | $10.8$ |
 
-**B. 对印刷激活与平方误差做一致的反向传播：** 此处输出及 y2 净输入均 >1，导数为 1；y1 净输入 <1，导数 0。因此 $\delta_z=1-3=-2$、$\delta_{y1}=0$、$\delta_{y2}=-2$，得到 w11=0,w12=2,w21=.2,w22=1；T1=−.8,T2=−2.6。点 x=1 的不可导情况本样本没有遇到。
+#### 3. 说明题面公式冲突的影响
 
-卷面建议：明确指出激活与给定导数不一致，写出你遵照的口径。不能悄悄把前向改成 sigmoid，再宣称是唯一原题答案。原扫描页可展开核对。
+上表是遵照题目指定误差式的结果。因 $o(1-o)$ 是 sigmoid 的导数，而题目印刷激活为分段函数，所给误差式与该激活并不一致。若按印刷分段函数和平方误差推导真实梯度：
+
+$$f'(0)=0,\qquad f'(2)=f'(3)=1.$$
+
+因此 $\delta_z=-2,\delta_{y_1}=0,\delta_{y_2}=-2$，对应 $w'_{21}=0.2,T'_1=-0.8,T'_2=-2.6$。卷面写清“采用题给误差式”或“采用分段激活的真实导数”，即可让计算口径与答案对应。
+
 
 ### English answer pattern
 
@@ -66,6 +86,25 @@ Design a one-hidden-layer feed-forward network for Height/Hair/Eye with classes 
 
 ### 逐步解答
 
+![当前 HW2：8 个输入、2 个隐藏单元和 3 个输出](../assets/solutions/detail-network-hw2.svg)
+
+#### 本题公式
+
+每层先做加权和，再通过激活函数。下式采用 sigmoid 与平方误差，$t_k$ 是目标，$o_k$ 是输出，$h_j$ 是隐藏输出：
+
+$$\begin{aligned}
+h_j&=\sigma\!\left(\sum_i w_{ij}x_i+b_j\right),&\sigma(a)&=\frac1{1+e^{-a}},\\
+o_k&=\sigma\!\left(\sum_j v_{jk}h_j+c_k\right),\\
+\delta_k&=o_k(1-o_k)(t_k-o_k),\\
+\delta_j&=h_j(1-h_j)\sum_kv_{jk}\delta_k,\\
+v'_{jk}&=v_{jk}+\eta\delta_kh_j,&c'_k&=c_k+\eta\delta_k,\\
+w'_{ij}&=w_{ij}+\eta\delta_jx_i,&b'_j&=b_j+\eta\delta_j.
+\end{aligned}$$
+
+激活导数 $o(1-o)$ 来自 sigmoid；更新式中的输入因子来自加权和对该权重的导数。先用同一套旧参数计算全部误差，再统一更新。
+
+#### 1. 编码和初始化
+
 Height 三类、Hair 三类、Eye 两类，采用独热输入 $x=(Tall,Medium,Short,Blond,Dark,Red,Brown,Blue)=(1,0,0,0,0,1,1,0)$，输出目标 $t=(0,0,1)$。隐藏层取 2 个神经元，得到 8–2–3 网络。
 
 **为便于逐项核算，自设初值**：所有输入→隐藏权重为 .1，隐藏偏置 0；所有隐藏→输出权重为 .1，输出偏置 0；sigmoid 激活、平方误差、η=.1。下面按这套初值逐项计算。
@@ -88,7 +127,8 @@ $h_1=h_2=\sigma(.3)=.574442517$；三个输出均为 $o=\sigma(.1h_1+.1h_2)=.528
 | 任一隐藏→C1/C2/C3 | 0.092432441, 0.092432441, 0.106746218 |
 | C1/C2/C3 输出偏置 | -0.013173745, -0.013173745, 0.011743940 |
 
-全部27个参数的梯度已用中心差分独立校验。
+按表分别替换输入权重、隐藏偏置、输出权重和输出偏置，即完成这一次更新。
+
 
 ### English answer pattern
 
@@ -123,6 +163,25 @@ Design a one-hidden-layer network for Q1. Show one backpropagation update for (M
 
 ### 逐步解答
 
+![往届 HW2：8 个输入、2 个隐藏单元和 1 个输出](../assets/solutions/detail-network-hxd2.svg)
+
+#### 本题公式
+
+每层先做加权和，再通过激活函数。下式采用 sigmoid 与平方误差，$t_k$ 是目标，$o_k$ 是输出，$h_j$ 是隐藏输出：
+
+$$\begin{aligned}
+h_j&=\sigma\!\left(\sum_i w_{ij}x_i+b_j\right),&\sigma(a)&=\frac1{1+e^{-a}},\\
+o_k&=\sigma\!\left(\sum_j v_{jk}h_j+c_k\right),\\
+\delta_k&=o_k(1-o_k)(t_k-o_k),\\
+\delta_j&=h_j(1-h_j)\sum_kv_{jk}\delta_k,\\
+v'_{jk}&=v_{jk}+\eta\delta_kh_j,&c'_k&=c_k+\eta\delta_k,\\
+w'_{ij}&=w_{ij}+\eta\delta_jx_i,&b'_j&=b_j+\eta\delta_j.
+\end{aligned}$$
+
+激活导数 $o(1-o)$ 来自 sigmoid；更新式中的输入因子来自加权和对该权重的导数。先用同一套旧参数计算全部误差，再统一更新。
+
+#### 1. 编码和初始化
+
 可取 8–2–1 网络。输入顺序沿用当前网络题，$x=(0,1,0,1,0,0,0,1)$，用 C1=1,C2=0 编码目标，取各权重 .1、偏置 0、η=.1、sigmoid+SSE。
 
 三个激活输入使两个隐藏输出仍 $a=\sigma(.3)$；输出 $b=\sigma(.2a)$。输出误差 $\delta_o=b(1-b)(1-b)$，隐藏误差 $\delta_h=a(1-a)\,.1\delta_o$。
@@ -133,8 +192,91 @@ Design a one-hidden-layer network for Q1. Show one backpropagation update for (M
 
 本例数值：隐藏输出 0.574442517，最终输出 0.528690575，输出误差 0.117439398，隐藏误差 0.002870904；更新后的两条输出权重均 0.106746218，输出偏置 0.011743940，激活输入权重 0.100287090，隐藏偏置 0.000287090。
 
+
 ### English answer pattern
 
 The older assignment is binary. One sigmoid output is sufficient when C1 is encoded as 1.
 
 往届作业是二分类。把 C1 编码为 1 时，一个 Sigmoid 输出已足够。
+
+
+---
+
+<a id="PPT-CL52"></a>
+
+## PPT-CL52 · 课件 · 3–2–1 网络的前向与一次 BP 更新
+
+来源：当前完整七讲课件 · classification.pdf · Exercise：网络、初值和前向 · PDF p.52；当前完整七讲课件 · classification.pdf · Exercise：误差及参数更新 · PDF p.53
+
+状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 原文
+
+Exercise
+
+练习。
+
+![课件 3–2–1 网络与参数](../assets/solutions/ppt-classification-52.png)
+
+Study task (following the worked exercise): use sigmoid activations, input (1,0,1), target 1 and learning rate 0.9. Compute the forward outputs, error signals and updated weights and biases.
+
+练习任务（按课件演示步骤整理）：使用 sigmoid 激活，输入为 (1,0,1)，目标值为 1，学习率为 0.9。计算前向输出、误差信号及更新后的权重和偏置。
+
+### 逐步解答
+
+#### 1. 本题公式与符号
+
+节点输入 $z_j=\sum_iw_{ij}o_i+b_j$，激活输出 $o_j=\sigma(z_j)=1/(1+e^{-z_j})$。用平方损失 $E=\tfrac12(t-o_6)^2$，将负梯度写作误差信号：
+
+$$\delta_6=(t-o_6)o_6(1-o_6),\qquad
+\delta_j=o_j(1-o_j)w_{j6}\delta_6\ (j=4,5).$$
+
+$$w_{ij}'=w_{ij}+\eta\delta_j o_i,\qquad b_j'=b_j+\eta\delta_j.$$
+
+误差信号包含“目标与输出的差”和“激活导数”；链式法则把它传播到隐藏层。
+
+#### 2. 前向：输入、隐藏、输出依次算
+
+$$\begin{aligned}
+z_4&=0.2(1)+0.4(0)-0.5(1)-0.4=-0.7,&o_4&=0.331812,\\
+z_5&=-0.3(1)+0.1(0)+0.2(1)+0.2=0.1,&o_5&=0.524979,\\
+z_6&=-0.3o_4-0.2o_5+0.1=-0.104540,&o_6&=0.473889.
+\end{aligned}$$
+
+#### 3. 反向：先输出误差，再隐藏误差
+
+$$\begin{aligned}
+\delta_6&=(1-0.473889)(0.473889)(1-0.473889)=0.131169,\\
+\delta_4&=(0.331812)(1-0.331812)(-0.3)(0.131169)=-0.00872456,\\
+\delta_5&=(0.524979)(1-0.524979)(-0.2)(0.131169)=-0.00654209.
+\end{aligned}$$
+
+#### 4. 同时更新全部参数
+
+例如 $w_{46}'=-0.3+0.9(0.131169)(0.331812)=-0.260829$。
+
+| 参数 | 初值 | 增量 $0.9\delta_j o_i$（偏置输入取 1） | 新值 |
+| --- | --- | --- | --- |
+| $w_{14}$ | 0.200000 | -0.007852 | 0.192148 |
+| $w_{15}$ | -0.300000 | -0.005888 | -0.305888 |
+| $w_{24}$ | 0.400000 | 0.000000 | 0.400000 |
+| $w_{25}$ | 0.100000 | 0.000000 | 0.100000 |
+| $w_{34}$ | -0.500000 | -0.007852 | -0.507852 |
+| $w_{35}$ | 0.200000 | -0.005888 | 0.194112 |
+| $w_{46}$ | -0.300000 | 0.039171 | -0.260829 |
+| $w_{56}$ | -0.200000 | 0.061975 | -0.138025 |
+| $b_4$ | -0.400000 | -0.007852 | -0.407852 |
+| $b_5$ | 0.200000 | -0.005888 | 0.194112 |
+| $b_6$ | 0.100000 | 0.118052 | 0.218052 |
+
+输入 $x_2=0$，所以 $w_{24},w_{25}$ 的增量均为 0。隐藏误差使用本轮更新前的输出层权重；保留足够小数，最后统一舍入。
+
+### English answer pattern
+
+The output before updating is approximately 0.473889. The error signals are 0.131169, -0.00872456 and -0.00654209 for units 6,4,5. Update all weights and biases using the same forward pass.
+
+更新前输出约为 0.473889。节点 6、4、5 的误差信号分别约为 0.131169、-0.00872456、-0.00654209。使用同一次前向计算更新全部权重和偏置。
+
+### 计算与内存分析
+
+一条样本的一次前向及反向均按连接计算，$W$ 条连接约需 $O(W)$ 时间、$O(W)$ 参数空间。
