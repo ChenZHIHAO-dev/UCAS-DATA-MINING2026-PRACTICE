@@ -1,71 +1,83 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" version="26.0.0">
   <diagram name="detail-airline-constellation">
-    <mxGraphModel page="0" pageWidth="1200" pageHeight="660">
+    <mxGraphModel page="0" pageWidth="1500" pageHeight="820">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="Airline fact constellation: shared dimensions" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=22;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="440.0" y="5" width="320" height="32" />
+        <mxCell id="2" value="DimPassenger&lt;br&gt;PK passenger_key&lt;br&gt;is_frequent; tier" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="570" y="60" width="360" height="110" />
         </mxCell>
-        <mxCell id="3" value="DimPassenger&lt;br&gt;passenger_key&lt;br&gt;frequent-flyer tier" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="460" y="70" width="280" height="91" />
+        <mxCell id="3" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="410" y="405" />
+            <mxPoint as="targetPoint" x="570" y="115" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="4" value="DimDate&lt;br&gt;date_key&lt;br&gt;year, season, month" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="460" y="265" width="280" height="91" />
+        <mxCell id="4" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="930" y="115" />
+            <mxPoint as="targetPoint" x="1080" y="405" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="5" value="DimFlightLeg / Route&lt;br&gt;flight_leg_key, route_key&lt;br&gt;origin / destination" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="460" y="460" width="280" height="91" />
+        <mxCell id="5" value="DimDate&lt;br&gt;PK date_key&lt;br&gt;calendar_year; season; year_month" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="570" y="240" width="360" height="110" />
         </mxCell>
-        <mxCell id="6" value="FactTravel&lt;br&gt;passenger / date / leg / route keys&lt;br&gt;passenger_count = 1; fare" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="20" y="265" width="340" height="91" />
+        <mxCell id="6" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="410" y="405" />
+            <mxPoint as="targetPoint" x="570" y="295" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="7" value="FactCatering&lt;br&gt;passenger / date / leg keys&lt;br&gt;product_key; quantity; amount" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="840" y="265" width="340" height="91" />
+        <mxCell id="7" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="930" y="295" />
+            <mxPoint as="targetPoint" x="1080" y="405" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="8" value="DimProduct&lt;br&gt;product_key&lt;br&gt;food / drink category" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="840" y="495" width="340" height="91" />
+        <mxCell id="8" value="DimFlightLeg&lt;br&gt;PK flight_leg_key&lt;br&gt;flight_leg_id; flight_no" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="570" y="420" width="360" height="110" />
         </mxCell>
         <mxCell id="9" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="360" y="310" />
-            <mxPoint as="targetPoint" x="460" y="115" />
+            <mxPoint as="sourcePoint" x="410" y="405" />
+            <mxPoint as="targetPoint" x="570" y="475" />
           </mxGeometry>
         </mxCell>
         <mxCell id="10" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="740" y="115" />
-            <mxPoint as="targetPoint" x="840" y="310" />
+            <mxPoint as="sourcePoint" x="930" y="475" />
+            <mxPoint as="targetPoint" x="1080" y="405" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="11" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="360" y="310" />
-            <mxPoint as="targetPoint" x="460" y="310" />
-          </mxGeometry>
+        <mxCell id="11" value="DimRoute&lt;br&gt;PK route_key&lt;br&gt;route_code; origin; destination" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="570" y="600" width="360" height="110" />
         </mxCell>
         <mxCell id="12" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="740" y="310" />
-            <mxPoint as="targetPoint" x="840" y="310" />
+            <mxPoint as="sourcePoint" x="410" y="405" />
+            <mxPoint as="targetPoint" x="570" y="655" />
           </mxGeometry>
         </mxCell>
         <mxCell id="13" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="360" y="310" />
-            <mxPoint as="targetPoint" x="460" y="505" />
+            <mxPoint as="sourcePoint" x="930" y="655" />
+            <mxPoint as="targetPoint" x="1080" y="405" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="14" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="740" y="505" />
-            <mxPoint as="targetPoint" x="840" y="310" />
-          </mxGeometry>
+        <mxCell id="14" value="FactTravel&lt;br&gt;PK/FK passenger_key, flight_leg_key&lt;br&gt;FK date_key, route_key&lt;br&gt;passenger_count = 1&lt;br&gt;fare (optional)" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="20" y="320" width="390" height="170" />
         </mxCell>
-        <mxCell id="15" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+        <mxCell id="15" value="FactCatering&lt;br&gt;PK consumption_key&lt;br&gt;FK passenger_key, flight_leg_key&lt;br&gt;FK date_key, route_key, product_key&lt;br&gt;quantity; amount (optional)" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1080" y="320" width="400" height="170" />
+        </mxCell>
+        <mxCell id="16" value="DimProduct&lt;br&gt;PK product_key&lt;br&gt;product_name; category" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1080" y="650" width="400" height="110" />
+        </mxCell>
+        <mxCell id="17" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="1010" y="356" />
-            <mxPoint as="targetPoint" x="1010" y="495" />
+            <mxPoint as="sourcePoint" x="1280" y="490" />
+            <mxPoint as="targetPoint" x="1280" y="650" />
           </mxGeometry>
         </mxCell>
       </root>

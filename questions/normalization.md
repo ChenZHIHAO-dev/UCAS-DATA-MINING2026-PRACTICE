@@ -76,6 +76,12 @@ Min-max uses the observed minimum and maximum. Z-score uses the mean and the sta
 
 最小—最大归一化使用观测最小值与最大值。z 分数使用均值和题目给定标准差。
 
+### 知识点与公式总结
+
+- **Min-max**：目标区间为 $[a,b]$ 时，$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a)$；原极值取对应变量的原始数据。
+- **Z-score**：$z=(x-\mu)/\sigma$，$\mu$ 为同列均值，$\sigma$ 为采用的标准差；本题体脂均值从该列求出，标准差使用题给 9.25。
+- **结果含义**：min-max 表示原区间中的相对位置；z 分数表示距均值多少个标准差，正值表示高于均值。
+
 
 ---
 
@@ -113,6 +119,12 @@ $$x'=\frac{33-13}{70-13}=\frac{20}{57}\approx\boxed{0.350877}.$$
 Using the original data range gives 20/57, approximately 0.350877.
 
 使用原始数据范围，得到 20/57，约 0.350877。
+
+### 知识点与公式总结
+
+- **Min-max 到 $[0,1]$**：$x'=(x-x_{\min})/(x_{\max}-x_{\min})$；$x$ 为待归一化值，极值取本题原始年龄数据。
+- **代入核对**：$x_{\min}=13,x_{\max}=70$，因此 $33\mapsto(33-13)/(70-13)=20/57\approx0.350877$。
+- **范围一致**：沿用题目要求的数据范围与同一组极值；原最大值 70 参与本题的尺度确定。
 
 
 ---
@@ -171,6 +183,13 @@ $$\sigma=\sqrt{\frac1N\sum_i(x_i-\mu)^2},\qquad s=\sqrt{\frac1{n-1}\sum_i(x_i-\b
 Normalization rescales numeric attributes. Min-max controls a range, z-score centers and scales by dispersion, and decimal scaling moves the decimal point.
 
 归一化重新缩放数值属性。最小—最大方法控制范围，z 分数中心化并按离散程度缩放，小数定标移动小数点。
+
+### 知识点与公式总结
+
+- **Min-max**：$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a)$；$[a,b]$ 为目标范围。保留区间相对位置，尺度受极值影响。
+- **Z-score**：$z=(x-\mu)/\sigma$；$\mu,\sigma$ 分别为所用均值、标准差。统一中心和离散尺度，输出范围不固定；均值与标准差受离群值影响。
+- **Decimal scaling**：$x'=x/10^j$，$j$ 为使全部 $|x'|<1$ 的最小非负整数。计算简单，缩放程度取决于最大绝对值。
+- **使用同一尺度**：训练数据确定归一化参数，验证与测试沿用这些参数。常量列使 min-max 或 z-score 分母为 0，需事先约定单独处理。
 
 
 ---
@@ -245,6 +264,12 @@ Use z=(x−16)/11. Keep the monthly order when reporting the normalized sequence
 
 已知min/max后变换O(N)，参数空间O(1)；若需保留全部变换结果则O(N)。
 
+### 知识点与公式总结
+
+- **Min-max**：一般公式为 $x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a)$，$[a,b]$ 是目标范围；本题目标为 $[0,1]$。
+- **本题统一尺度**：原始 20 个值共用 $x_{\min}=16,x_{\max}=27$，故每项均按 $x'=(x-16)/11$ 计算，并保留月份次序。
+- **核对**：最小值映射为 0，最大值映射为 1；重复原值映射结果相同。
+
 
 ---
 
@@ -301,3 +326,9 @@ $$z=\frac{x-\mu}{\sigma}=\frac{x-500}{316.2}.$$
 Min-max outputs are (0,0.125,0.25,0.5,1). Z-scores are approximately (-0.948767,-0.632511,-0.316256,0.316256,1.581278).
 
 Min-max 结果为 (0,0.125,0.25,0.5,1)。Z-score 结果约为 (-0.948767,-0.632511,-0.316256,0.316256,1.581278)。
+
+### 知识点与公式总结
+
+- **Min-max 到 $[0,1]$**：$x'=(x-x_{\min})/(x_{\max}-x_{\min})$。本题原最小值 200、最大值 1000，所以分母为 800。
+- **Z-score**：$z=(x-\mu)/\sigma$，其中 $\mu$ 是均值，$\sigma$ 是本题采用的标准差；直接代入题给 $\mu=500$、标准差 316.2。
+- **标准差口径**：自行计算时，总体方差分母为 $n$，样本方差分母为 $n-1$，标准差再开平方；题面已给标准差时沿用给定值。

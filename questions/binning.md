@@ -83,6 +83,13 @@ The equal-depth bin means are $30,51,175/3$. The three equal-width intervals are
 
 先排序需 $O(N\log N)$ 时间，再分箱与替换需 $O(N)$。保存输入/输出需 $O(N)$；已排序输入按箱处理时，箱均值的累计量只需 $O(1)$ 工作内存，输出可逐箱写出。
 
+### 知识点与公式总结
+
+- **等深（equal-depth）** 先排序，每箱深度 $b$ 表示观测个数；重复值按出现次数保留。本题 $N=18,b=6$，分三箱。
+- **均值平滑（bin means）** ：$\bar x_B=\sum_{x\in B}x/|B|$，同箱所有观测均替换为该均值，$|B|$ 是箱内个数。
+- **等宽（equal-width）** ：$w=(x_{\max}-x_{\min})/k$，$k$ 是箱数；采用左闭右开区间，最后一箱包含最大值。
+- **边界平滑（bin boundaries）** ：取箱内实际最小、最大观测 $l,u$；比较 $x-l$ 与 $u-x$，选择较近端点。平局按声明规则处理，本题取 $l$。
+
 
 ---
 
@@ -148,6 +155,12 @@ After sorting, form four bins of depth six. Their means are $103/6,70/3,33.5,289
 
 O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
 
+### 知识点与公式总结
+
+- **等深分箱**：先升序排列，箱深 $b$ 表示每箱的记录数。本题 $24/6=4$ 箱，重复的年龄分别计数。
+- **箱均值公式**：$\bar x_B=\sum_{x\in B}x/|B|$，其中 $|B|$ 是同箱观测数；用该均值替换该箱每个值，输出数量保持为 24。
+- **结果核对**：四个箱均值为 $103/6,70/3,33.5,289/6$，每个均值各重复 6 次。
+
 
 ---
 
@@ -159,15 +172,21 @@ O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
 
 状态：完整；形式：计算 / 推导。
 
-### 原文
+### 英文题面（由中文原题译写）
 
+The following are the sales data for product A in a supermarket over 20 consecutive months (in hundreds of yuan). Smooth the noise in these data using equal-depth binning with a bin depth of 5.
 
+下面是一个超市商品 A 连续 20 个月的销售数据（单位为百元）。对以上数据进行噪声平滑，使用深度为 5 的等深分箱（equal-depth binning）方法。
 
-对商品 A 的 20 个月销量做深度为 5 的 Equal-depth binning，分别使用 bin median 和 bin boundaries 平滑。
+21,16,19,24,27,23,22,21,20,17,16,20,23,22,18,24,26,25,20,26
 
+**(a)** Smooth the data by bin medians.
 
+**(a)** 采用箱中位数（bin median）方法进行平滑。
 
-21, 16, 19, 24, 27, 23, 22, 21, 20, 17, 16, 20, 23, 22, 18, 24, 26, 25, 20, 26
+**(b)** Smooth the data by bin boundaries.
+
+**(b)** 采用箱边界（bin boundaries）方法进行平滑。
 
 ### 逐步解答
 
@@ -224,6 +243,12 @@ The four bin medians are $17,20,23,26$. Boundary smoothing uses the nearest obse
 
 排序 $O(N\log N)$，划分与两种平滑各 $O(N)$。存储输入/输出需 $O(N)$；已排序数据按箱读入时工作区为 $O(b)$，这里 $b=5$。
 
+### 知识点与公式总结
+
+- **等深分箱**：升序排列后每箱放 $b=5$ 个观测；$20/5=4$ 箱，重复值分别保留。
+- **中位数平滑**：每箱各值都换为该箱中位数；本题每箱 5 个数，取排序后的第 3 个值。
+- **边界平滑**：用箱内实际端点 $l=\min(B),u=\max(B)$，按 $\min\{|x-l|,|x-u|\}$ 选最近端点；本题平局取较小值，如第三箱的 $23\mapsto22$。
+
 
 ---
 
@@ -235,11 +260,25 @@ The four bin medians are $17,20,23,26$. Boundary smoothing uses the nearest obse
 
 状态：完整；形式：计算 / 推导。
 
-### 原文
+### 英文题面（由中文原题译写）
 
+The following are the sales data for a product in a supermarket over 16 consecutive months (in hundreds of yuan).
 
+下面是一个超市某种商品连续 16 个月的销售数据（单位为百元）。
 
-对 23,23,27,27,39,41,47,49,50,52,53,53,54,55,56,57 做：(a) 深度 4 的 median 平滑；(b) 深度 4 的 boundaries 平滑；(c) 四个等宽箱的 mean 平滑。
+23,23,27,27,39,41,47,49,50,52,53,53,54,55,56,57
+
+**(a)** Apply equal-depth binning with a bin depth of 4 to the data, and smooth them by bin medians. (5 points)
+
+**(a)** 对以上数据进行深度为 4 的等深分箱（equal-depth binning），采用箱中位数（bin median）方法进行平滑。（5 分）
+
+**(b)** Apply equal-depth binning with a bin depth of 4 to the data, and smooth them by bin boundaries. (5 points)
+
+**(b)** 对以上数据进行深度为 4 的等深分箱（equal-depth binning），采用箱边界（bin boundaries）方法进行平滑。（5 分）
+
+**(c)** Apply equal-width binning to the data, divide them into 4 bins, and smooth them by bin means. (5 points)
+
+**(c)** 对以上数据进行等宽分箱（equal-width binning），分成 4 个箱，采用箱均值（bin mean）方法进行平滑。（5 分）
 
 ### 逐步解答
 
@@ -291,6 +330,13 @@ The equal-depth bin medians are $25,44,52.5,55.5$. For four equal-width bins, th
 ### 计算与内存分析
 
 输入已有序时，分箱与三种平滑均可 $O(N)$ 完成；未排序输入通常先付出 $O(N\log N)$。保存结果需 $O(N)$ 空间，按箱流式输出可只保留当前箱。
+
+### 知识点与公式总结
+
+- **等深**约束每箱观测数；先排序，本题 $N=16,b=4$，得到 4 箱。
+- **中位数平滑**：每箱 4 个值，中位数为第 2、3 个值的平均；用该中位数替换同箱所有值。
+- **边界平滑**：取同箱实际最小、最大观测 $l,u$，选择离 $x$ 较近的端点；平局时执行已声明的同一规则。
+- **等宽与均值**：$w=(x_{\max}-x_{\min})/k$，按数值区间重新分箱，再用 $\bar x_B=\sum_{x\in B}x/|B|$ 平滑；此时各箱记录数可不同。
 
 
 ---
@@ -398,6 +444,13 @@ The smoothed sequence is $(1,1,3,4,4,20)$. For the original data, the five-numbe
 
 未排序输入通常先用 $O(N\log N)$ 排序；之后分箱与作图统计为 $O(N)$。保存原始输入需 $O(N)$ 空间；排序额外空间取决于实现，例如归并排序另需 $O(N)$。已排序数据可按箱顺序处理，每箱工作区为 $O(b)$，本题箱深 $b=3$。
 
+### 知识点与公式总结
+
+- **分箱平滑**：箱深 3 得 $B_1=(1,2,3),B_2=(4,5,20)$；按各箱实际端点 $l,u$ 比较 $x-l$ 与 $u-x$，平局取 $l$。
+- **数据范围**：小问 (b) 使用原始六数 $(1,2,3,4,5,20)$。小问 (a) 得到的平滑序列单独作为平滑答案。
+- **五数概括**依次为 min（最小值）、$Q_1$、median（$Q_2$）、$Q_3$、max（最大值）；本题上下半组中位数法得到 $(1,2,3.5,5,20)$。
+- **箱线图**：$IQR=Q_3-Q_1$，界限为 $Q_1-1.5IQR$、$Q_3+1.5IQR$；须取界限内实际极值。本题须为 1、5，20 是离群点。
+
 
 ---
 
@@ -468,3 +521,10 @@ $$w=\frac{x_{\max}-x_{\min}}{3}=\frac{65-5}{3}=20.$$
 For depth 4, the bin means are 9.75,25,62.5. Boundary smoothing gives (5,13,13,13), (15,15,15,55), and (60,60,65,65). Three equal-width bins give seven 12s and five 61s.
 
 深度为 4 时，箱均值依次为 9.75、25、62.5。边界平滑得到 (5,13,13,13)、(15,15,15,55)、(60,60,65,65)。三个等宽箱得到七个 12 和五个 61。
+
+### 知识点与公式总结
+
+- **等深**按记录数分箱：已排序的 12 个售价以箱深 $b=4$ 分成 3 箱；重复售价分别保留。
+- **均值平滑**：$\bar x_B=\sum_{x\in B}x/|B|$，把同箱所有值换为该均值；$|B|$ 为箱内记录数。
+- **边界平滑**：取箱内实际最小、最大值 $l,u$，选择距离 $x$ 最近的端点；平局先声明统一规则。
+- **等宽**按数值范围重新划分：$w=(65-5)/3=20$；采用 $[5,25),[25,45),[45,65]$，最后一箱包含最大值。空箱保留为空，无观测可替换。

@@ -53,6 +53,12 @@ Convert bits to bytes explicitly and separate numeric payloads from implementati
 
 明确将位转换为字节，并区分数值有效载荷与实现开销。
 
+### 知识点与公式总结
+
+- 先数记录，再乘每条字节数：稠密距离矩阵 $N^2b$；三角存储约 $N(N-1)b/2$。
+- $V$ 个未压缩位图、每条 $N$ 位：$NV/8$ bytes；每人存 $k$ 个邻居则为 $Nkb_{record}$。
+- 区分 bytes 与 bits；$1\ \mathrm{GiB}=2^{30}$ bytes，索引及对象开销按题意另计。
+
 
 ---
 
@@ -102,3 +108,9 @@ $$2^m-1.$$
 Candidate generation and output can be exponential. Two database scans do not imply linear total computation.
 
 候选生成和输出可能呈指数规模。数据库扫描两次不能推出总计算量为线性。
+
+### 知识点与公式总结
+
+- $m$ 个频繁单项产生至多 $\binom m2=m(m-1)/2$ 个候选二项集；乘以每条计数记录字节数得载荷。
+- Apriori 的瓶颈包括候选数量和重复计数；支持度阈值低时，频繁项集本身也可能很多。
+- FP-tree 共享事务前缀，节省程度取决于前缀重合；还要考虑条件树与输出的空间。

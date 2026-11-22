@@ -1,50 +1,56 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" version="26.0.0">
   <diagram name="detail-email-schema">
-    <mxGraphModel page="0" pageWidth="1050" pageHeight="590">
+    <mxGraphModel page="0" pageWidth="1400" pageHeight="720">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="Email analysis: message grain with recipient bridge" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=22;fontColor=#111111;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="365.0" y="5" width="320" height="32" />
+        <mxCell id="2" value="DimTime&lt;br&gt;PK time_key&lt;br&gt;calendar_year; month; full_timestamp" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="500" y="60" width="400" height="110" />
         </mxCell>
-        <mxCell id="3" value="FactMessage&lt;br&gt;PK message_key; sender/subject/time&lt;br&gt;message_count = 1; size_bytes" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="385" y="220" width="280" height="91" />
+        <mxCell id="3" value="DimSender&lt;br&gt;PK sender_key&lt;br&gt;sender_address" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="20" y="265" width="310" height="110" />
         </mxCell>
-        <mxCell id="4" value="DimTime&lt;br&gt;time_key (PK)&lt;br&gt;hour / day / month / year" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="385" y="65" width="280" height="91" />
+        <mxCell id="4" value="DimSubject&lt;br&gt;PK subject_key&lt;br&gt;subject_text" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1070" y="265" width="310" height="110" />
         </mxCell>
-        <mxCell id="5" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+        <mxCell id="5" value="FactMessage&lt;br&gt;PK message_key&lt;br&gt;FK sender_key, subject_key&lt;br&gt;FK sent_time_key&lt;br&gt;message_count = 1; size_bytes" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="500" y="250" width="400" height="170" />
+        </mxCell>
+        <mxCell id="6" value="BridgeMessageRecipient&lt;br&gt;PK/FK message_key, recipient_key&lt;br&gt;PK recipient_type (To / CC / BCC)" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="500" y="520" width="400" height="110" />
+        </mxCell>
+        <mxCell id="7" value="DimRecipient&lt;br&gt;PK recipient_key&lt;br&gt;recipient_address" style="rounded=0;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=18;strokeColor=#111111;fillColor=#ffffff;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1070" y="520" width="310" height="110" />
+        </mxCell>
+        <mxCell id="8" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="525" y="156" />
-            <mxPoint as="targetPoint" x="525" y="220" />
+            <mxPoint as="sourcePoint" x="700" y="170" />
+            <mxPoint as="targetPoint" x="700" y="250" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="6" value="DimSender&lt;br&gt;sender_key (PK)&lt;br&gt;address / organization" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="35" y="235" width="280" height="91" />
-        </mxCell>
-        <mxCell id="7" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
-          <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="315" y="280.5" />
-            <mxPoint as="targetPoint" x="385" y="265.5" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="8" value="DimSubject&lt;br&gt;subject_key (PK)&lt;br&gt;subject / topic" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="735" y="235" width="280" height="91" />
         </mxCell>
         <mxCell id="9" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="665" y="265.5" />
-            <mxPoint as="targetPoint" x="735" y="280.5" />
+            <mxPoint as="sourcePoint" x="330" y="320" />
+            <mxPoint as="targetPoint" x="500" y="335" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="10" value="BridgeMessageRecipient&lt;br&gt;message_key; recipient_key&lt;br&gt;recipient_type: To / CC / BCC" style="whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=18;fontColor=#111111;strokeColor=#111111;strokeWidth=1.5;fillColor=#ffffff;rounded=0;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="385" y="450" width="280" height="91" />
+        <mxCell id="10" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="900" y="335" />
+            <mxPoint as="targetPoint" x="1070" y="320" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="11" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
           <mxGeometry as="geometry" relative="1">
-            <mxPoint as="sourcePoint" x="525" y="311" />
-            <mxPoint as="targetPoint" x="525" y="450" />
+            <mxPoint as="sourcePoint" x="700" y="420" />
+            <mxPoint as="targetPoint" x="700" y="520" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" style="endArrow=none;startArrow=none;strokeColor=#111111;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="900" y="575" />
+            <mxPoint as="targetPoint" x="1070" y="575" />
           </mxGeometry>
         </mxCell>
       </root>

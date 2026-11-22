@@ -72,6 +72,12 @@ Merge the largest similarity. With single linkage, the merges occur at .98, .85,
 
 保存该矩阵 O(N²)；每轮重找所有簇对的朴素实现 O(N³)，single-link 可专门优化。
 
+### 知识点与公式总结
+
+- 原表给相似度，先合并最大的非对角元素；single-link 用 $s(A\cup B,C)=\max\{s(A,C),s(B,C)\}$ 更新。
+- 画距离高度可取 $d=1-s$；每次画出两个旧簇在相应高度合并，并保持前面已经形成的子树。
+- 先写清 linkage 和表中数字的方向，再列合并顺序；相似度越大越先合并，距离越小越先合并。
+
 
 ---
 
@@ -118,3 +124,9 @@ d_{complete}(\{a,b\},c)&=\max\{d(a,c),d(b,c)\}=\max(7,5)=7.
 Single linkage uses the closest pair; complete linkage uses the farthest pair.
 
 单链接使用最近点对，全链接使用最远点对。
+
+### 知识点与公式总结
+
+- Single-link 取最近跨簇点对：$d(A,B)=\min_{x\in A,y\in B}d(x,y)$；complete-link 取最远跨簇点对，即把 min 换为 max。
+- 先按原点对最小距离合并，再用相应 linkage 计算新簇与剩余点的距离；树状图的合并高度就是这一新距离。
+- Single-link 容易形成链，complete-link 更强调簇的整体紧凑；同一原距离表可以得到不同合并高度。

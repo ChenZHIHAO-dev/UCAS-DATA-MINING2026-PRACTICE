@@ -35,6 +35,12 @@ Overfitting means fitting noise in the training data and generalizing poorly. Us
 
 过拟合指拟合训练噪声，泛化表现差。采用预剪枝或后剪枝，并用验证数据选择复杂度。
 
+### 知识点与公式总结
+
+- 过拟合（overfitting）：训练误差很低，未见数据上的误差较高；观察训练与验证表现的差距。
+- 预剪枝限制深度、最小叶样本数等；后剪枝先长树，再按验证表现删除子树。
+- 作答顺序：定义与现象 → 预剪枝 → 后剪枝及验证依据。
+
 
 ---
 
@@ -74,6 +80,12 @@ $\lambda$ 控制惩罚强度，通过验证集选择。
 Use weight regularization, early stopping, capacity control, appropriate data augmentation or dropout, with hyperparameters selected on validation data.
 
 使用权重正则化、提前停止、容量控制、适当的数据增强或 Dropout，并在验证数据上选择超参数。
+
+### 知识点与公式总结
+
+- 控制网络过拟合常用：正则化（regularization）、早停（early stopping）、Dropout、减小容量、增加有效数据。
+- 早停看验证集：保存验证损失最低轮次的模型；测试集用于最终评价。
+- 每种方法写一句原理即可，如“L2 惩罚大权重”“Dropout 减少共同适应”。
 
 
 ---
@@ -129,6 +141,12 @@ Select on validation performance and business costs, not training accuracy or tr
 
 根据验证表现与业务成本选择模型，不能只看训练准确率或树大小。
 
+### 知识点与公式总结
+
+- 先确定正类和矩阵轴，再读 $TP,TN,FP,FN$。
+- $Accuracy=(TP+TN)/N$，$Precision=TP/(TP+FP)$，$Recall=TP/(TP+FN)$；分母为 0 时说明指标未定义。
+- 在同一验证集上按题定指标选树；样本不平衡时同时看各类表现，选完再评价最终测试集。
+
 
 ---
 
@@ -174,6 +192,12 @@ $$beer=1\ \land\ cheese=0\ \Rightarrow\ pasta=yes.$$
 Conjoin the edge tests along each root-to-positive-leaf path. Count the root as level one.
 
 将每条根到正类叶路径上的边条件作合取。根计为第 1 层。
+
+### 知识点与公式总结
+
+- 树的一条根到叶路径对应一条规则：路径条件取 AND，叶标签作为结论。
+- 预测时从根开始，按样本属性值选分支，直到叶节点。
+- 题定根为第 1 层；到第 5 层最多经过 4 条边，提取规则时逐层数清。
 
 
 ---
@@ -233,6 +257,12 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 模型比较次数乘以单次训练与验证成本；交叉验证K折使训练成本大致再乘K。
 
+### 知识点与公式总结
+
+- 训练集拟合参数，验证集或交叉验证选模型，测试集评价最终方案。
+- 正类指标：$Precision=TP/(TP+FP)$，$Recall=TP/(TP+FN)$，$F_1=2PR/(P+R)$。
+- 预测特征必须在预测时可获得；按相同数据划分比较各模型。
+
 
 ---
 
@@ -274,7 +304,29 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 | (b) | 至少 3 种减轻神经网络过拟合的措施 | 每种写名称与起作用的方式；不是只列术语。 |
 | (c) | 说明在哪个数据集上选超参数与早停轮次 | 验证集/交叉验证；测试集保留作最终评价。 |
 
-### 逐步解答
+### 解答
+
+**(a)** 过拟合（overfitting）是模型过度适应训练数据中的噪声或偶然规律，导致泛化表现下降。典型现象是训练损失继续下降，而验证损失开始上升。
+
+**(b)** 可采用以下三种方法：
+
+- **L2 正则化：** 在数据损失上加入 $\lambda\|W\|_F^2$，限制过大权重。
+- **早停：** 根据验证损失停止训练，恢复验证损失最低轮次的模型。
+- **Dropout：** 训练时随机屏蔽部分单元，减少共同适应。
+
+**(c)** 权重由训练集拟合；正则强度、网络规模和停止轮次由验证集或交叉验证选择；确定方案后在测试集上报告最终结果。
+
+### English answer · 英文作答
+
+Overfitting occurs when a model learns noise or accidental details in the training set and generalizes poorly. Training loss may keep decreasing while validation loss increases. L2 regularization penalizes large weights; early stopping restores the model at the best validation epoch; dropout reduces co-adaptation of hidden units. Reducing unnecessary model capacity and adding representative, label-preserving training data can also help. Select hyperparameters on validation data or cross-validation, and reserve the test set for final evaluation.
+
+模型学习训练噪声或偶然细节、泛化表现差时，发生过拟合。训练损失可能继续下降，而验证损失上升。L2 正则化惩罚大权重；提前停止恢复验证表现最佳轮次的模型；Dropout 减少隐藏单元共同适应。减少多余模型容量，增加有代表性且保持标签的训练数据，也有帮助。用验证集或交叉验证选择超参数，保留测试集用于最终评价。
+
+<details>
+<summary>补充解释与 SQL（展开）</summary>
+
+
+### 补充详解
 
 #### 过拟合的含义与判断
 
@@ -315,15 +367,17 @@ $$\overline E_{CV}=\frac1k\sum_{j=1}^{k}E_j.$$
 先说明“训练表现继续改善、验证表现变差”的典型现象；选三种措施逐项解释机理；最后交代验证选参、测试评价的分工。
 
 
-### English answer pattern
-
-Overfitting occurs when a model learns noise or accidental details in the training set and generalizes poorly. Training loss may keep decreasing while validation loss increases. L2 regularization penalizes large weights; early stopping restores the model at the best validation epoch; dropout reduces co-adaptation of hidden units. Reducing unnecessary model capacity and adding representative, label-preserving training data can also help. Select hyperparameters on validation data or cross-validation, and reserve the test set for final evaluation.
-
-模型学习训练噪声或偶然细节、泛化表现差时，发生过拟合。训练损失可能继续下降，而验证损失上升。L2 正则化惩罚大权重；提前停止恢复验证表现最佳轮次的模型；Dropout 减少隐藏单元共同适应。减少多余模型容量，增加有代表性且保持标签的训练数据，也有帮助。用验证集或交叉验证选择超参数，保留测试集用于最终评价。
-
 ### 易错点与约定
 
 每种方法要说明它怎样限制拟合噪声，并交代如何用验证数据选择设置。Batch normalization 与输入缩放不能保证消除过拟合。
+
+</details>
+
+### 知识点与公式总结
+
+- 典型过拟合现象：训练损失继续下降，验证损失转而上升。
+- 写清三种措施及机理即可：L2 限制权重、早停保留验证最优轮次、Dropout 减少共同适应。
+- 模型规模、正则强度和轮次由验证集选择；最终测试集用于评价。
 
 
 ---
@@ -372,6 +426,12 @@ Bagging 对这些基分类器等权投票，负类获得 2 票。三次训练集
 The three classifiers predict -1,+1,-1. Equal-weight majority voting therefore predicts -1 for x=0.38.
 
 三个分类器分别预测 -1、+1、-1。因此等权多数投票对 x=0.38 预测为 -1。
+
+### 知识点与公式总结
+
+- Bagging：自助采样训练多个分类器；预测时先算每个模型输出，再做多数投票。
+- 对本题的一维点，按各轮样本和模型边界分别判定类别，再汇总票数。
+- 多分类器的投票机制与训练样本的自助采样是两步；若平票，应说明处理规则。
 
 
 ---
@@ -426,3 +486,9 @@ Recall 按真实正类行求比例，Precision 按预测正类列求比例；先
 Sensitivity is 99.3429%, specificity is 86.2667%, precision is 94.4067%, and accuracy is 95.42%.
 
 灵敏度为 99.3429%，特异度为 86.2667%，精确率为 94.4067%，准确率为 95.42%。
+
+### 知识点与公式总结
+
+- 先按真实标签行、预测标签列，确定 $TP,TN,FP,FN$。
+- $Sensitivity=TP/(TP+FN)$，$Specificity=TN/(TN+FP)$；$Precision=TP/(TP+FP)$，$Accuracy=(TP+TN)/N$。
+- Recall 看真实正类总数，Precision 看预测正类总数；代入前先写分母。

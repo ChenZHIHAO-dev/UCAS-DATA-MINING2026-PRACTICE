@@ -67,6 +67,12 @@ The printed piecewise activation is inconsistent with the supplied sigmoid deriv
 
 初始偏置为零，更新时仍按偏置梯度计算增量。当前题只要求四个输入权重时，其他权重/偏置可作为补充检查。
 
+### 知识点与公式总结
+
+- 先按照题面分段激活做前向传播，固定各权重对应的起点、终点；目标值与输出连接权重使用不同记号。
+- 采用题给误差式时，$\delta_z=z(1-z)(t-z)$、$\delta_j=y_j(1-y_j)\delta_zT_j$；隐藏误差使用旧 $T_j$。
+- 先算全部误差，再同时更新 $w'=w+\eta\delta\,input$ 与 $b'=b+\eta\delta$。题给导数与分段激活不一致，若采用真实导数需另行声明计算口径。
+
 
 ---
 
@@ -113,7 +119,11 @@ $h_1=h_2=\sigma(.3)=.574442517$；三个输出均为 $o=\sigma(.1h_1+.1h_2)=.528
 
 令 $a=\sigma(.3),b=\sigma(.2a)$，则可保留精确表达式：$d_0=-b^2(1-b)$，$d_1=b(1-b)^2$，隐藏误差均为 $d_h=a(1-a)\,.1(2d_0+d_1)$。
 
-更新：$W'_{jk}=.1+.1\delta_k a$，$b'_k=.1\delta_k$；激活的三个输入对应权重变为 $.1+.1d_h$，未激活输入的权重仍 .1；隐藏偏置为 $.1d_h$。将这些表达式同时代入即可得到所有参数，而非只更新一条边。
+更新时沿用上方公式的符号：隐藏到输出权重为 $v_{jk}$，输出偏置为 $c_k$：
+
+$$v'_{jk}=0.1+0.1\delta_k a,\qquad c'_k=0.1\delta_k.$$
+
+激活的 Tall、Red、Brown 输入到每个隐藏单元的权重变为 $w'_{ij}=0.1+0.1d_h$，未激活输入的权重仍为 0.1；隐藏偏置为 $b'_j=0.1d_h$。这样分别更新四类参数，且与本题公式中的下标和字母一致。
 
 此初值具有对称性，适合手算检查；实际训练一般用非对称随机初值以打破隐藏单元对称。Softmax+交叉熵可用于三分类，但其输出误差不能再套这里的 sigmoid+SSE 公式。
 
@@ -143,6 +153,13 @@ Use one-hot inputs, declare the initialization and loss, compute all deltas with
 ### 计算与内存分析
 
 设总权重/偏置数 P，8–2–3 网络 P=(8+1)×2+(2+1)×3=27，一样本前向与反向均 O(P)。
+
+### 知识点与公式总结
+
+- 类别属性先独热编码；每层按加权和及 sigmoid $\sigma(a)=1/(1+e^{-a})$ 前向计算。
+- sigmoid 加平方损失的输出误差为 $\delta_k=o_k(1-o_k)(t_k-o_k)$。
+- 隐藏误差为 $\delta_j=h_j(1-h_j)\sum_k v_{jk}\delta_k$，其中 $v_{jk}$ 必须使用本轮旧权重。
+- 权重按 $w'=w+\eta\delta\,input$、偏置按 $b'=b+\eta\delta$ 同时更新；输入为 0 的边本轮增量为 0。
 
 
 ---
@@ -182,7 +199,7 @@ w'_{ij}&=w_{ij}+\eta\delta_jx_i,&b'_j&=b_j+\eta\delta_j.
 
 #### 1. 编码和初始化
 
-可取 8–2–1 网络。输入顺序沿用当前网络题，$x=(0,1,0,1,0,0,0,1)$，用 C1=1,C2=0 编码目标，取各权重 .1、偏置 0、η=.1、sigmoid+SSE。
+可取 8–2–1 网络。输入顺序明确为 (Tall,Medium,Short,Blond,Dark,Red,Brown,Blue)，$x=(0,1,0,1,0,0,0,1)$，用 C1=1,C2=0 编码目标，取各权重 .1、偏置 0、η=.1、sigmoid+SSE。
 
 三个激活输入使两个隐藏输出仍 $a=\sigma(.3)$；输出 $b=\sigma(.2a)$。输出误差 $\delta_o=b(1-b)(1-b)$，隐藏误差 $\delta_h=a(1-a)\,.1\delta_o$。
 
@@ -198,6 +215,12 @@ w'_{ij}&=w_{ij}+\eta\delta_jx_i,&b'_j&=b_j+\eta\delta_j.
 The older assignment is binary. One sigmoid output is sufficient when C1 is encoded as 1.
 
 往届作业是二分类。把 C1 编码为 1 时，一个 Sigmoid 输出已足够。
+
+### 知识点与公式总结
+
+- 二分类可用一输出，先声明 C1=1、C2=0；输入独热编码后用 sigmoid 做前向计算。
+- 输出误差 $\delta_o=o(1-o)(t-o)$；隐藏误差 $\delta_h=h(1-h)v\delta_o$ 使用旧输出权重 v。
+- 所有误差先算完，再按 $w'=w+\eta\delta\,input$、$b'=b+\eta\delta$ 同时更新；分别报告输入权重、隐藏偏置、输出权重、输出偏置。
 
 
 ---
@@ -280,3 +303,9 @@ The output before updating is approximately 0.473889. The error signals are 0.13
 ### 计算与内存分析
 
 一条样本的一次前向及反向均按连接计算，$W$ 条连接约需 $O(W)$ 时间、$O(W)$ 参数空间。
+
+### 知识点与公式总结
+
+- 前向依次算 $z_j=\sum_iw_{ij}o_i+b_j$、$o_j=\sigma(z_j)$；偏置直接加到净输入。
+- 先算输出误差 $\delta_6=(t-o_6)o_6(1-o_6)$，再算隐藏误差 $\delta_j=o_j(1-o_j)w_{j6}\delta_6$；传播使用旧权重。
+- 统一更新 $w_{ij}'=w_{ij}+\eta\delta_j o_i$、$b_j'=b_j+\eta\delta_j$；本题输入 $x_2=0$，对应两条边的增量为 0。

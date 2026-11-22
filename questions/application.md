@@ -38,6 +38,12 @@ Classification uses labeled examples, clustering discovers unlabeled groups, and
 
 分类使用带标签样本；聚类发现无标签分组；关联挖掘寻找共现模式；离群点分析识别异常对象。
 
+### 知识点与公式总结
+
+- 按“技术 → 产出 → 应用”作答：分类预测类别，回归预测数值，聚类形成相似群体。
+- 关联模式关注共现，序列模式关注顺序；离群分析寻找偏离主体的少数对象。
+- 每类配一个对应场景，如垃圾邮件分类、客户聚类、购物篮关联。
+
 
 ---
 
@@ -55,7 +61,25 @@ Suppose you have roughly classified previous e-mails as junk, unimportant or nor
 
 假设你已把以往邮件粗分为垃圾、不重要、正常或重要。描述数据挖掘系统怎样利用该训练集，对新邮件或未分类邮件分类。
 
-### 逐步解答
+### 解答
+
+1. 用历史邮件建立带标签训练集，类别为 junk、unimportant、normal/important，另留验证集与测试集。
+2. 将标题、正文、发件人等转换为特征，如词频向量；在训练集确定词表和转换规则。
+3. 训练朴素贝叶斯或决策树等分类器；在验证集上选择参数。
+4. 在测试集上评价各类 Precision、Recall 及混淆矩阵。
+5. 新邮件采用相同的特征处理，输入已训练模型并输出预测类别；后续用新增标注更新模型。
+
+### English answer · 英文作答
+
+Build features from labeled messages, fit a supervised classifier, validate without leakage, and apply the same feature pipeline to new mail.
+
+从带标签邮件构建特征，拟合监督分类器，进行无泄漏验证，再把同一特征流程应用到新邮件。
+
+<details>
+<summary>补充解释与 SQL（展开）</summary>
+
+
+### 补充详解
 
 #### 明确分类任务和数据划分
 
@@ -91,11 +115,13 @@ $$Precision=\frac{TP}{TP+FP},\qquad Recall=\frac{TP}{TP+FN}.$$
 标注历史邮件 → 提取特征 → 训练分类器 → 验证选参 → 测试评价 → 同样处理新邮件并预测。题面未给具体训练计数，答案应写清流程及估计、预测方法。
 
 
-### English answer pattern
+</details>
 
-Build features from labeled messages, fit a supervised classifier, validate without leakage, and apply the same feature pipeline to new mail.
+### 知识点与公式总结
 
-从带标签邮件构建特征，拟合监督分类器，进行无泄漏验证，再把同一特征流程应用到新邮件。
+- 邮件分类流程：带标签数据 → 特征 → 训练 → 验证选参 → 测试 → 新邮件预测。
+- 朴素贝叶斯按 $P(c)\prod_wP(w\mid c)^{x_w}$ 比较类别，取对数后为加和；$x_w$ 是词频。
+- 词表及变换在训练集确定，新邮件使用同一流程；未见词可用平滑处理。
 
 
 ---
@@ -108,11 +134,11 @@ Build features from labeled messages, fit a supervised classifier, validate with
 
 状态：补充问答；年份不明；形式：来源补充简答。
 
-### 原文
+### 英文题面（由中文原题译写）
 
+Briefly describe suitable applications of bitmap indexes, and distinguish an OLTP database from an OLAP data warehouse.
 
-
-简述位图索引的适用场景，并区分 OLTP 数据库和 OLAP 数据仓库。该文档无明确年份与题号，不能标为某年原题。
+简述位图索引的适用场景，并区分 OLTP 数据库和 OLAP 数据仓库。
 
 ### 逐步解答
 
@@ -143,6 +169,12 @@ $$M=NK\ \mathrm{bits}=\frac{NK}{8}\ \mathrm{bytes}.$$
 OLTP supports operational transactions; OLAP supports integrated historical analysis. Bitmap suitability depends on cardinality and update patterns.
 
 OLTP 支持业务事务；OLAP 支持集成历史分析。位图适用性取决于基数与更新模式。
+
+### 知识点与公式总结
+
+- 位图索引每个属性值对应一条位向量，AND/OR 组合条件；低基数、分析查询多的属性常受益。
+- OLTP 处理短事务和频繁更新；OLAP 面向历史数据的多维分析与聚合。
+- 分析索引时写清“加速什么、增加多少空间、如何维护”，按具体负载选择。
 
 
 ---
@@ -186,3 +218,9 @@ Can you describe other possible kind of knowledge that needs to be discovered by
 One example is a time-constrained precursor pattern for equipment failures. Mine sensor-event sequences, validate the patterns on future periods, and use them for early maintenance.
 
 一个例子是带时间约束的设备故障前兆模式。挖掘传感器事件序列，在未来时间段验证模式，并用于提前维护。
+
+### 知识点与公式总结
+
+- 开放题按“输入数据 → 要发现的知识 → 输出形式 → 应用”组织。
+- 可给出因果或反事实等发现任务，说明它与课堂已讲预测/关联任务的联系及区别。
+- 任务、数据和评价方式应相互对应，举一个具体场景即可。

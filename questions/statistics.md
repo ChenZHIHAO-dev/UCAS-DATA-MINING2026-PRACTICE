@@ -79,6 +79,12 @@ The five-number summary is $(13,20.5,27.5,35.5,70)$. With $IQR=15$, the fences a
 
 通常排序需 $O(N\log N)$ 时间；排序后定位四分位数及扫描离群值需 $O(N)$。保留完整数据需 $O(N)$ 空间；精确分位数也可用选择算法在线性时间内求得。
 
+### 知识点与公式总结
+
+- **五数概括（five-number summary）** 依次为最小值 min、第一四分位数 $Q_1$、中位数 median（$Q_2$）、第三四分位数 $Q_3$、最大值 max。本题 $Q_1,Q_3$ 用上下半组各自的中位数。
+- **离群界限**：$IQR=Q_3-Q_1$，$LF=Q_1-1.5IQR$，$UF=Q_3+1.5IQR$；观测满足 $x<LF$ 或 $x>UF$ 时标为离群值。
+- **作图**：箱体为 $[Q_1,Q_3]$，内线为 median；须落在 $[LF,UF]$ 内最小、最大的实际观测。此题须为 13、52，70 单独画点。
+
 
 ---
 
@@ -102,9 +108,11 @@ Calculate mean, median, standard deviation of A; draw its boxplot; compute the c
 
 ### 逐步解答
 
+本题 A、B 销售数据的单位均为百元。均值、中位数与标准差沿用该单位，例如均值 $21.5$ 表示 $2150$ 元。
+
 #### 均值、中位数与标准差
 
-均值概括平均销量；标准差衡量销量围绕均值的波动。A 的统计量为
+均值概括平均销售额；标准差衡量销售额围绕均值的波动。A 的统计量为
 
 $$N=20,\qquad\sum A_i=430,\qquad\sum A_i^2=9452.$$
 
@@ -147,7 +155,7 @@ $$LF=19.5-1.5(4.5)=12.75,\qquad UF=24+1.5(4.5)=30.75.$$
 
 全部值落在界限内，所以无离群点；下、上须分别为 $16,27$。
 
-![当前 HW1：A 销量箱线图，箱体为 19.5 至 24，中位线 21.5](../assets/solutions/hw1-sales-boxplot.svg)
+![当前 HW1：A 销售额箱线图，箱体为 19.5 至 24，中位线 21.5](../assets/solutions/hw1-sales-boxplot.svg)
 
 #### Pearson 相关：保留每月 A、B 的配对
 
@@ -169,17 +177,17 @@ $$\boxed{r=\frac{364.5}{\sqrt{207\times929.75}}\approx0.830863}.$$
 
 #### 散点图与结论
 
-横轴为当月 A 销量，纵轴为同月 B 销量，每个月画一个点。重叠的坐标标出出现次数。
+横轴为当月 A 销售额，纵轴为同月 B 销售额，每个月画一个点。重叠的坐标标出出现次数。
 
 ![当前 HW1：20 个月的 A、B 配对散点图](../assets/solutions/hw1-sales-scatter.svg)
 
-点云总体向右上方延伸，$r\approx0.831$，说明 A、B 销量有较强正线性相关。相关系数描述共同变化，因果关系需另有证据。
+点云总体向右上方延伸，$r\approx0.831$，说明 A、B 销售额有较强正线性相关。相关系数描述共同变化，因果关系需另有证据。
 
 ### English answer pattern
 
-For A, the mean and median are both $21.5$. Its population standard deviation is $3.217142$, and its sample standard deviation is $3.300718$. Its five-number summary is $(16,19.5,21.5,24,27)$, with no outliers. The paired Pearson correlation is $r=0.830863$.
+For A, the mean and median are both $21.5$. Its population standard deviation is $3.217142$, and its sample standard deviation is $3.300718$. Its five-number summary is $(16,19.5,21.5,24,27)$, with no outliers. The paired Pearson correlation is $r=0.830863$. Sales values are in hundreds of yuan.
 
-A 的均值和中位数均为 $21.5$。总体标准差为 $3.217142$，样本标准差为 $3.300718$。五数概括为 $(16,19.5,21.5,24,27)$，无离群值。配对 Pearson 相关系数为 $r=0.830863$。
+A 的均值和中位数均为 $21.5$。总体标准差为 $3.217142$，样本标准差为 $3.300718$。五数概括为 $(16,19.5,21.5,24,27)$，无离群值。配对 Pearson 相关系数为 $r=0.830863$。 销售数据单位为百元。
 
 ### 易错点与约定
 
@@ -188,6 +196,13 @@ A 的均值和中位数均为 $21.5$。总体标准差为 $3.217142$，样本标
 ### 计算与内存分析
 
 用 $N,\sum A_i,\sum B_i,\sum A_i^2,\sum B_i^2,\sum A_iB_i$ 可在 $O(N)$ 时间、$O(1)$ 累计内存求均值、方差和相关。精确箱线图常先用 $O(N\log N)$ 排序，保存输入与输出图点需 $O(N)$。
+
+### 知识点与公式总结
+
+- **均值与波动**：$\bar x=\sum x_i/n$；总体方差用 $\sum(x_i-\bar x)^2/n$，样本方差用 $\sum(x_i-\bar x)^2/(n-1)$，标准差取对应平方根。$n$ 是观测数，销售数据单位为百元。
+- **五数概括**：min（最小值）、$Q_1$、median（$Q_2$）、$Q_3$、max（最大值）；本题四分位数取排序后上下半组的中位数。
+- **箱线图**：$IQR=Q_3-Q_1$，界限为 $Q_1-1.5IQR$、$Q_3+1.5IQR$；须接界限内最小、最大的实际观测，离群值独立画点。
+- **相关与散点图**：$r=\frac{\sum(A_i-\bar A)(B_i-\bar B)}{\sqrt{\sum(A_i-\bar A)^2\sum(B_i-\bar B)^2}}$；保留同月份的配对，横轴 A、纵轴 B；$r$ 的正负表示线性共同变化的方向。
 
 
 ---
@@ -340,6 +355,13 @@ The means of age and body fat are $44.125$ and $28.05625$. Using population stan
 
 均值、方差、z 分数与相关均为 $O(N)$ 时间；先保存配对数据再输出全部 z 值需 $O(N)$ 空间。精确四分位数通常先排序，需 $O(N\log N)$ 时间。
 
+### 知识点与公式总结
+
+- **均值、标准差与 z 分数**：$\bar x=\sum x_i/n$；总体 / 样本方差的分母分别为 $n,n-1$，标准差取平方根。每列做 $z=(x-\bar x)/\mathrm{SD}$，其中 $\mathrm{SD}$ 为该列按所选口径计算的标准差。
+- **五数概括**依次为 min（最小值）、$Q_1$、median（$Q_2$）、$Q_3$、max（最大值）；$Q_1,Q_3$ 取各自排序列上下半组的中位数。
+- **箱线图**：$IQR=Q_3-Q_1$，界限为 $Q_1-1.5IQR$、$Q_3+1.5IQR$；须取界限内实际极值，离群点单画。年龄和体脂率按各自单位作图。
+- **Pearson 相关**：$r=\frac{\sum(x_i-\bar x)(y_i-\bar y)}{\sqrt{\sum(x_i-\bar x)^2\sum(y_i-\bar y)^2}}$；散点与相关均保留同一人的年龄—体脂率配对。
+
 
 ---
 
@@ -426,6 +448,12 @@ The mean and median are both 17.5. The modes are 16 and 20. The five-number summ
 ### 计算与内存分析
 
 排序需 $O(n\log n)$ 时间；排序后线性扫描即可求各统计量。四分位数采用上下半组中位数法，答卷写明口径。
+
+### 知识点与公式总结
+
+- **位置统计量**：均值 $\bar x=\sum x_i/n$，$n$ 是观测数；中位数取排序后的中间位置，偶数个观测取中间两值平均；众数 mode 是出现次数最多的值，可有多个。
+- **五数概括**依次为 min（最小值）、$Q_1$、median（$Q_2$）、$Q_3$、max（最大值）。本题 $Q_1,Q_3$ 取上下半组的中位数，得到 $(13,15.5,17.5,20,21)$。
+- **箱线图**：$IQR=Q_3-Q_1$；下、上界为 $Q_1-1.5IQR$、$Q_3+1.5IQR$。须为界限内最小、最大的实际观测，界限外的观测单独画点。
 
 
 ---
@@ -539,3 +567,9 @@ The expected counts under independence are 90, 360, 210 and 840. Pearson’s sta
 ### 计算与内存分析
 
 对 $r\times c$ 列联表，累计行列和并逐格计算需 $O(rc)$ 时间；若按格流式计算期望与贡献，除已给原表外，行列合计需 $O(r+c)$ 存储。
+
+### 知识点与公式总结
+
+- **独立假设下的期望数**：$E_{ij}=R_iC_j/N$；$R_i,C_j$ 为行、列总数，$N$ 为总样本数。$O_{ij}$ 是实际观察计数。
+- **卡方统计量**：$\chi^2=\sum_{i,j}(O_{ij}-E_{ij})^2/E_{ij}$，逐格求贡献再相加；自由度 $df=(r-1)(c-1)$，$r,c$ 是行、列类别数。
+- **检验结论**：本题 $df=1$，$\chi^2\approx507.9365>3.841$，在 $\alpha=0.05$ 下拒绝独立假设，表明样本中的两种偏好有关联；这项检验本身不确定因果方向。

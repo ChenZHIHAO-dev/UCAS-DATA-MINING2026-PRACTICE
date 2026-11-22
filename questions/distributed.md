@@ -67,6 +67,12 @@ Union all locally frequent itemsets, count that union globally, then generate ru
 
 通信约 O(Σp|Lp|·平均项集长度 + P|C|·平均项集长度 + P|C| 计数)，不传 O(N·平均篮长) 原数据。候选过多时仍可能昂贵。
 
+### 知识点与公式总结
+
+- 局部阈值 $q_p=\lceil sN_p\rceil$，全局阈值 $q=\lceil s\sum_pN_p\rceil$；$s$ 为支持度比例。
+- 全局频繁项集至少在一个站点局部频繁：先合并局部频繁候选，再对候选做全局精确计数。
+- 规则置信度用全局共同计数除以全局前件计数；通信主要是候选及计数。
+
 
 ---
 
@@ -128,6 +134,12 @@ Broadcast shared centroids and reduce per-cluster counts and coordinate sums. Co
 ### 计算与内存分析
 
 t轮：站点p计算 O(tNp kd)，每轮总通信 O(Pkd) 个数；每站工作区 O(kd)，原数据若存内存另需 O(Np d)。
+
+### 知识点与公式总结
+
+- 每站点按同一组旧中心分配本地点；对每簇上传点数 $n_{pj}$ 与向量和 $S_{pj}$。
+- 新中心 $\mu_j=\sum_pS_{pj}/\sum_pn_{pj}$，即按点数加权；空簇按统一规则处理。
+- 记忆顺序：广播中心 → 本地分配与求和 → 汇总更新 → 收敛判断；每轮通信量约 $O(Pkd)$。
 
 
 ---
@@ -201,6 +213,12 @@ Maintain bounded cluster summaries, update each incoming point once, and retain 
 
 直接找最近中心每点 O(Kmax d)，摘要 O(Kmax d)，保留 H 组快照 O(HKmax d)；H和Kmax固定。
 
+### 知识点与公式总结
+
+- 流数据单遍处理：读入一点后，只更新有限大小的摘要；旧原始点无需全部保存。
+- 摘要 $(n,LS,SS)$ 保存点数、向量和及平方范数和；中心 $\mu=LS/n$，$SSE=SS-\|LS\|^2/n$。
+- 处理演化要说明时间窗口或衰减，并给出新增、合并或删除摘要的规则；内存预算保持固定。
+
 
 ---
 
@@ -243,7 +261,30 @@ Give **(a)** pseudocode with local and global thresholds, **(b)** a correctness 
 | 正确性 | 证明全局频繁项集至少局部频繁一次，并说明为什么需全局复核。 |
 | 资源分析 | 传什么、扫库/本地计算代价、候选峰值内存；不要把两阶段说成恒定总时间。 |
 
-### 逐步解答
+### 解答
+
+**(a) 两阶段算法。** 设站点 $p$ 有 $N_p$ 笔事务，总数 $N=\sum_pN_p$，最小支持度为 $s$、最小置信度为 $c$。
+
+1. 每站点按局部门槛 $\lceil sN_p\rceil$ 挖频繁项集 $L_p$，发送候选及 $N_p$。
+2. 协调者取候选并集 $C=\bigcup_pL_p$，广播 $C$。
+3. 每站点对 $C$ 精确重数，回传 $n_p(X)$；协调者合计 $n(X)=\sum_pn_p(X)$，保留 $n(X)\ge\lceil sN\rceil$ 的项集。
+4. 对每个频繁项集 $F$，枚举非空真子集 $A$，令 $H=F\setminus A$。满足 $n(F)/n(A)\ge c$ 时输出 $A\Rightarrow H$，其支持度为 $n(F)/N$。
+
+**(b) 正确性。** 若 $X$ 在每个站点都不频繁，则 $n_p(X)<sN_p$，求和得 $n(X)<sN$。所以每个全局频繁项集至少在一站局部频繁，一定进入 $C$；全局重数再过滤即可得到准确结果。
+
+**(c) 资源。** 传输候选和计数，原始事务保留在各站点。候选平均长度为 $\ell$ 时，四站广播约 $O(4\ell|C|)$、计数回传约 $O(4|C|)$；候选与计数内存约 $O((\ell+1)|C|)$。局部挖掘后还需一次全局候选的本地重数，扫描和 CPU 成本取决于局部挖掘及包含性检测方法。
+
+### English answer · 英文作答
+
+Mine locally with threshold ceil(sNp), union the local frequent itemsets, and recount every candidate globally. Any globally frequent itemset must be frequent at some site. Generate rules from global counts, and communicate itemsets and count vectors rather than raw transactions.
+
+按 ceil(sNp) 阈值进行本地挖掘，合并本地频繁项集，再对每个候选进行全局计数。每个全局频繁项集必在某站点频繁。根据全局计数生成规则，通信传送项集和计数向量，无须传输原始事务。
+
+<details>
+<summary>补充解释与 SQL（展开）</summary>
+
+
+### 补充详解
 
 #### 1. 区分比例阈值与计数阈值
 
@@ -308,12 +349,14 @@ conf(A\Rightarrow H)&=\frac{n(A\cup H)}{n(A)}.
 
 先分别累加全局共同计数与全局前件计数，再求二者的比值；这样每笔事务按相同权重参与计算。
 
-### English answer pattern
-
-Mine locally with threshold ceil(sNp), union the local frequent itemsets, and recount every candidate globally. Any globally frequent itemset must be frequent at some site. Generate rules from global counts, and communicate itemsets and count vectors rather than raw transactions.
-
-按 ceil(sNp) 阈值进行本地挖掘，合并本地频繁项集，再对每个候选进行全局计数。每个全局频繁项集必在某站点频繁。根据全局计数生成规则，通信传送项集和计数向量，无须传输原始事务。
-
 ### 易错点与约定
 
 这是一道算法设计题，完成伪代码、证明和代价分析即可；不要求虚构一套数据库再手算所有规则。
+
+</details>
+
+### 知识点与公式总结
+
+- 整数支持度门槛：局部 $\lceil sN_p\rceil$，全局 $\lceil sN\rceil$；局部候选并集包含全部全局频繁项集。
+- 用总计数过滤候选，再枚举规则：$supp(A\Rightarrow H)=n(A\cup H)/N$，$conf(A\Rightarrow H)=n(A\cup H)/n(A)$。
+- 设计题交代四项：各站点计算什么、传什么、为何完整、需要哪些扫描与内存。

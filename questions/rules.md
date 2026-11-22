@@ -33,17 +33,24 @@ conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
 
 #### 2. 代入计数，逐方向检验
 
-每条规则的支持度用并集计数除以总事务数，置信度用并集计数除以前件计数。前件改变时，置信度的分母也随之改变。
+频繁三项集只有 $F=\{a,b,e\}$，支持计数为 5。题目限定“两项前件⇒一项后件”，因此只需检验以下三个方向：
 
-频繁三项集只有 abe，计数 5。三个方向分别检验：
-
-| Rule | 共同计数 | 前件计数 | 置信度 Confidence |
+| 规则 | 共同计数 | 前件计数 | 置信度 |
 | --- | --- | --- | --- |
-| ab ⇒ e | 5 | 6 | 5/6=.833333 |
-| ae ⇒ b | 5 | 6 | 5/6=.833333 |
-| be ⇒ a | 5 | 7 | 5/7=.714286 |
+| $ab\Rightarrow e$ | 5 | 6 | $5/6=0.833333$ |
+| $ae\Rightarrow b$ | 5 | 6 | $5/6=0.833333$ |
+| $be\Rightarrow a$ | 5 | 7 | $5/7=0.714286$ |
 
-所以 2016 通过前两条，2020 三条都通过；支持度均 5/10=.5。把 .70 误记成 .75 会漏掉 2020 的 be⇒a。
+三条支持度均为 $5/10=0.5$，达到共同的最小支持度 50%。
+
+#### 最终答案
+
+- **2016：** $min\_conf=75\%$，保留 $ab\Rightarrow e$、$ae\Rightarrow b$。
+- **2020：** $min\_conf=70\%$，以上三条全部保留。
+
+#### 本题关键点
+
+改变规则方向会改变前件计数，即置信度的分母；同一个频繁项集产生的不同方向可以有不同置信度。
 
 
 ### English answer pattern
@@ -51,6 +58,12 @@ conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
 All three directions have support 0.5, but their confidences differ. The 70% threshold admits one more rule than 75%.
 
 三个方向支持度均为 0.5，但置信度不同。70% 阈值比 75% 多接纳一条规则。
+
+### 知识点与公式总结
+
+- 规则支持度 $supp(X\Rightarrow Y)=count(X\cup Y)/N$，分母是全部事务数。
+- 置信度 $conf(X\Rightarrow Y)=count(X\cup Y)/count(X)$，分母是前件出现数；反向规则通常有不同分母。
+- 从频繁三项集枚举两项前件、单项后件；2016 置信度阈值为 75%，2020 为 70%，分别与阈值比较。
 
 
 ---
@@ -84,19 +97,28 @@ conf(X\Rightarrow Y)&=\frac{count(X\cup Y)}{count(X)}.
 
 #### 2. 代入计数，逐方向检验
 
-count(X) 表示同时包含项集 X 中全部物品的事务数。对 X⇒Y，先数同时包含 X、Y 的事务，再除以包含 X 的事务数，得到置信度。
+先从四笔事务得到 $count(AB)=4$、$count(C)=2$、$count(ABC)=2$。
 
-count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=1，不对称；两条支持度都 .5，低于 .6，均未通过该支持度阈值。
+$$\begin{aligned}
+conf(AB\Rightarrow C)&=\frac{count(ABC)}{count(AB)}=\frac24=0.5,\\
+conf(C\Rightarrow AB)&=\frac{count(ABC)}{count(C)}=\frac22=1.
+\end{aligned}$$
 
-满足支持度的三项集只有 ABD，count=3：
+两方向置信度不同；两条规则的支持度都为 $2/4=0.5<0.6$，因此均未通过最小支持度要求。
 
-| Rule | 支持度 Support | 置信度 Confidence |
+#### 3. 枚举符合元规则的强规则
+
+满足支持度的三项集只有 $\{A,B,D\}$，计数为 3。两项前件的计数为 AB:4、AD:3、BD:3。
+
+| 规则 | 支持度 | 置信度 |
 | --- | --- | --- |
-| AB ⇒ D | 3/4 | 3/4 = 0.75 |
-| AD ⇒ B | 3/4 | 3/3 = 1 |
-| BD ⇒ A | 3/4 | 3/3 = 1 |
+| $AB\Rightarrow D$ | $3/4=0.75$ | $3/4=0.75$ |
+| $AD\Rightarrow B$ | $3/4=0.75$ | $3/3=1$ |
+| $BD\Rightarrow A$ | $3/4=0.75$ | $3/3=1$ |
 
-元规则只允许两项前件与单项后件，不把 A⇒BD 等加入这个答案。
+#### 最终答案
+
+置信度**不对称**；上述三条均满足支持度 60%、置信度 70% 以及“两项⇒一项”的要求，构成最终强规则列表。
 
 
 ### English answer pattern
@@ -104,6 +126,12 @@ count(AB)=4、count(C)=2、count(ABC)=2，因此 conf(AB⇒C)=.5，conf(C⇒AB)=
 Confidence is directional because it conditions on the antecedent. High confidence alone does not make a strong rule.
 
 置信度以给定前件为条件，因此有方向性。仅有高置信度不足以构成强规则。
+
+### 知识点与公式总结
+
+- 规则支持度 $supp(X\Rightarrow Y)=count(X\cup Y)/N$，分母是全部事务数。
+- 置信度 $conf(X\Rightarrow Y)=count(X\cup Y)/count(X)$，分母是前件出现数；反向规则通常有不同分母。
+- 每条强规则同时检验最小支持度、最小置信度及“两项⇒一项”的元规则；高置信度本身不能替代支持度要求。
 
 
 ---
@@ -165,6 +193,12 @@ Enumerate all six directions from EKO, then keep only the three 2-to-1 rules req
 
 枚举 EKO 的六个方向，再只保留元规则要求的三条“两项到一项”规则。
 
+### 知识点与公式总结
+
+- 规则支持度 $supp(X\Rightarrow Y)=count(X\cup Y)/N$，分母是全部事务数。
+- 置信度 $conf(X\Rightarrow Y)=count(X\cup Y)/count(X)$，分母是前件出现数；反向规则通常有不同分母。
+- 三项集产生 $2^3-2=6$ 个非空方向；先列全六条，再按“二项前件⇒单项后件”保留对应三条。
+
 
 ---
 
@@ -220,3 +254,10 @@ $$supp(X\Rightarrow Y)=supp(X)\,conf(X\Rightarrow Y)\ge0.07\times0.45=0.0315.$$
 Antecedent support is P(X); rule support is P(X∪Y). Lift compares confidence with the consequent baseline.
 
 前件支持度为 P(X)，规则支持度为 P(X∪Y)。Lift 把置信度与后件基准比较。
+
+### 知识点与公式总结
+
+- 规则支持度 $supp(X\Rightarrow Y)=count(X\cup Y)/N$，分母是全部事务数。
+- 置信度 $conf(X\Rightarrow Y)=count(X\cup Y)/count(X)$，分母是前件出现数；反向规则通常有不同分母。
+- 前件支持度是 $count(X)/N$；提升度 $lift=conf(X\Rightarrow Y)/supp(Y)$，比较命中率与 Y 本来的出现率。
+- 先按题给阈值和最大前件数 $|X|$ 过滤，再排序、检查冗余；覆盖、命中率、相对提升分别回答不同问题。

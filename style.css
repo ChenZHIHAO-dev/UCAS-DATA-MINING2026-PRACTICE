@@ -180,3 +180,23 @@ html{scroll-padding-top:calc(var(--header-height) + 16px)}
 :root[data-theme="dark"] .diagram:has(img[src*="assets/solutions/"]) figcaption{color:#46524b;border-color:#ddd}
 @media(max-width:760px){.answer{padding:4px 18px 24px;font-size:15px;line-height:1.9}.solution-step{padding:20px 0}.solution-step>h3{font-size:16px;margin-bottom:14px}.solution-step.is-formula,.solution-step.is-result{padding:15px 13px;margin:17px 0}.step-body .katex-display{font-size:.96em}.step-body th,.step-body td{padding:8px 9px}.q-meta{font-size:11px}}
 @media print{.answer{font-size:10.5pt;line-height:1.75}.solution-step.is-formula,.solution-step.is-result{background:white;border:1px solid #999;border-radius:0;padding:3mm;break-inside:avoid}.step-body .katex-display{font-size:1em;margin:3mm 0!important}.step-body table{font-size:9pt}.source-badge{color:black;background:white;border-color:#aaa}}
+
+.handwritten-answer{padding:20px 0 8px;line-height:1.85}
+.handwritten-answer>h3{font-size:17px;color:var(--ink);margin:0 0 16px}
+.handwritten-answer p{margin:0 0 13px}
+.handwritten-answer li{margin:7px 0}
+.handwritten-answer .diagram{max-width:900px;margin:18px auto}
+.study-notes{margin-top:22px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.study-notes>summary{display:flex;align-items:center;justify-content:space-between;min-height:46px;padding:12px 17px;background:var(--soft);font-size:14px;font-weight:600;cursor:pointer}
+.study-notes>summary:after{content:"＋";font-size:17px;font-weight:400}
+.study-notes[open]>summary:after{content:"−"}
+.study-notes>div{padding:0 17px 18px}
+@media(max-width:760px){.handwritten-answer{font-size:15px}.study-notes>summary{padding:12px}.study-notes>div{padding:0 12px 14px}}
+@media print{.handwritten-answer{padding:3mm 0}.handwritten-answer>h3{font-size:12pt}.study-notes{border:0}.study-notes:not([open]){display:none}.study-notes>summary{background:white}}
+.knowledge-summary{background:var(--soft);line-height:1.85}
+.knowledge-summary ul{margin:8px 0;padding-left:1.4em}
+.knowledge-summary li{margin:7px 0}
+.progress-buttons .favorite-toggle{border-color:#b8c8bc;color:#48604f}
+.progress-buttons .favorite-toggle.selected{background:#f6f0df;border-color:#c7b476;color:#735d24}
+:root[data-theme="dark"] .progress-buttons .favorite-toggle{background:#333;color:#ccc;border-color:#555}
+:root[data-theme="dark"] .progress-buttons .favorite-toggle.selected{background:#39352a;color:#e0cc91;border-color:#8e8057}

@@ -90,6 +90,12 @@ Choose B at the root and recursively recompute information gain on the B=1 subse
 
 分支权重取该分支样本数占当前节点样本总数的比例。某子集上已用属性 B 的增益为 0，不应再次选择。
 
+### 知识点与公式总结
+
+- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
+- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
+- 在每个未纯净子节点重算局部比例，再继续分裂；重复样本也计入人数，最后沿树逐行检查预测。
+
 
 ---
 
@@ -170,6 +176,12 @@ Eye 在根节点的信息增益最大。在 Blue 子集内重算增益，按 Hai
 ### 易错点与约定
 
 当前 HW2 网络题 Q3 的第 8、9 条标签是 C3，这个建树题中仍是 C2。
+
+### 知识点与公式总结
+
+- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
+- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
+- 根选定后，只用该分支的数据比较下一属性；可按“类频数→子熵→加权熵→增益→画树”组织计算。
 
 
 ---
@@ -293,6 +305,12 @@ The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. 
 
 对 $r$ 行聚合记录和 $d$ 个属性，可用 $O(rd)$ 时间汇总分裂统计，无须把频数展开成 $N$ 行；额外计数空间按属性取值和类别数计。
 
+### 知识点与公式总结
+
+- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
+- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
+- 每行代表多名样本，样本量由 C1、C2 频数相加；题目只要求首次分裂，子节点写频数与多数类即可停止。
+
 
 ---
 
@@ -352,6 +370,13 @@ $$Gini(D)=1-\sum_c p_c^2,\qquad Gini_{split}(A)=\sum_v\frac{|D_v|}{|D|}Gini(D_v)
 Select the attribute with maximum information gain, recomputed from class proportions at the current node.
 
 选择信息增益最大的属性；在当前节点上根据类别比例重新计算。
+
+### 知识点与公式总结
+
+- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
+- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
+- 增益率 $GainRatio=Gain/SplitInfo$，其中 $SplitInfo=-\sum_v q_v\log_2q_v$、$q_v=|D_v|/|D|$；分母为 0 的分裂不作此比值。
+- Gini 口径为 $1-\sum_c p_c^2$；同样按子集人数加权，选择子 Gini 最小的分裂。选题目要求的一套准则完成比较。
 
 
 ---
@@ -432,3 +457,9 @@ The gains are approximately 0.029223 for income, 0.151836 for student, and 0.048
 ### 计算与内存分析
 
 一次节点分裂可扫描 $n$ 条记录并累计 $d$ 个属性的类别计数，约需 $O(nd)$ 时间。
+
+### 知识点与公式总结
+
+- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
+- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
+- 每个属性值分别统计 (yes,no)，再加权；题目比较 income、student、credit_rating，若另问全部属性的根才把 age 加入比较。

@@ -54,6 +54,12 @@ MAE=2, NMAE=0.5 and RMSE≈2.280351.
 
 MAE=2，NMAE=0.5，RMSE≈2.280351。
 
+### 知识点与公式总结
+
+- 设 $e_i=\hat r_i-r_i$，$MAE=\frac1n\sum_i|e_i|$；先逐项列真实、预测、绝对误差和平方误差。
+- 评分范围归一化：$NMAE=MAE/(r_{max}-r_{min})$；本题范围为 1–5，分母是 4。
+- $RMSE=\sqrt{\frac1n\sum_i e_i^2}$，对大误差更敏感；在相同评分对上应满足 $RMSE\ge MAE$。
+
 
 ---
 
@@ -112,6 +118,12 @@ Spearman ρ=0.4; Kendall τ=1/3. The two discordant pairs both involve i2.
 
 Spearman ρ=0.4，Kendall τ=1/3。两对不一致物品对都涉及 i2。
 
+### 知识点与公式总结
+
+- 无并列时，Spearman 为 $\rho=1-6\sum_i d_i^2/[n(n^2-1)]$，$d_i$ 是同一物品的两个名次之差。
+- Kendall 为 $\tau=(C-D)/\binom n2$，C/D 分别为一致/逆序物品对的数量；逐对比较两个排序的先后。
+- 先对齐同一组物品，再列名次差或全部物品对；有并列时使用相应修正版，不直接套无并列简式。
+
 
 ---
 
@@ -162,3 +174,9 @@ $$F_1=\frac{2PR}{P+R}=\frac{2\times0.75\times0.375}{0.75+0.375}=\boxed{0.5}.$$
 Precision is 0.75, recall is 0.375 and F1 is 0.5.
 
 精确率 0.75，召回率 0.375，F1 为 0.5。
+
+### 知识点与公式总结
+
+- 把“相关”定义为正类、“被推荐”定义为预测正类，先将四个格子对应为 TP、FP、FN、TN。
+- $Precision=TP/(TP+FP)$ 看推荐出的物品；$Recall=TP/(TP+FN)$ 看全部相关物品。
+- $F_1=2PR/(P+R)=2TP/(2TP+FP+FN)$；这三个指标的分母均不包含 TN。

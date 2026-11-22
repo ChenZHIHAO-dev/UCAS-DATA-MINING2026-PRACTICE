@@ -71,6 +71,12 @@ The scanned table has six points despite the statement saying eight. Under the s
 
 题干说八点，扫描表实际只有六点。按规定平局规则，完成每次分配后再更新全部质心。
 
+### 知识点与公式总结
+
+- 分配：$c_i=\arg\min_j\|x_i-\mu_j\|_2^2$；平方距离与普通欧氏距离有相同的大小顺序。
+- 更新：$\mu_j=\frac1{|C_j|}\sum_{x_i\in C_j}x_i$，按各坐标分别求簇均值。
+- 一整轮都用旧中心完成分配，再一起更新；可见原表为六点，逐轮列六点归属并检查分配何时稳定。
+
 
 ---
 
@@ -159,6 +165,12 @@ Assign by squared Euclidean distance and recompute coordinate-wise means. The se
 ### 计算与内存分析
 
 一般 O(tNkd)；此题 N=10,k=3,d=3。
+
+### 知识点与公式总结
+
+- 分配：$c_i=\arg\min_j\|x_i-\mu_j\|_2^2$；平方距离与普通欧氏距离有相同的大小顺序。
+- 更新：$\mu_j=\frac1{|C_j|}\sum_{x_i\in C_j}x_i$，按各坐标分别求簇均值。
+- 三维距离逐坐标差平方后相加；A/B/C 是点名，归属由距离决定。第一轮新中心算出后，再用它们检查下一轮分配。
 
 
 ---
@@ -284,6 +296,12 @@ After the first update the centers are 10/3 and 17. After the second assignment,
 
 直接 Lloyd 实现每轮 $O(Nkd)$，做 $t$ 轮为 $O(tNkd)$；本题 $t=2,N=10,k=2,d=1$。输入占 $O(Nd)$，中心和各簇累加器额外占 $O(kd)$，若保存每点标签还需 $O(N)$。无需存 $N\times k$ 的完整距离表；可逐点比较并保留最小距离。
 
+### 知识点与公式总结
+
+- 分配：$c_i=\arg\min_j\|x_i-\mu_j\|_2^2$；平方距离与普通欧氏距离有相同的大小顺序。
+- 更新：$\mu_j=\frac1{|C_j|}\sum_{x_i\in C_j}x_i$，按各坐标分别求簇均值。
+- 一维两中心可用中点快速分配；题目只做两轮，区分“本轮分配”和“本轮更新”，第二次更新完成后即停止。
+
 
 ---
 
@@ -327,3 +345,9 @@ $K=2$ 取中心 1 和 11，四点到所属中心的距离均为 1，所以 $SSE=
 Use comparable scales, exclude the specified field, and distinguish mean distance from mean squared distance.
 
 采用可比较尺度，排除指定字段，并区分平均距离与平均平方距离。
+
+### 知识点与公式总结
+
+- $SSE=\sum_i\|x_i-\mu_{c_i}\|_2^2$；原作业 mean distortion 为 $\frac1N\sum_i\|x_i-\mu_{c_i}\|_2$，一个平方、一个不平方。
+- 按题目排除到达时间，并处理剩余属性的量纲；对相同缩放的数据，用多个初始化比较不同 K。
+- 误差随 K 增大通常下降，结合肘部、聚类稳定性与业务解释选 K；同时检查迭代上限和容差是否导致过早停止。

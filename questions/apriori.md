@@ -73,6 +73,12 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 
 标准逐层方法通常每层扫库一次。候选数最坏指数级；候选集合与计数器可能先耗尽内存。
 
+### 知识点与公式总结
+
+- 支持计数门槛 $q=\lceil N\,min\_sup\rceil$，本题 $N=10$、$min\_sup=0.5$；支持度为 $supp(X)=count(X)/N$。
+- Apriori 性质：频繁项集的全部子集都频繁。连接 $L_{k-1}$ 后，任何 $(k-1)$ 子集不频繁的候选都在计数前剪去。
+- 按“候选 $C_k$→扫描计数→频繁 $L_k$”逐层列出；停止后合并各层 $L_k$，将剪枝前连接项与实际计数候选区分清楚。
+
 
 ---
 
@@ -138,6 +144,12 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 ### 计算与内存分析
 
 标准逐层方法通常每层扫库一次。候选数最坏指数级；候选集合与计数器可能先耗尽内存。
+
+### 知识点与公式总结
+
+- 支持计数门槛 $q=\lceil N\,min\_sup\rceil$，本题 $N=4$、$min\_sup=0.6$；支持度为 $supp(X)=count(X)/N$。
+- Apriori 性质：频繁项集的全部子集都频繁。连接 $L_{k-1}$ 后，任何 $(k-1)$ 子集不频繁的候选都在计数前剪去。
+- 按“候选 $C_k$→扫描计数→频繁 $L_k$”逐层列出；停止后合并各层 $L_k$，将剪枝前连接项与实际计数候选区分清楚。
 
 
 ---
@@ -205,6 +217,12 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 ### 计算与内存分析
 
 标准逐层方法通常每层扫库一次。候选数最坏指数级；候选集合与计数器可能先耗尽内存。
+
+### 知识点与公式总结
+
+- 支持计数门槛 $q=\lceil N\,min\_sup\rceil$，本题 $N=5$、$min\_sup=0.4$；支持度为 $supp(X)=count(X)/N$。
+- Apriori 性质：频繁项集的全部子集都频繁。连接 $L_{k-1}$ 后，任何 $(k-1)$ 子集不频繁的候选都在计数前剪去。
+- 按“候选 $C_k$→扫描计数→频繁 $L_k$”逐层列出；停止后合并各层 $L_k$，将剪枝前连接项与实际计数候选区分清楚。
 
 
 ---
@@ -297,6 +315,12 @@ The minimum count is 2. L1 has 5 itemsets, L2 has 6, and L3 contains {I1,I2,I3} 
 
 第 k 轮朴素计数可对每个事务测试全部 $|C_k|$ 候选，约 $O(N|C_k|k)$；需保存候选及计数，约 $O(|C_k|k)$。本题只需三次完整计数扫描。
 
+### 知识点与公式总结
+
+- 支持计数门槛 $q=\lceil N\,min\_sup\rceil$，本题 $N=9$、$min\_sup=0.2$；支持度为 $supp(X)=count(X)/N$。
+- Apriori 性质：频繁项集的全部子集都频繁。连接 $L_{k-1}$ 后，任何 $(k-1)$ 子集不频繁的候选都在计数前剪去。
+- 按“候选 $C_k$→扫描计数→频繁 $L_k$”逐层列出；停止后合并各层 $L_k$，将剪枝前连接项与实际计数候选区分清楚。
+
 
 ---
 
@@ -376,3 +400,9 @@ After the first full pass, all five singletons are confirmed frequent. Pairs 12,
 ### 计算与内存分析
 
 块长控制检查频率和候选的同时驻留量。需保存每个活动候选的计数、状态、起始检查点与已扫描长度；减少全库遍数通常以更多同时活动候选为代价。
+
+### 知识点与公式总结
+
+- DIC 仍使用全库门槛 $q=\lceil9\times0.2\rceil=2$，每处理 3 笔事务到达一个检查点。
+- 圆/方表示未达/已达门槛，虚/实线表示尚未/已经计满全库；子集都为方形时，才在检查点启动更长候选。
+- 每个候选从自己的启动位置计满一圈；第一遍末的部分计数不是全库计数，未达门槛但尚未计满一圈的候选仍需继续统计。

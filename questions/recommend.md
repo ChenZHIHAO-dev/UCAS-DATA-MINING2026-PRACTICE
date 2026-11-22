@@ -76,6 +76,12 @@ Use only Product1, Product3 and Product4 to compare users. State how neighbor ra
 
 问号不填0参与距离。原题只指定 Euclidean 邻居，未唯一规定评分聚合方法。
 
+### 知识点与公式总结
+
+- 只在共同已评分物品上算 $d(u,v)=\sqrt{\sum_i(r_{ui}-r_{vi})^2}$；距离越小越近，取题目要求的 Top-2。
+- 题给反距离权重为 $s=1/d$；原评分预测为 $\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$，权重需归一化。
+- 原题未指定评分聚合式，写清采用原评分加权还是均值修正；后者先减邻居均值、加权后再加目标均值。
+
 
 ---
 
@@ -142,6 +148,12 @@ The two nearest students are 3 and 4. Equal inverse-distance weights give 2 for 
 ### 易错点与约定
 
 Student2 距离 √14≈3.741657，应按距离排序后选择最近两人；不要用缺失列 item2/item5 求相似度。
+
+### 知识点与公式总结
+
+- 只在共同已评分物品上算 $d(u,v)=\sqrt{\sum_i(r_{ui}-r_{vi})^2}$；距离越小越近，取题目要求的 Top-2。
+- 题给反距离权重为 $s=1/d$；原评分预测为 $\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$，权重需归一化。
+- 对 item2、item5 分别用同一组邻居预测，再选预测更高的一项；共同评分列用于距离，候选列用于最后的预测。
 
 
 ---
@@ -275,6 +287,12 @@ The two cosine neighbors are U1 and U3. With the specified mean-centered formula
 
 对 $M$ 个候选用户、最多 $d$ 个共同特征直接比较为 $O(Md)$；Top-$k$ 可用 $O(M\log k)$ 时间维护，本题 $k=2$ 为线性。存下全部相似度需 $O(M)$；逐个比较、只留前 $k$ 位则额外 $O(k+d)$ 工作空间。原评分矩阵按稀疏格式占 $O(nnz)$，其中 nnz 为已知评分数，不需要为本题生成 $M^2$ 相似度矩阵。
 
+### 知识点与公式总结
+
+- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
+- 均值修正预测 $\hat r_{ui}=\bar r_u+\frac{\sum_v s_{uv}(r_{vi}-\bar r_v)}{\sum_v s_{uv}}$；每人均值使用其全部已观察评分。
+- 相似度计算不提前舍入；先列邻居对各候选的“评分减均值”，分别代入，再按最高预测评分给出 Top-1。
+
 
 ---
 
@@ -328,6 +346,12 @@ $$\widehat r_D=\frac{1\times1+s\times5}{1+s}\approx\boxed{2.888544}.$$
 Select V and Z by cosine similarity, then normalize the weighted rating sum.
 
 按余弦选择 V、Z，再对加权评分和归一化。
+
+### 知识点与公式总结
+
+- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
+- 本题按原评分加权：$\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$；对 C、D 分别算分子，分母使用相同邻居权重和。
+- 余弦比较方向，向量长度成比例时可得相似度 1；先选邻居，再比较两个候选的预测分数。
 
 
 ---
@@ -397,3 +421,9 @@ $$\widehat r_{Jane,Aladdin}=\frac43+\frac{s_1\times1.25+s_2\times0.75}{s_1+s_2}\
 Use cosine weights with the stated mean-centered prediction rule; that does not turn the weights into Pearson correlations.
 
 使用余弦权重及规定的去均值预测规则；这些权重仍是余弦相似度。
+
+### 知识点与公式总结
+
+- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
+- 均值修正预测 $\hat r_{ui}=\bar r_u+\frac{\sum_v s_{uv}(r_{vi}-\bar r_v)}{\sum_v s_{uv}}$；每人均值使用其全部已观察评分。
+- 0 是有效评分，参与向量和均值；问号才表示缺失。计算 Joe、Jorge 的 Aladdin 偏差，加权后加回 Jane 均值。

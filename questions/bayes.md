@@ -33,33 +33,39 @@ Use Naïve Bayesian Classifier to predict the class of (A=0,B=1,C=0).
 
 ### 逐步解答
 
-#### 1. 先数先验，再数类内比例
+#### 本题公式
 
-对待预测样本 $x=(x_1,\ldots,x_d)$，朴素贝叶斯采用“给定类别后，各属性条件独立”的假设：
+对 $x=(A=0,B=1,C=0)$，类条件独立假设给出
 
-$$score(C_c)=P(C_c)\prod_{j=1}^dP(x_j\mid C_c).$$
+$$s_c=P(C_c)P(A=0\mid C_c)P(B=1\mid C_c)P(C=0\mid C_c).$$
 
-其中 $P(C_c)=n_c/N$，$P(x_j\mid C_c)$ 的分母是该类的样本数。分类选择分数最大者；要求后验概率时再归一化：
+先验 $P(C_c)$ 的分母是总人数 10；每个条件概率的分母是对应类别人数 5。选择分数最大者；若需要后验，再计算 $P(C_c\mid x)=s_c/(s_1+s_2)$。
 
-$$P(C_c\mid x)=\frac{score(C_c)}{\sum_k score(C_k)}.$$
+#### 1. 逐项计数
 
-#### 2. 从原表填写条件概率
+| 类别 | 先验 | $P(A=0\mid C_c)$ | $P(B=1\mid C_c)$ | $P(C=0\mid C_c)$ |
+| --- | --- | --- | --- | --- |
+| C1 | $5/10$ | $2/5$ | $1/5$ | $1/5$ |
+| C2 | $5/10$ | $3/5$ | $1/5$ | $0/5$ |
 
-| Class | Prior | P(A=0\ | class) | P(B=1\ | class) | P(C=0\ | class) | Unnormalized score |
-| --- | --- | --- | --- | --- | --- |
-| C1 | 5/10 | 2/5 | 1/5 | 1/5 | 0.008 |
-| C2 | 5/10 | 3/5 | 1/5 | 0/5 | 0 |
+#### 2. 代入分数并分类
 
-后验：C1=1, C2=0。预测 C1。
+$$\begin{aligned}
+s_1&=\frac5{10}\frac25\frac15\frac15=0.008,\\
+s_2&=\frac5{10}\frac35\frac15\frac05=0.
+\end{aligned}$$
 
-先计算未归一化分数 $P(class)\prod_jP(x_j|class)$；需要后验概率时，再除以各类分数之和。C2 的 C=0 没出现，未平滑分数为 0。若使用二元属性 Laplace +1 平滑：C1 分数 $(1/2)(3/7)(2/7)(2/7)=6/343$；C2 为 $(1/2)(4/7)(2/7)(1/7)=4/343$，归一后 C1=.6、C2=.4，分类不变。
+$$P(C_1\mid x)=\frac{0.008}{0.008+0}=1,\qquad P(C_2\mid x)=0.$$
 
+#### 最终答案
 
-#### 3. 代入得到类别
+预测为 **C1**。C2 类中没有 C=0 的样本，导致未平滑的乘积为 0；本题按频数估计计算。
 
-$$score(C_1)=\frac5{10}\frac25\frac15\frac15=0.008,\qquad score(C_2)=\frac5{10}\frac35\frac15\frac05=0.$$
+若另行采用二元属性的 Laplace +1 平滑，每项概率为“类内对应计数加 1，类人数加 2”。此时两类分数分别为 $6/343$、$4/343$，后验为 0.6、0.4，仍预测 C1。
 
-归一化后 $P(C_1\mid x)=0.008/(0.008+0)=1$，所以预测 **C1**。零分数来自 C2 类中没有 C=0 的训练样本；表中结果采用题目未要求额外平滑的频数估计。
+#### 本题关键点
+
+先数类别总人数，再分别在各类内部数属性取值；只比较分数即可分类，要求概率时才归一化。
 
 
 ### English answer pattern
@@ -71,6 +77,12 @@ Estimate probabilities within each class. The unsmoothed C2 score is zero becaus
 ### 易错点与约定
 
 Laplace 的每个类条件分母为该类样本数 + 属性可取值数，，对应给每个可能取值各增加一次计数。
+
+### 知识点与公式总结
+
+- 朴素贝叶斯分数 $s_c=P(C_c)\prod_jP(x_j\mid C_c)$；先验按全体人数计算，条件概率按对应类别人数计算。
+- 分类取 $\arg\max_c s_c$；需要后验时再归一化：$P(C_c\mid x)=s_c/\sum_k s_k$。
+- 未平滑乘积中，一个条件计数为 0 就使该类分数为 0；若采用 Laplace 平滑，明确属性取值个数后统一加到各类中。
 
 
 ---
@@ -91,35 +103,35 @@ Using the Q1 training table, what would a naïve Bayesian classifier classify Z=
 
 ### 逐步解答
 
-#### 1. 先数先验，再数类内比例
+#### 本题公式
 
-对待预测样本 $x=(x_1,\ldots,x_d)$，朴素贝叶斯采用“给定类别后，各属性条件独立”的假设：
+对 $Z=(Short,Blond,Brown)$，先计算各类联合分数，再比较：
 
-$$score(C_c)=P(C_c)\prod_{j=1}^dP(x_j\mid C_c).$$
+$$s_c=P(C_c)P(Short\mid C_c)P(Blond\mid C_c)P(Brown\mid C_c).$$
 
-其中 $P(C_c)=n_c/N$，$P(x_j\mid C_c)$ 的分母是该类的样本数。分类选择分数最大者；要求后验概率时再归一化：
+若要求后验概率，使用 $P(C_c\mid Z)=s_c/(s_1+s_2)$。下面沿用 Q1 的九个训练样本；未知样本 Z 只用于预测。
 
-$$P(C_c\mid x)=\frac{score(C_c)}{\sum_k score(C_k)}.$$
+#### 1. 先验和类内条件概率
 
-#### 2. 从原表填写条件概率
+| 类别 | 先验 | $P(Short\mid C_c)$ | $P(Blond\mid C_c)$ | $P(Brown\mid C_c)$ |
+| --- | --- | --- | --- | --- |
+| C1 | $5/9$ | $2/5$ | $2/5$ | $3/5$ |
+| C2 | $4/9$ | $1/4$ | $2/4$ | $0/4$ |
 
-| Class | Prior | P(Short\ | class) | P(Blond\ | class) | P(Brown\ | class) | Unnormalized score |
-| --- | --- | --- | --- | --- | --- |
-| C1 | 5/9 | 2/5 | 2/5 | 3/5 | 0.053333 |
-| C2 | 4/9 | 1/4 | 2/4 | 0/4 | 0 |
+例如 C1 类共五人，其中两人 Short、两人 Blond、三人 Brown；分母均取 5。
 
-后验：C1=1, C2=0。预测 C1。
+#### 2. 相乘并归一化
 
-原始数据中 C2 从未出现 Brown，所以未平滑 C2 分数为零。不要把未知样本先放入训练表；也不要因词的大小写不同就当不同类别，本题 blond 与 Blond 同义。
+$$\begin{aligned}
+s_1&=\frac59\frac25\frac25\frac35=\frac4{75}\approx0.053333,\\
+s_2&=\frac49\frac14\frac24\frac04=0.
+\end{aligned}$$
 
+$$P(C_1\mid Z)=\frac{4/75}{4/75+0}=1,\qquad P(C_2\mid Z)=0.$$
 
-#### 3. 展开分数与后验
+#### 最终答案
 
-$$score(C_1)=\frac59\frac25\frac25\frac35=\frac4{75}\approx0.053333.$$
-
-$$score(C_2)=\frac49\frac14\frac24\frac04=0.$$
-
-所以 $P(C_1\mid Z)=1$、$P(C_2\mid Z)=0$，预测 **C1**。例如分子“2”来自 C1 类中两名 Short；分母“5”来自 C1 类总共五名样本。
+预测为 **C1**。C2 中没有 Brown，故未平滑分数为 0。题目未指定额外平滑时，按上述频数估计完成分类。
 
 
 ### English answer pattern
@@ -127,6 +139,12 @@ $$score(C_2)=\frac49\frac14\frac24\frac04=0.$$
 The unsmoothed classifier predicts C1. Multiplying class-conditional probabilities assumes conditional independence given the class.
 
 未平滑分类器预测 C1。相乘类别条件概率时，假设给定类别后各属性条件独立。
+
+### 知识点与公式总结
+
+- 朴素贝叶斯分数 $s_c=P(C_c)\prod_jP(x_j\mid C_c)$；先验按全体人数计算，条件概率按对应类别人数计算。
+- 分类取 $\arg\max_c s_c$；需要后验时再归一化：$P(C_c\mid x)=s_c/\sum_k s_k$。
+- 从 Q1 训练表分别统计 Short、Blond、Brown 的类内人数；待预测样本只用于代入，不加入训练计数。
 
 
 ---
@@ -188,6 +206,12 @@ Bayes gives P(G|S)=23/83. Under conditional independence given student status, P
 ### 易错点与约定
 
 P(S|G) 在研究生中数吸烟者，P(G|S) 在吸烟者中数研究生；第三问的独立性应明确是给定类别后的条件独立。
+
+### 知识点与公式总结
+
+- 全概率先求分母：$P(S)=\sum_cP(S\mid c)P(c)$；贝叶斯公式 $P(G\mid S)=P(S\mid G)P(G)/P(S)$。
+- 给定类别后独立时，吸烟且住校的分数为 $P(c)P(S\mid c)P(D\mid c)$，再除以两类分数之和。
+- 区分“随机学生”的先验与“已知吸烟/住校”的后验；增加条件后重新计算，不直接沿用上一问的类别比例。
 
 
 ---
@@ -261,3 +285,9 @@ $$P_{NB}(yes\mid X)=\frac{0.0282187}{0.0282187+0.00685714}=0.804505.$$
 The unnormalized yes and no scores are 0.0282187 and 0.00685714. The normalized yes probability is approximately 0.804505, so predict buys_computer=yes.
 
 yes 与 no 的未归一化分数分别为 0.0282187 和 0.00685714。归一化后的 yes 概率约为 0.804505，因此预测 buys_computer=yes。
+
+### 知识点与公式总结
+
+- 朴素贝叶斯分数 $s_c=P(C_c)\prod_jP(x_j\mid C_c)$；先验按全体人数计算，条件概率按对应类别人数计算。
+- 分类取 $\arg\max_c s_c$；需要后验时再归一化：$P(C_c\mid x)=s_c/\sum_k s_k$。
+- 四个属性分别在 yes/no 类内计数，相乘后比较；共同分母 P(X) 对两个类别相同，分类时可先省略。
