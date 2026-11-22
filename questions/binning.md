@@ -12,6 +12,20 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 分箱：均值、边界与等宽
+
+先排序；等深每箱放 $b$ 个观测，等宽重新按数值区间划分。
+
+箱 $B$ 中有 $|B|$ 个观测，均值为 $\bar x_B=\sum_{x\in B}x/|B|$；均值平滑把同箱每个值替换为 $\bar x_B$。
+
+边界平滑取同箱实际最小、最大值 $l,u$：
+
+$$\widetilde x=\begin{cases}l,&x-l\le u-x,\\u,&x-l>u-x.\end{cases}$$
+
+上式采用距离平局取较小端点；题目另有规定时按题意执行。
+
+等宽的 $k$ 个箱使用宽度 $w=(x_{\max}-x_{\min})/k$；通常左闭右开，最后一箱包含最大值。空箱没有替换结果。
+
 ### 原文
 
 Use smoothing by bin means on the age data with bin depth 6. Then partition age into 3 bins by equal-width partitioning and smooth each bin by bin boundaries.
@@ -101,6 +115,12 @@ The equal-depth bin means are $30,51,175/3$. The three equal-width intervals are
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 等深分箱与均值平滑
+
+先排序；箱深 $b$ 表示每箱观测数，重复值分别计数。
+
+箱 $B$ 中有 $|B|$ 个观测，均值为 $\bar x_B=\sum_{x\in B}x/|B|$；均值平滑把同箱每个值替换为 $\bar x_B$。
+
 ### 原文
 
 Use smoothing by bin means to smooth the age data, using a bin depth of 6.
@@ -171,6 +191,18 @@ O(N log N) 排序加 O(N) 统计；保留原顺序索引 O(N) 空间。
 来源：当前 HW1 · Q4(a-b)
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 等深分箱：中位数与边界
+
+先排序，每箱按题给深度放 $b$ 个观测。
+
+中位数平滑：将箱内 $b$ 个值排序，奇数 $b$ 取第 $(b+1)/2$ 项；偶数 $b$ 取第 $b/2,b/2+1$ 项平均，再替换该箱所有值。
+
+边界平滑取同箱实际最小、最大值 $l,u$：
+
+$$\widetilde x=\begin{cases}l,&x-l\le u-x,\\u,&x-l>u-x.\end{cases}$$
+
+上式采用距离平局取较小端点；题目另有规定时按题意执行。
 
 ### 英文题面（由中文原题译写）
 
@@ -259,6 +291,22 @@ The four bin medians are $17,20,23,26$. Boundary smoothing uses the nearest obse
 来源：往届 HW1（hxd） · Q4(a-c) · PDF p.1
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 等深中位数、边界与等宽均值
+
+先排序，等深按每箱观测数划分。
+
+中位数平滑：将箱内 $b$ 个值排序，奇数 $b$ 取第 $(b+1)/2$ 项；偶数 $b$ 取第 $b/2,b/2+1$ 项平均，再替换该箱所有值。
+
+边界平滑取同箱实际最小、最大值 $l,u$：
+
+$$\widetilde x=\begin{cases}l,&x-l\le u-x,\\u,&x-l>u-x.\end{cases}$$
+
+上式采用距离平局取较小端点；题目另有规定时按题意执行。
+
+等宽的 $k$ 个箱使用宽度 $w=(x_{\max}-x_{\min})/k$；通常左闭右开，最后一箱包含最大值。空箱没有替换结果。
+
+箱 $B$ 中有 $|B|$ 个观测，均值为 $\bar x_B=\sum_{x\in B}x/|B|$；均值平滑把同箱每个值替换为 $\bar x_B$。
 
 ### 英文题面（由中文原题译写）
 
@@ -357,6 +405,22 @@ The equal-depth bin medians are $25,44,52.5,55.5$. For four equal-width bins, th
 - 边界距离平局取较小值；四分位数采用上下半组各自中位数。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · 边界平滑与原数据箱线图
+
+边界平滑取同箱实际最小、最大值 $l,u$：
+
+$$\widetilde x=\begin{cases}l,&x-l\le u-x,\\u,&x-l>u-x.\end{cases}$$
+
+上式采用距离平局取较小端点；题目另有规定时按题意执行。
+
+小问 (a) 的平滑序列单独作答；小问 (b) 按题意使用原始观测计算下列统计。
+
+排序后用上下半组各自的中位数求 $Q_1,Q_3$；奇数个观测先排除总体中位数再分两半。五数概括依次为 min、$Q_1$、median（$Q_2$）、$Q_3$、max。
+
+$$IQR=Q_3-Q_1,\qquad LF=Q_1-1.5IQR,\quad UF=Q_3+1.5IQR.$$
+
+箱体从 $Q_1$ 到 $Q_3$，中位线在 $Q_2$；须取 $[LF,UF]$ 内最小、最大的**实际观测**，界限外的观测单独画点。
 
 ### 原文
 
@@ -461,6 +525,20 @@ The smoothed sequence is $(1,1,3,4,4,20)$. For the original data, the five-numbe
 来源：当前完整七讲课件 · Preprocessing.pdf · Exercise 1(a–c) · PDF p.36
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · 分箱：均值、边界与等宽
+
+先排序；等深每箱放 $b$ 个观测，等宽重新按数值区间划分。
+
+箱 $B$ 中有 $|B|$ 个观测，均值为 $\bar x_B=\sum_{x\in B}x/|B|$；均值平滑把同箱每个值替换为 $\bar x_B$。
+
+边界平滑取同箱实际最小、最大值 $l,u$：
+
+$$\widetilde x=\begin{cases}l,&x-l\le u-x,\\u,&x-l>u-x.\end{cases}$$
+
+上式采用距离平局取较小端点；题目另有规定时按题意执行。
+
+等宽的 $k$ 个箱使用宽度 $w=(x_{\max}-x_{\min})/k$；通常左闭右开，最后一箱包含最大值。空箱没有替换结果。
 
 ### 原文
 

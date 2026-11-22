@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 混合属性的不相似度
+
+名义属性相同记 0，不同记 1；有序属性的秩 $r$ 归一化为 $z=(r-1)/(M-1)$，$M$ 为秩级数。比例属性按题意先取对数，再做范围缩放。
+
+$$z_i=\frac{\log x_i-\log x_{\min}}{\log x_{\max}-\log x_{\min}},\quad d(i,j)=\frac{\sum_{a\in J_{ij}}d_a(i,j)}{|J_{ij}|}.$$
+
+$J_{ij}$ 是该对象对可比较的属性集合；数值属性使用归一化值的绝对差。
+
 ### 原文
 
 Compute the dissimilarity matrix for nominal Test-1, ordinal Test-2 and ratio Test-3.
@@ -89,6 +97,14 @@ N 个对象、d 个属性的全对矩阵 O(N²d) 时间、O(N²) 存储。
 来源：当前完整七讲课件 · classification.pdf · Exercise 1 · PDF p.59
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · kNN：距离排序与多数投票
+
+对查询点 $x$，一维距离为 $d(x,x_i)=|x-x_i|$；多维欧氏距离为 $\sqrt{\sum_r(x_r-x_{ir})^2}$。
+
+$$\widehat y=\arg\max_c\sum_{i\in N_k(x)}\mathbf1[y_i=c].$$
+
+$N_k(x)$ 为距离最小的 k 个邻居，指示量在标签为 c 时等于 1。距离平局按声明规则处理，再列各类票数。
 
 ### 原文
 

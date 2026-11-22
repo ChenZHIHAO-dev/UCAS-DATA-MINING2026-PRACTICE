@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 相似度表的 Single-Link 合并
+
+对相似度，先合并最大相似度的对象或簇：
+
+$$s(A,B)=\max_{x\in A,y\in B}s(x,y),\quad s(A\cup B,C)=\max\{s(A,C),s(B,C)\}.$$
+
+若树状图以距离为高度，可用 $d=1-s$；每合并一次更新其到其他簇的值。
+
 ### 原文
 
 Use the following similarity matrix to perform AGNES clustering. Draw a dendrogram showing the merge order. Numbers indicate similarities.
@@ -88,6 +96,14 @@ Merge the largest similarity. With single linkage, the merges occur at .98, .85,
 来源：整理者补充变式 · 依据 clustering pp.39–43
 
 状态：完整；形式：补充变式。
+
+### 本题公式 · Single-Link 与 Complete-Link
+
+对距离矩阵，两种方法都从最小跨簇距离开始合并：
+
+$$d_{single}(A,B)=\min_{x\in A,y\in B}d(x,y),\qquad d_{complete}(A,B)=\max_{x\in A,y\in B}d(x,y).$$
+
+每次合并后按相同规则更新距离；树的横线高度等于该次所采用的合并距离。
 
 ### 原文
 

@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 五数概括、离群界限与箱线图
+
+排序后用上下半组各自的中位数求 $Q_1,Q_3$；奇数个观测先排除总体中位数再分两半。五数概括依次为 min、$Q_1$、median（$Q_2$）、$Q_3$、max。
+
+$$IQR=Q_3-Q_1,\qquad LF=Q_1-1.5IQR,\quad UF=Q_3+1.5IQR.$$
+
+箱体从 $Q_1$ 到 $Q_3$，中位线在 $Q_2$；须取 $[LF,UF]$ 内最小、最大的**实际观测**，界限外的观测单独画点。
+
 ### 原文
 
 Determine outliers in the age data by five-number summary.
@@ -95,6 +103,26 @@ The five-number summary is $(13,20.5,27.5,35.5,70)$. With $IQR=15$, the fences a
 来源：当前 HW1 · Q3(a,b,d,e)
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 描述统计、箱线图与相关系数
+
+设 $n$ 个观测为 $x_i$，均值 $\bar x=\sum_i x_i/n$，离均差平方和 $S_{xx}=\sum_i(x_i-\bar x)^2$。
+
+$$\sigma^2=S_{xx}/n,\quad s^2=S_{xx}/(n-1),\qquad \sigma=\sqrt{\sigma^2},\quad s=\sqrt{s^2}.$$
+
+总体方差用分母 $n$，样本方差用 $n-1$；标准差取对应平方根。
+
+排序后用上下半组各自的中位数求 $Q_1,Q_3$；奇数个观测先排除总体中位数再分两半。五数概括依次为 min、$Q_1$、median（$Q_2$）、$Q_3$、max。
+
+$$IQR=Q_3-Q_1,\qquad LF=Q_1-1.5IQR,\quad UF=Q_3+1.5IQR.$$
+
+箱体从 $Q_1$ 到 $Q_3$，中位线在 $Q_2$；须取 $[LF,UF]$ 内最小、最大的**实际观测**，界限外的观测单独画点。
+
+两列保留原始配对；$S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y)$，$S_{yy}=\sum_i(y_i-\bar y)^2$。
+
+$$r=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}.$$
+
+散点图每个点是一条原始 $(x_i,y_i)$ 记录。
 
 ### 原文
 
@@ -214,6 +242,28 @@ A 的均值和中位数均为 $21.5$。总体标准差为 $3.217142$，样本标
 来源：往届 HW1（hxd） · Q3(a-e) · PDF p.1
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 统计量、z 分数与相关系数
+
+设 $n$ 个观测为 $x_i$，均值 $\bar x=\sum_i x_i/n$，离均差平方和 $S_{xx}=\sum_i(x_i-\bar x)^2$。
+
+$$\sigma^2=S_{xx}/n,\quad s^2=S_{xx}/(n-1),\qquad \sigma=\sqrt{\sigma^2},\quad s=\sqrt{s^2}.$$
+
+总体方差用分母 $n$，样本方差用 $n-1$；标准差取对应平方根。
+
+每列分别标准化：$z_i=(x_i-\bar x)/\mathrm{SD}$，其中 SD 为题目采用口径下的标准差。
+
+排序后用上下半组各自的中位数求 $Q_1,Q_3$；奇数个观测先排除总体中位数再分两半。五数概括依次为 min、$Q_1$、median（$Q_2$）、$Q_3$、max。
+
+$$IQR=Q_3-Q_1,\qquad LF=Q_1-1.5IQR,\quad UF=Q_3+1.5IQR.$$
+
+箱体从 $Q_1$ 到 $Q_3$，中位线在 $Q_2$；须取 $[LF,UF]$ 内最小、最大的**实际观测**，界限外的观测单独画点。
+
+两列保留原始配对；$S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y)$，$S_{yy}=\sum_i(y_i-\bar y)^2$。
+
+$$r=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}.$$
+
+散点图每个点是一条原始 $(x_i,y_i)$ 记录。
 
 ### 原文
 
@@ -373,6 +423,16 @@ The means of age and body fat are $44.125$ and $28.05625$. Using population stan
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
 
+### 本题公式 · 均值、中位数、众数与箱线图
+
+均值 $\bar x=\sum_i x_i/n$。排序后，奇数个观测的中位数取中间一项，偶数个取中间两项平均；众数是出现次数最多的值。
+
+排序后用上下半组各自的中位数求 $Q_1,Q_3$；奇数个观测先排除总体中位数再分两半。五数概括依次为 min、$Q_1$、median（$Q_2$）、$Q_3$、max。
+
+$$IQR=Q_3-Q_1,\qquad LF=Q_1-1.5IQR,\quad UF=Q_3+1.5IQR.$$
+
+箱体从 $Q_1$ 到 $Q_3$，中位线在 $Q_2$；须取 $[LF,UF]$ 内最小、最大的**实际观测**，界限外的观测单独画点。
+
 ### 原文
 
 The values of data tuples are 13, 15, 16, 16, 19, 20, 20, 21.
@@ -465,6 +525,14 @@ The mean and median are both 17.5. The modes are 16 and 20. The five-number summ
 来源：当前完整七讲课件 · Preprocessing.pdf · Chi-Square Calculation: An Example；p49 原表与结论，p48 检验公式 · PDF p.49
 
 状态：完整（课件原表；显著性条件与计算小问为复习补充）；形式：课件算例 / 计算。
+
+### 本题公式 · 列联表卡方独立性检验
+
+设 $O_{ij}$ 为观察计数，行、列总数为 $R_i,C_j$，总数 $N$；$r,c$ 是行、列类别数。
+
+$$E_{ij}=\frac{R_iC_j}{N},\quad \chi^2=\sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}},\quad df=(r-1)(c-1).$$
+
+逐格算期望与贡献后求和，再与给定显著性水平下的临界值比较。
 
 ### 原文
 

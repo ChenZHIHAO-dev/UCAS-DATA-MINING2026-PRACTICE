@@ -12,6 +12,14 @@
 
 状态：完整；形式：算法设计 / 证明。
 
+### 本题公式 · 分布式支持计数与全局规则
+
+第 p 站有 $N_p$ 笔事务、候选计数 $n_p(X)$，支持度比例阈值为 s：
+
+$$N=\sum_pN_p,\quad q_p=\lceil sN_p\rceil,\quad q=\lceil sN\rceil,\quad n(X)=\sum_p n_p(X).$$
+
+全局支持度为 $n(X\cup Y)/N$，全局置信度为 $n(X\cup Y)/n(X)$；先收集局部频繁候选并集，再以各站精确计数求和检验。
+
 ### 原文
 
 A large store has transaction databases at four locations. Propose an efficient algorithm to mine global association rules without shipping all data to one site or causing excessive network communication.
@@ -84,6 +92,14 @@ Union all locally frequent itemsets, count that union globally, then generate ru
 
 状态：完整；形式：算法设计 / 伪代码。
 
+### 本题公式 · 分布式中心由和与点数合并
+
+第 p 站第 j 簇的向量和为 $S_{pj}$，点数为 $n_{pj}$：
+
+$$\mu_j^{new}=\frac{\sum_pS_{pj}}{\sum_pn_{pj}}=\frac{\sum_pn_{pj}\mu_{pj}}{\sum_pn_{pj}}.$$
+
+全部站点使用同一轮旧中心分配；更新只需传每簇的和、点数。局部均值按各自点数加权。
+
 ### 原文
 
 A large database is distributed among four locations. Propose an efficient K-means algorithm in pseudocode without moving all data to one site or excessive network overhead.
@@ -151,6 +167,14 @@ t轮：站点p计算 O(tNp kd)，每轮总通信 O(Pkd) 个数；每站工作区
 来源：2020 年扫描卷 · Q7 / 15 points · PDF p.3
 
 状态：完整；形式：算法设计 / 伪代码。
+
+### 本题公式 · 在线均值与簇摘要
+
+对已有 n 个点、中心为 $\mu$ 的簇加入新点 x：
+
+$$n'=n+1,\quad LS'=LS+x,\quad SS'=SS+x\odot x,\quad \mu'=LS'/n'.$$
+
+其中 $x\odot x$ 表示逐坐标平方；$SSE=\sum_rSS_r-\|LS\|^2/n$。有衰减时先按时间因子同时缩放 n、LS、SS，再加入新点。
 
 ### 原文
 
@@ -237,6 +261,14 @@ Maintain bounded cluster summaries, update each incoming point once, and retain 
 - 将输入输出、阈值和伪代码/正确性/通信量的答题范围写完整；不需要补一个任意事务大表。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · 分布式支持计数与全局规则
+
+第 p 站有 $N_p$ 笔事务、候选计数 $n_p(X)$，支持度比例阈值为 s：
+
+$$N=\sum_pN_p,\quad q_p=\lceil sN_p\rceil,\quad q=\lceil sN\rceil,\quad n(X)=\sum_p n_p(X).$$
+
+全局支持度为 $n(X\cup Y)/N$，全局置信度为 $n(X\cup Y)/n(X)$；先收集局部频繁候选并集，再以各站精确计数求和检验。
 
 ### 原文
 

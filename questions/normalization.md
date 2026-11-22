@@ -12,6 +12,16 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · Min-max 与 z-score
+
+$x$ 为待转换值，原极值为 $x_{\min},x_{\max}$，目标区间为 $[a,b]$：
+
+$$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
+
+目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
+
+Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
+
 ### 原文
 
 Use min-max normalization to transform age 49 to [0,1]. Use z-score normalization to transform body fat 41.2, where the standard deviation of body fat is 9.25.
@@ -93,6 +103,14 @@ Min-max uses the observed minimum and maximum. Z-score uses the mean and the sta
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · Min-max 归一化
+
+$x$ 为待转换值，原极值为 $x_{\min},x_{\max}$，目标区间为 $[a,b]$：
+
+$$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
+
+目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
+
 ### 原文
 
 Use min-max normalization to normalize 33. Use the age data of Question 2.
@@ -136,6 +154,18 @@ Using the original data range gives 20/57, approximately 0.350877.
 来源：2017 年扫描卷 · Q2 / 6 points · PDF p.1
 
 状态：完整；形式：历年简答。
+
+### 本题公式 · 三种归一化的公式
+
+$x$ 为待转换值，原极值为 $x_{\min},x_{\max}$，目标区间为 $[a,b]$：
+
+$$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
+
+目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
+
+Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
+
+Decimal scaling：$x'=x/10^j$，取使全部 $|x'|<1$ 的最小非负整数 $j$。
 
 ### 原文
 
@@ -201,6 +231,14 @@ Normalization rescales numeric attributes. Min-max controls a range, z-score cen
 来源：当前 HW1 · Q3(c)
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · Min-max 归一化
+
+$x$ 为待转换值，原极值为 $x_{\min},x_{\max}$，目标区间为 $[a,b]$：
+
+$$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
+
+目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
 
 ### 原文
 
@@ -280,6 +318,16 @@ Use z=(x−16)/11. Keep the monthly order when reporting the normalized sequence
 来源：当前完整七讲课件 · Preprocessing.pdf · Exercise 1(a–b) · PDF p.40
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · Min-max 与 z-score
+
+$x$ 为待转换值，原极值为 $x_{\min},x_{\max}$，目标区间为 $[a,b]$：
+
+$$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
+
+目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
+
+Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
 
 ### 原文
 

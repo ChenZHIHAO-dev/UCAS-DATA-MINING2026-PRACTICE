@@ -12,6 +12,12 @@
 
 状态：完整；形式：补充变式。
 
+### 本题公式 · DBSCAN：邻域计数与点类型
+
+邻域包含点本身：$N_\varepsilon(p)=\{q:d(p,q)\le\varepsilon\}$。核心点满足 $|N_\varepsilon(p)|\ge MinPts$。
+
+自身点数不足、但落在核心点邻域中的为边界点；从核心点扩展并吸收边界点，最后仍未入簇的为噪声。逐点列邻域与计数再给标签。
+
 ### 原文
 
 Run DBSCAN on {0,0.1,0.2,1,1.1,3}, ε=0.15, MinPts=3, including each point itself in its neighborhood. Label core, border and noise points.
@@ -96,6 +102,16 @@ Including each point itself, only $0.1$ has at least three neighbors and is core
 来源：当前完整七讲课件 · clustering.pdf · CF 向量例图与 pp.46–49 方法说明 · PDF p.45
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · BIRCH 的 CF、半径和直径
+
+$CF=(N,LS,SS)$，$N$ 为点数，$LS=\sum_iX_i$；SS 是逐坐标平方和，$S_2$ 是 SS 分量总和。
+
+$$\mu=LS/N,\qquad R^2=S_2/N-\|\mu\|^2.$$
+
+$$D^2=\frac{2NS_2-2\|LS\|^2}{N(N-1)}\quad(N>1).$$
+
+对 $R^2,D^2$ 分别开方得到均方根半径与均方根点对直径。互不重叠子簇的 N、LS、SS 逐分量相加。
 
 ### 原文
 
@@ -197,6 +213,12 @@ $SS=(54,190)$ 按坐标保存；代入范数公式使用其分量之和 $S_2=244
 
 状态：完整；形式：课件可考简答。
 
+### 本题公式 · STING：格数与计算量
+
+设 N 为输入点数、K 为底层网格数；固定维数和层数时，构建统计约 $O(N)$，已有统计的查询约 $O(K)$。
+
+若每维 b 格，完整 d 维网格含 $K=b^d$ 格。按网格分辨率解释质量和存储，新点更新所属格与祖先摘要。
+
 ### 原文
 
 Comment on STING in terms of cluster shape, computational complexity, cluster quality and incremental clustering.
@@ -255,6 +277,12 @@ STING 用网格单元的并集表示簇，因此边界与坐标轴平行。在�
 来源：当前完整七讲课件 · clustering.pdf · Exercise 1：K-means · PDF p.37；当前完整七讲课件 · clustering.pdf · Exercise 1：Single-Link · PDF p.55；当前完整七讲课件 · clustering.pdf · Exercise 1：DBSCAN · PDF p.63
 
 状态：完整课件练习；形式：课件图形题 / 方法比较。
+
+### 本题公式 · 图形题：三种聚类准则
+
+K-means 按最近质心分配，最小化 $SSE=\sum_j\sum_{x\in C_j}\|x-\mu_j\|^2$；Single-Link 按最近跨簇点对 $d(A,B)=\min_{x\in A,y\in B}d(x,y)$ 连接。
+
+DBSCAN 的核心点条件为 $|N_\varepsilon(p)|\ge MinPts$（含自身）；沿核心点链形成簇并吸收边界点。用各自准则解释圆环、桥接、稀疏背景的不同分组倾向。
 
 ### 原文
 

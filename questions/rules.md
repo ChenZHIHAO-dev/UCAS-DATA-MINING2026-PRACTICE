@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 关联规则支持度与置信度
+
+$X,Y$ 为非空且不相交的项集，$N$ 为事务总数，$count(Z)$ 为包含 Z 全部物品的事务数：
+
+$$supp(X\Rightarrow Y)=\frac{count(X\cup Y)}N,\qquad conf(X\Rightarrow Y)=\frac{count(X\cup Y)}{count(X)}.$$
+
+先数同时包含前后件的事务，再以前件计数为分母算置信度。固定 $m$ 项频繁集可枚举 $2^m-2$ 个非空真子集前件；两项前件到一项后件还需按长度筛选。
+
 ### 原文
 
 Using the resulting frequent itemsets, find all strong associations matching buys(x,item1) AND buys(x,item2) ⇒ buys(x,item3). min_support=50%; min_confidence=75% in 2016 and 70% in 2020. Use the ten-transaction table from the FP-growth question.
@@ -75,6 +83,14 @@ All three directions have support 0.5, but their confidences differ. The 70% thr
 来源：当前 HW3 · Written Q2(b-c)
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 关联规则支持度与置信度
+
+$X,Y$ 为非空且不相交的项集，$N$ 为事务总数，$count(Z)$ 为包含 Z 全部物品的事务数：
+
+$$supp(X\Rightarrow Y)=\frac{count(X\cup Y)}N,\qquad conf(X\Rightarrow Y)=\frac{count(X\cup Y)}{count(X)}.$$
+
+先数同时包含前后件的事务，再以前件计数为分母算置信度。固定 $m$ 项频繁集可枚举 $2^m-2$ 个非空真子集前件；两项前件到一项后件还需按长度筛选。
 
 ### 原文
 
@@ -144,6 +160,14 @@ Confidence is directional because it conditions on the antecedent. High confiden
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 关联规则支持度与置信度
+
+$X,Y$ 为非空且不相交的项集，$N$ 为事务总数，$count(Z)$ 为包含 Z 全部物品的事务数：
+
+$$supp(X\Rightarrow Y)=\frac{count(X\cup Y)}N,\qquad conf(X\Rightarrow Y)=\frac{count(X\cup Y)}{count(X)}.$$
+
+先数同时包含前后件的事务，再以前件计数为分母算置信度。固定 $m$ 项频繁集可枚举 $2^m-2$ 个非空真子集前件；两项前件到一项后件还需按长度筛选。
+
 ### 原文
 
 Using the five transactions, min_sup=40%,min_conf=40%, present confidence for all rules generated from 3-frequent itemsets, then list rules matching two items ⇒ one item.
@@ -209,6 +233,18 @@ Enumerate all six directions from EKO, then keep only the three 2-to-1 rules req
 来源：当前 HW3 · Lab Q2；往届 HW3（hxd） · Lab Recommendation Systems
 
 状态：完整；形式：作业提炼 / 规则比较。
+
+### 本题公式 · 前件支持度、置信度和 lift
+
+$X,Y$ 为非空且不相交的项集，$N$ 为事务总数，$count(Z)$ 为包含 Z 全部物品的事务数：
+
+$$supp(X\Rightarrow Y)=\frac{count(X\cup Y)}N,\qquad conf(X\Rightarrow Y)=\frac{count(X\cup Y)}{count(X)}.$$
+
+先数同时包含前后件的事务，再以前件计数为分母算置信度。固定 $m$ 项频繁集可枚举 $2^m-2$ 个非空真子集前件；两项前件到一项后件还需按长度筛选。
+
+$$supp(X)=count(X)/N,\qquad lift(X\Rightarrow Y)=\frac{conf(X\Rightarrow Y)}{supp(Y)}.$$
+
+先按题给前件支持度、置信度及长度过滤，再比较规则支持度与 lift。
 
 ### 原文
 

@@ -55,6 +55,22 @@ Classification uses labeled examples, clustering discovers unlabeled groups, and
 
 状态：完整；形式：历年应用设计。
 
+### 本题公式 · 邮件朴素贝叶斯：先验、词平滑与对数分数
+
+以词频袋模型（bag of words）为例，N 是训练邮件数，$N_c$ 是类别 c 的邮件数，V 是训练词表；$n_{cw}$ 为 c 类邮件中词 w 的出现总次数，$x_w$ 为新邮件中词 w 的次数。
+
+$$P(c)=\frac{N_c}{N}.$$
+
+对类别内词频做加一平滑，分母是该类别全部词的出现总数加词表大小：
+
+$$\theta_{cw}=P(w\mid c)=\frac{n_{cw}+1}{\sum_{v\in V}n_{cv}+|V|}.$$
+
+新邮件使用同一训练词表，计算各类别的对数分数并选最大者：
+
+$$S(c)=\log P(c)+\sum_{w\in V}x_w\log\theta_{cw},\qquad \hat c=\arg\max_cS(c).$$
+
+加一平滑使训练中未出现的类内词仍有非零概率；取对数将多词概率乘积转为加法，减少很小数相乘造成的数值下溢。先验按邮件计数，词概率按词出现次数计数，两者分母不同。
+
 ### 原文
 
 Suppose you have roughly classified previous e-mails as junk, unimportant or normal/important. Describe how a data mining system can use this training set to classify new or unclassified messages.

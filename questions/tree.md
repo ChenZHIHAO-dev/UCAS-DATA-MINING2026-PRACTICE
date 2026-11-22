@@ -12,6 +12,59 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 决策树：符号、公式与选属性规则
+
+### 先认清符号
+
+- $D$：**当前节点**的数据集，$|D|$ 为其中样本数。
+- $C_k$：第 $k$ 个**类别**；$p_k=n_k/|D|$ 为当前节点内该类占比。
+- $A$：待比较的**分裂属性**；$v$ 是它的一个取值。代入题目时，$A$ 可换成 B、Hair、Eye 等实际列名。
+- $D_v=\{x\in D:A(x)=v\}$：按 $A=v$ 分出的子集；$w_v=|D_v|/|D|$ 为该分支占父节点的比例。
+
+计算 $H(D_v)$ 时，用该子集内部的类别比例。所有对数以2为底，$0\log_2 0=0$。
+
+### ① 类别熵 Entropy：当前节点有多混杂
+
+$$H(D)=-\sum_k p_k\log_2p_k.$$
+
+只有一个类别时为0；二分类各占一半时为1 bit。
+
+### ② 条件熵 Conditional entropy：分裂后还剩多少混杂
+
+$$H(D\mid A)=\sum_v w_vH(D_v).$$
+
+先算每个子集的类别熵，再按子集人数占比加权。
+
+### ③ 信息增益 Information gain：熵减少了多少
+
+$$Gain(A)=H(D)-H(D\mid A).$$
+
+选择信息增益最大的属性，再对未纯净子节点重新计算。
+
+### ④ 分裂信息 Split information：样本怎样分配到分支
+
+$$SplitInfo(A)=-\sum_v w_v\log_2w_v.$$
+
+这里用的是**各分支人数比例 $w_v$**；类别熵用的是**各类别人数比例 $p_k$**。
+
+### ⑤ 增益率 Gain ratio：用分裂信息归一化增益
+
+$$GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+
+按增益率准则比较有效候选时，取较大者；$SplitInfo(A)=0$ 的分裂跳过该比值。C4.5还结合信息增益筛选候选，避免仅由很小的分母获得较高比值。
+
+### ⑥ 基尼指数 Gini index：用平方比例衡量类别混杂
+
+$$\begin{aligned}
+Gini(D)&=1-\sum_k p_k^2,\\
+Gini_{split}(A)&=\sum_v w_vGini(D_v),\\
+\Delta Gini(A)&=Gini(D)-Gini_{split}(A).
+\end{aligned}$$
+
+选择**加权子 Gini 最小**的分裂，等价于选择 **$\Delta Gini$ 最大**的分裂。
+
+**计算顺序：** 当前节点类频数 → 子节点类频数与人数权重 → 代入公式 → 比较结果 → 画树。
+
 ### 原文
 
 Given attributes {A,B,C} and classes {C1,C2}, build a decision tree using information gain to select the split attribute.
@@ -33,58 +86,78 @@ Given attributes {A,B,C} and classes {C1,C2}, build a decision tree using inform
 
 ### 逐步解答
 
-#### 本题公式
+#### 1. 父节点：先数类别，再代入熵
 
-对当前节点数据集 $D$，$p_c$ 是第 $c$ 类占比，$D_v$ 是按属性 $A=v$ 分出的子集：
+当前 $D$ 有10条记录，$C_1$ 有6条、$C_2$ 有4条：
+
+$$H(D)=-\frac6{10}\log_2\frac6{10}-\frac4{10}\log_2\frac4{10}
+=\boxed{0.970951}.$$
+
+#### 2. 按 A、B、C 分组，列出类频数与子熵
+
+每对计数依次为 $(C_1,C_2)$。
+
+| 属性 | 分支 | 类频数 | $|D_v|$ | $H(D_v)$ |
+| --- | --- | --- | --- | --- |
+| A | 0 | (3,1) | 4 | 0.811278 |
+| A | 1 | (3,3) | 6 | 1 |
+| B | 0 | (5,0) | 5 | 0 |
+| B | 1 | (1,4) | 5 | 0.721928 |
+| C | 0 | (4,3) | 7 | 0.985228 |
+| C | 1 | (2,1) | 3 | 0.918296 |
+
+例如A=0的子集，类别比例为 $3/4,1/4$：
+
+$$H(D_{A=0})=-\frac34\log_2\frac34-\frac14\log_2\frac14=0.811278.$$
+
+#### 3. 每个属性都写“加权条件熵 → 信息增益”
 
 $$\begin{aligned}
-H(D)&=-\sum_c p_c\log_2p_c,\\
-H(D\mid A)&=\sum_v\frac{|D_v|}{|D|}H(D_v),\\
-Gain(A)&=H(D)-H(D\mid A).
+H(D\mid A)&\approx\frac4{10}(0.811278124)+\frac6{10}(1)=0.924511250,\\
+Gain(A)&\approx0.970950594-0.924511250\approx\boxed{0.046439}.
 \end{aligned}$$
 
-熵衡量类别混杂程度；条件熵按各子集样本数加权。选择增益最大的属性后，在尚未纯净的子节点中重新计算。
+$$\begin{aligned}
+H(D\mid B)&\approx\frac5{10}(0)+\frac5{10}(0.721928095)=0.360964047,\\
+Gain(B)&\approx0.970950594-0.360964047\approx\boxed{0.609987}.
+\end{aligned}$$
 
-#### 2. 根节点的类别计数与属性比较
+$$\begin{aligned}
+H(D\mid C)&\approx\frac7{10}(0.985228136)+\frac3{10}(0.918295834)=0.965148445,\\
+Gain(C)&\approx0.970950594-0.965148445\approx\boxed{0.005802}.
+\end{aligned}$$
 
-总计 C1=6、C2=4，$H(D)=0.970951$。使用 $Gain(A)=H(D)-\sum_v |D_v|H(D_v)/|D|$。
+B的信息增益最大，故根节点选择B。B=0的5条记录全为$C_1$，直接成为叶节点。
 
-| Attribute | Conditional entropy | Information gain |
+#### 4. 只在 B=1 的5条数据内比较 A、C
+
+现在令 $D$ 为B=1子节点的数据。类频数为$(1,4)$，故 $H(D)=0.721928$。
+
+| 候选属性 | 0分支 $(C_1,C_2)$ | 1分支 $(C_1,C_2)$ |
 | --- | --- | --- |
-| A | 0.924511 | 0.046439 |
-| B | 0.360964 | 0.609987 |
-| C | 0.965148 | 0.005802 |
+| A | (1,1)，2条 | (0,3)，3条 |
+| C | (1,3)，4条 | (0,1)，1条 |
 
-根选 B。B=0 有 5 条，全部 C1；B=1 有 5 条，其中 C1=1、C2=4，熵 $H(1/5,4/5)=0.721928$。
+$$\begin{aligned}
+H(D\mid A)&=\frac25(1)+\frac35(0)=0.4,\\
+Gain(A)&=0.721928-0.4=\boxed{0.321928};\\[4pt]
+H(D\mid C)&=\frac45(0.811278)+\frac15(0)=0.649022,\\
+Gain(C)&=0.721928-0.649022=\boxed{0.072906}.
+\end{aligned}$$
 
-| Attribute | Conditional entropy | Information gain |
-| --- | --- | --- |
-| A | 0.4 | 0.321928 |
-| B | 0.721928 | 0 |
-| C | 0.649022 | 0.072906 |
+该节点选择A。A=1的3条记录全为$C_2$；A=0的2条记录类别各一，熵为1。最后用C将这两条分开，条件熵为0、增益为1：C=0给$C_1$，C=1给$C_2$。
 
-该子集选 A；A=1 有三条全部 C2；A=0 两条由 C 区分。
+#### 5. 根据上述选择画最终树
 
-![2016 决策树：分支为属性取值，叶节点为预测类别](../assets/solutions/detail-tree-2016.svg)
-逐行回代全部十个样本即可检查树是否一致。重复样本仍须保留其计数权重。
+![2016决策树：根为B；B=1分支继续按A、C分裂](../assets/solutions/detail-tree-2016.svg)
 
-
-#### 3. 展开一次实际计算
-
-根节点的 $B=0$ 分支全为 C1，其熵为 0；$B=1$ 分支的比例为 $1/5,4/5$：
-
-$$H(D\mid B)=\frac5{10}\times0+\frac5{10}\times0.721928=0.360964.$$
-
-$$Gain(B)=0.970951-0.360964=0.609987.$$
-
-在 $B=1$ 子集中，$A=1$ 三条全为 C2；$A=0$ 的两条类别各一。因此 $H(D_{B=1}\mid A)=(3/5)\times0+(2/5)\times1=0.4$，增益为 $0.721928-0.4=0.321928$。最后仅剩 $A=0,B=1$ 的两条，用 C 分开即得到纯叶节点。
-
+从根沿属性取值到叶节点即可预测。将原表10条记录逐行代回，全部分类一致；重复记录保留原有计数。
 
 ### English answer pattern
 
-Choose B at the root and recursively recompute information gain on the B=1 subset.
+Choose B at the root: $Gain(B)=0.609987$. The B=0 branch is C1. In the B=1 subset, choose A: $Gain(A)=0.321928$. The A=1 branch is C2; split A=0 by C to obtain pure leaves.
 
-根节点选 B，在 B=1 子集中重新计算信息增益并递归。
+根选择B：$Gain(B)=0.609987$。B=0分支为C1。在B=1子集中选择A：$Gain(A)=0.321928$。A=1分支为C2；对A=0再按C分裂，得到纯叶节点。
 
 ### 易错点与约定
 
@@ -92,9 +165,10 @@ Choose B at the root and recursively recompute information gain on the B=1 subse
 
 ### 知识点与公式总结
 
-- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
-- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
-- 在每个未纯净子节点重算局部比例，再继续分裂；重复样本也计入人数，最后沿树逐行检查预测。
+- $D$始终表示当前节点：根有10条数据；进入B=1后，分母改为该节点的5条数据。
+- 根增益：$Gain(B)=0.609987>Gain(A)=0.046439>Gain(C)=0.005802$。
+- B=1内：$Gain(A)=0.321928>Gain(C)=0.072906$，故先按A，再用C区分剩下两条。
+- 计算权重$w_v$用分支人数，计算子熵用分支内部类别比例。
 
 
 ---
@@ -106,6 +180,59 @@ Choose B at the root and recursively recompute information gain on the B=1 subse
 来源：当前 HW2 · Written Q1；往届 HW2（hxd） · Written Q1
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 决策树：符号、公式与选属性规则
+
+### 先认清符号
+
+- $D$：**当前节点**的数据集，$|D|$ 为其中样本数。
+- $C_k$：第 $k$ 个**类别**；$p_k=n_k/|D|$ 为当前节点内该类占比。
+- $A$：待比较的**分裂属性**；$v$ 是它的一个取值。代入题目时，$A$ 可换成 B、Hair、Eye 等实际列名。
+- $D_v=\{x\in D:A(x)=v\}$：按 $A=v$ 分出的子集；$w_v=|D_v|/|D|$ 为该分支占父节点的比例。
+
+计算 $H(D_v)$ 时，用该子集内部的类别比例。所有对数以2为底，$0\log_2 0=0$。
+
+### ① 类别熵 Entropy：当前节点有多混杂
+
+$$H(D)=-\sum_k p_k\log_2p_k.$$
+
+只有一个类别时为0；二分类各占一半时为1 bit。
+
+### ② 条件熵 Conditional entropy：分裂后还剩多少混杂
+
+$$H(D\mid A)=\sum_v w_vH(D_v).$$
+
+先算每个子集的类别熵，再按子集人数占比加权。
+
+### ③ 信息增益 Information gain：熵减少了多少
+
+$$Gain(A)=H(D)-H(D\mid A).$$
+
+选择信息增益最大的属性，再对未纯净子节点重新计算。
+
+### ④ 分裂信息 Split information：样本怎样分配到分支
+
+$$SplitInfo(A)=-\sum_v w_v\log_2w_v.$$
+
+这里用的是**各分支人数比例 $w_v$**；类别熵用的是**各类别人数比例 $p_k$**。
+
+### ⑤ 增益率 Gain ratio：用分裂信息归一化增益
+
+$$GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+
+按增益率准则比较有效候选时，取较大者；$SplitInfo(A)=0$ 的分裂跳过该比值。C4.5还结合信息增益筛选候选，避免仅由很小的分母获得较高比值。
+
+### ⑥ 基尼指数 Gini index：用平方比例衡量类别混杂
+
+$$\begin{aligned}
+Gini(D)&=1-\sum_k p_k^2,\\
+Gini_{split}(A)&=\sum_v w_vGini(D_v),\\
+\Delta Gini(A)&=Gini(D)-Gini_{split}(A).
+\end{aligned}$$
+
+选择**加权子 Gini 最小**的分裂，等价于选择 **$\Delta Gini$ 最大**的分裂。
+
+**计算顺序：** 当前节点类频数 → 子节点类频数与人数权重 → 代入公式 → 比较结果 → 画树。
 
 ### 原文
 
@@ -129,49 +256,67 @@ Compute information gain for Height, Hair and Eye, then construct a decision tre
 
 ### 逐步解答
 
-#### 本题公式
+#### 1. 计算父熵
 
-对当前节点数据集 $D$，$p_c$ 是第 $c$ 类占比，$D_v$ 是按属性 $A=v$ 分出的子集：
+当前 $D$ 有9条记录，类别计数为$(C_1,C_2)=(5,4)$：
+
+$$H(D)=-\frac59\log_2\frac59-\frac49\log_2\frac49=\boxed{0.991076}.$$
+
+#### 2. 为每个候选属性数清分支
+
+| 属性 | 分支及 $(C_1,C_2)$ | 子集人数 |
+| --- | --- | --- |
+| Height | Tall:(3,2)；Short:(2,1)；Medium:(0,1) | 5，3，1 |
+| Hair | Blond:(2,2)；Dark:(3,1)；Red:(0,1) | 4，4，1 |
+| Eye | Brown:(3,0)；Blue:(2,4) | 3，6 |
+
+#### 3. 代入条件熵并逐个算增益
 
 $$\begin{aligned}
-H(D)&=-\sum_c p_c\log_2p_c,\\
-H(D\mid A)&=\sum_v\frac{|D_v|}{|D|}H(D_v),\\
-Gain(A)&=H(D)-H(D\mid A).
+H(D\mid Height)&=\frac59(0.970951)+\frac39(0.918296)+\frac19(0)\\
+&=0.845516,\\
+Gain(Height)&=0.991076-0.845516=\boxed{0.145560}.
 \end{aligned}$$
 
-熵衡量类别混杂程度；条件熵按各子集样本数加权。选择增益最大的属性后，在尚未纯净的子节点中重新计算。
+$$\begin{aligned}
+H(D\mid Hair)&=\frac49(1)+\frac49(0.811278)+\frac19(0)=0.805012,\\
+Gain(Hair)&=0.991076-0.805012=\boxed{0.186064}.
+\end{aligned}$$
 
-#### 2. 根节点的类别计数与属性比较
+$$\begin{aligned}
+H(D\mid Eye)&=\frac39(0)+\frac69(0.918296)=0.612197,\\
+Gain(Eye)&=0.991076-0.612197=\boxed{0.378879}.
+\end{aligned}$$
 
-总体 C1=5、C2=4，熵 $H=0.991076$。
+根选Eye。Brown的3条全为$C_1$；Blue的6条为$(2,4)$，需要继续分裂。
 
-| Attribute | Conditional entropy | Information gain |
-| --- | --- | --- |
-| Height | 0.845516 | 0.14556 |
-| Hair | 0.805012 | 0.186064 |
-| Eye | 0.612197 | 0.378879 |
+#### 4. 在 Eye=Blue 的局部数据中重算
 
-根选 Eye。Brown 的三条全部 C1；Blue 的六条 C1=2、C2=4。在 Blue 子集重算，Hair 的增益为 0.459148，Height 为 0.125815，故选 Hair。Hair=Blond/Red 均为 C2；Dark 子集按 Height，Tall/Short 为 C1，Medium 为 C2。
+现在 $D$ 为Blue子节点的6条数据，$H(D)=0.918296$。
 
-![HW2 决策树：依次按 Eye、Hair 和 Height 判断](../assets/solutions/detail-tree-hw2.svg)
+- Hair：Dark为$(2,1)$共3条；Blond两条与Red一条均为$C_2$。
+- Height：Tall为$(1,2)$共3条；Short为$(1,1)$共2条；Medium一条为$C_2$。
 
+$$\begin{aligned}
+H(D\mid Hair)&=\frac36(0.918296)+\frac26(0)+\frac16(0)=0.459148,\\
+Gain(Hair)&=0.918296-0.459148=\boxed{0.459148};\\[4pt]
+H(D\mid Height)&=\frac36(0.918296)+\frac26(1)+\frac16(0)=0.792481,\\
+Gain(Height)&=0.918296-0.792481=\boxed{0.125815}.
+\end{aligned}$$
 
-#### 3. 为什么 Eye 获得最大增益
+选择Hair。Blond、Red直接标$C_2$；Dark的3条再按Height分成三个纯叶：Tall、Short标$C_1$，Medium标$C_2$。最后这次Height分裂的加权子熵为0。
 
-Brown 三条全部属于 C1，熵为 0；Blue 六条中有 C1 两条、C2 四条：
+#### 5. 画树并检查样本
 
-$$H(D\mid Eye)=\frac39\times0+\frac69 H\!\left(\frac26,\frac46\right)=0.612197.$$
+![HW2决策树：根Eye，Blue分支按Hair，Dark分支按Height](../assets/solutions/detail-tree-hw2.svg)
 
-$$Gain(Eye)=0.991076-0.612197=0.378879.$$
-
-进入 Blue 后，Hair=Blond 的两条和 Hair=Red 的一条均为 C2；Hair=Dark 三条比例为 $(2/3,1/3)$。因此 Hair 的条件熵为 $(3/6)\times0.918296=0.459148$，增益也是 $0.918296-0.459148=0.459148$。继续按 Height 分开 Dark 的三条即可。
-
+该树正确分类原表全部9条记录。
 
 ### English answer pattern
 
-Eye has the largest root information gain. Recompute gains within the Blue subset and split by Hair.
+The root gains for Height, Hair and Eye are 0.145560,0.186064 and 0.378879, so choose Eye. Brown is C1. Within Blue, choose Hair; Blond and Red are C2. Split Dark by Height: Tall and Short are C1, Medium is C2.
 
-Eye 在根节点的信息增益最大。在 Blue 子集内重算增益，按 Hair 分裂。
+Height、Hair和Eye在根节点的增益分别为0.145560、0.186064和0.378879，因此选择Eye。Brown为C1。在Blue内选择Hair；Blond和Red为C2。Dark按Height分裂：Tall和Short为C1，Medium为C2。
 
 ### 易错点与约定
 
@@ -179,9 +324,10 @@ Eye 在根节点的信息增益最大。在 Blue 子集内重算增益，按 Hai
 
 ### 知识点与公式总结
 
-- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
-- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
-- 根选定后，只用该分支的数据比较下一属性；可按“类频数→子熵→加权熵→增益→画树”组织计算。
+- 根类频数为$(5,4)$；先求各属性的加权子熵，再用父熵$0.991076$相减。
+- Eye增益最大$0.378879$；Brown为纯叶，Blue进入局部递归。
+- Blue内用6条数据重算，Hair增益$0.459148$，大于Height的$0.125815$。
+- 最终树在计算之后画；每次分裂选择与局部数据的计算结果对应。
 
 
 ---
@@ -202,6 +348,59 @@ Eye 在根节点的信息增益最大。在 Blue 子集内重算增益，按 Hai
 - 限定画一层分裂（根 + 两个子结点），子结点标频数；按多数票加预测标签。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · 决策树：符号、公式与选属性规则
+
+### 先认清符号
+
+- $D$：**当前节点**的数据集，$|D|$ 为其中样本数。
+- $C_k$：第 $k$ 个**类别**；$p_k=n_k/|D|$ 为当前节点内该类占比。
+- $A$：待比较的**分裂属性**；$v$ 是它的一个取值。代入题目时，$A$ 可换成 B、Hair、Eye 等实际列名。
+- $D_v=\{x\in D:A(x)=v\}$：按 $A=v$ 分出的子集；$w_v=|D_v|/|D|$ 为该分支占父节点的比例。
+
+计算 $H(D_v)$ 时，用该子集内部的类别比例。所有对数以2为底，$0\log_2 0=0$。
+
+### ① 类别熵 Entropy：当前节点有多混杂
+
+$$H(D)=-\sum_k p_k\log_2p_k.$$
+
+只有一个类别时为0；二分类各占一半时为1 bit。
+
+### ② 条件熵 Conditional entropy：分裂后还剩多少混杂
+
+$$H(D\mid A)=\sum_v w_vH(D_v).$$
+
+先算每个子集的类别熵，再按子集人数占比加权。
+
+### ③ 信息增益 Information gain：熵减少了多少
+
+$$Gain(A)=H(D)-H(D\mid A).$$
+
+选择信息增益最大的属性，再对未纯净子节点重新计算。
+
+### ④ 分裂信息 Split information：样本怎样分配到分支
+
+$$SplitInfo(A)=-\sum_v w_v\log_2w_v.$$
+
+这里用的是**各分支人数比例 $w_v$**；类别熵用的是**各类别人数比例 $p_k$**。
+
+### ⑤ 增益率 Gain ratio：用分裂信息归一化增益
+
+$$GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+
+按增益率准则比较有效候选时，取较大者；$SplitInfo(A)=0$ 的分裂跳过该比值。C4.5还结合信息增益筛选候选，避免仅由很小的分母获得较高比值。
+
+### ⑥ 基尼指数 Gini index：用平方比例衡量类别混杂
+
+$$\begin{aligned}
+Gini(D)&=1-\sum_k p_k^2,\\
+Gini_{split}(A)&=\sum_v w_vGini(D_v),\\
+\Delta Gini(A)&=Gini(D)-Gini_{split}(A).
+\end{aligned}$$
+
+选择**加权子 Gini 最小**的分裂，等价于选择 **$\Delta Gini$ 最大**的分裂。
+
+**计算顺序：** 当前节点类频数 → 子节点类频数与人数权重 → 代入公式 → 比较结果 → 画树。
 
 ### 原文
 
@@ -242,60 +441,57 @@ Each row below represents multiple samples. Columns C1 and C2 are class **counts
 
 ### 逐步解答
 
-#### 本题公式
+#### 1. (a) 频数相加得到样本数与父熵
 
-对当前节点数据集 $D$，$p_c$ 是第 $c$ 类占比，$D_v$ 是按属性 $A=v$ 分出的子集：
+C1、C2列给的是每行的类别人数。八行合计：
 
-$$\begin{aligned}
-H(D)&=-\sum_c p_c\log_2p_c,\\
-H(D\mid A)&=\sum_v\frac{|D_v|}{|D|}H(D_v),\\
-Gain(A)&=H(D)-H(D\mid A).
-\end{aligned}$$
+$$n_{C_1}=140,\qquad n_{C_2}=140,\qquad |D|=280.$$
 
-熵衡量类别混杂程度；条件熵按各子集样本数加权。选择增益最大的属性后，在尚未纯净的子节点中重新计算。
+$$H(D)=-\frac{140}{280}\log_2\frac{140}{280}
+-\frac{140}{280}\log_2\frac{140}{280}=1.$$
 
-#### 1. 按类别频数计算样本量
+#### 2. (a) 按 X 分组，再算条件熵和增益
 
-$$N=280,\qquad n_{C_1}=140,\qquad n_{C_2}=140.$$
-$$H(D)=-\tfrac12\log_2\tfrac12-\tfrac12\log_2\tfrac12=1\ \text{bit}.$$
-
-某行如 $(X,Y,Z)=(0,0,0)$ 代表 $5+35=40$ 个样本；将八行的类别计数全部相加，得到 280 个样本。
-
-#### 2. 展开 X 的加权熵
-
-X=0 的类频数为 $(40,100)$，X=1 为 $(100,40)$，两组均 140 人。组内比例分别为 $(2/7,5/7)$ 及 $(5/7,2/7)$。
-
-这里 $H(p_1,p_2)=-p_1\log_2p_1-p_2\log_2p_2$，表示给定两类比例时的不确定性；两组各占总样本的一半。
+X=0：$(C_1,C_2)=(40,100)$，共140人；X=1：$(100,40)$，共140人。
 
 $$\begin{aligned}
-H(D\mid X)&=\frac{140}{280}H\!\left(\frac27,\frac57\right)\\
-&\quad+\frac{140}{280}H\!\left(\frac57,\frac27\right)\\
-&=0.863120569.
+H(D_{X=0})&=-\frac{40}{140}\log_2\frac{40}{140}
+-\frac{100}{140}\log_2\frac{100}{140}=0.863120569,\\
+H(D_{X=1})&=0.863120569,\\
+H(D\mid X)&=\frac{140}{280}(0.863120569)
++\frac{140}{280}(0.863120569)=0.863120569,\\
+Gain(X)&=1-0.863120569=\boxed{0.136879431}.
 \end{aligned}$$
-$$Gain(X)=1-0.863120569=\boxed{0.136879431}.$$
 
-#### 3. 比较 Y、Z
+#### 3. (b) 对 Y、Z 也写出加权代入
 
-| Attribute | 0 branch: (C1,C2) | 1 branch: (C1,C2) | Weighted entropy | Information gain |
-| --- | --- | --- | --- | --- |
-| X | (40, 100) | (100, 40) | 0.863120569 | 0.136879431 |
-| Y | (80, 80) | (60, 60) | 1.000000000 | 0.000000000 |
-| Z | (70, 70) | (70, 70) | 1.000000000 | 0.000000000 |
+| 属性 | 0分支 $(C_1,C_2)$ | 1分支 $(C_1,C_2)$ |
+| --- | --- | --- |
+| Y | (80,80)，160人 | (60,60)，120人 |
+| Z | (70,70)，140人 | (70,70)，140人 |
 
-Y 的两组都是类比例 1:1，Z 也一样，所以条件熵都为 1，增益 0。根选 **X**。
+四个子集的两类比例均为 $1/2,1/2$，所以各自的类别熵均为1：
 
-#### 4. 按要求只画一层
+$$\begin{aligned}
+H(D\mid Y)&=\frac{160}{280}(1)+\frac{120}{280}(1)=1,\\
+Gain(Y)&=1-1=\boxed{0};\\[4pt]
+H(D\mid Z)&=\frac{140}{280}(1)+\frac{140}{280}(1)=1,\\
+Gain(Z)&=1-1=\boxed{0}.
+\end{aligned}$$
 
-![X 的一次分裂与子结点频数](../assets/diagrams/recall2025-stump.svg)
+最大信息增益来自X，故选X为根。
 
-X=0 预测 C2，X=1 预测 C1。两个子节点仍包含两类样本；按各节点多数类标记，即完成题目要求的**一层截断树**。
+#### 4. (c) 只画题目要求的一层
 
+![X的首次分裂：子节点频数及多数类标签](../assets/diagrams/recall2025-stump.svg)
+
+X=0的子节点标$(40,100)$，多数类为$C_2$；X=1标$(100,40)$，多数类为$C_1$。按题意在这一层停止。
 
 ### English answer pattern
 
-The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. Select X and draw only its two children, labeled C2 and C1 by majority vote.
+There are 280 samples, with 140 in each class. $H(D)=1$ and $H(D\mid X)=0.863120569$, giving $Gain(X)=0.136879431$. $Gain(Y)=Gain(Z)=0$. Draw only the X split: child counts are (40,100) and (100,40), labeled C2 and C1.
 
-数据集有 280 个样本。Gain(X)=0.136879431，Gain(Y)=Gain(Z)=0。选 X，只画两个子节点；按多数投票分别标为 C2、C1。
+共有280个样本，每类140个。$H(D)=1$，$H(D\mid X)=0.863120569$，因此$Gain(X)=0.136879431$。$Gain(Y)=Gain(Z)=0$。只画X的分裂：子节点频数为(40,100)和(100,40)，分别标为C2和C1。
 
 ### 易错点与约定
 
@@ -307,9 +503,10 @@ The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. 
 
 ### 知识点与公式总结
 
-- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
-- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
-- 每行代表多名样本，样本量由 C1、C2 频数相加；题目只要求首次分裂，子节点写频数与多数类即可停止。
+- 输入是类别频数表，$|D|=\sum_i(n_{i,C_1}+n_{i,C_2})=280$。
+- $H(D\mid A)$的权重按样本人数计算：Y两支为160/280与120/280。
+- $Gain(X)=0.136879431$，Y和Z的条件熵都为1，所以增益为0。
+- 本题只画首次分裂；写子节点频数，再按多数类标记即可。
 
 
 ---
@@ -322,6 +519,59 @@ The dataset contains 280 samples. Gain(X)=0.136879431, while Gain(Y)=Gain(Z)=0. 
 
 状态：完整；形式：历年简答。
 
+### 本题公式 · 决策树：符号、公式与选属性规则
+
+### 先认清符号
+
+- $D$：**当前节点**的数据集，$|D|$ 为其中样本数。
+- $C_k$：第 $k$ 个**类别**；$p_k=n_k/|D|$ 为当前节点内该类占比。
+- $A$：待比较的**分裂属性**；$v$ 是它的一个取值。代入题目时，$A$ 可换成 B、Hair、Eye 等实际列名。
+- $D_v=\{x\in D:A(x)=v\}$：按 $A=v$ 分出的子集；$w_v=|D_v|/|D|$ 为该分支占父节点的比例。
+
+计算 $H(D_v)$ 时，用该子集内部的类别比例。所有对数以2为底，$0\log_2 0=0$。
+
+### ① 类别熵 Entropy：当前节点有多混杂
+
+$$H(D)=-\sum_k p_k\log_2p_k.$$
+
+只有一个类别时为0；二分类各占一半时为1 bit。
+
+### ② 条件熵 Conditional entropy：分裂后还剩多少混杂
+
+$$H(D\mid A)=\sum_v w_vH(D_v).$$
+
+先算每个子集的类别熵，再按子集人数占比加权。
+
+### ③ 信息增益 Information gain：熵减少了多少
+
+$$Gain(A)=H(D)-H(D\mid A).$$
+
+选择信息增益最大的属性，再对未纯净子节点重新计算。
+
+### ④ 分裂信息 Split information：样本怎样分配到分支
+
+$$SplitInfo(A)=-\sum_v w_v\log_2w_v.$$
+
+这里用的是**各分支人数比例 $w_v$**；类别熵用的是**各类别人数比例 $p_k$**。
+
+### ⑤ 增益率 Gain ratio：用分裂信息归一化增益
+
+$$GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+
+按增益率准则比较有效候选时，取较大者；$SplitInfo(A)=0$ 的分裂跳过该比值。C4.5还结合信息增益筛选候选，避免仅由很小的分母获得较高比值。
+
+### ⑥ 基尼指数 Gini index：用平方比例衡量类别混杂
+
+$$\begin{aligned}
+Gini(D)&=1-\sum_k p_k^2,\\
+Gini_{split}(A)&=\sum_v w_vGini(D_v),\\
+\Delta Gini(A)&=Gini(D)-Gini_{split}(A).
+\end{aligned}$$
+
+选择**加权子 Gini 最小**的分裂，等价于选择 **$\Delta Gini$ 最大**的分裂。
+
+**计算顺序：** 当前节点类频数 → 子节点类频数与人数权重 → 代入公式 → 比较结果 → 画树。
+
 ### 原文
 
 Please present an attribute selection method in a decision tree.
@@ -330,53 +580,60 @@ Please present an attribute selection method in a decision tree.
 
 ### 逐步解答
 
-#### 1. 信息增益：先算当前节点混杂度
+#### 1. 给出信息增益选属性法
 
-设 $D$ 为当前节点的样本，$p_c$ 为类 c 的样本比例。信息熵为
+对当前节点数据集$D$，先根据类别人数求$p_k$及$H(D)$。对每个候选属性A，按取值v划分子集$D_v$，计算各子集熵，再按$w_v=|D_v|/|D|$加权：
 
-$$H(D)=-\sum_c p_c\log_2p_c.$$
+$$H(D\mid A)=\sum_v w_vH(D_v),\qquad Gain(A)=H(D)-H(D\mid A).$$
 
-比例为 0 的项按 $0\log_2 0=0$ 处理。纯节点熵为 0；两类各半时熵为 1 bit。
+选择信息增益最大的属性进行分裂，在尚未纯净的子节点重复上述过程。
 
-#### 2. 按子节点样本数加权，选择增益最大者
+#### 2. 用一个小例子说明代入
 
-属性 A 的取值 v 对应子集 $D_v$：
+父节点两类各5人，故$H(D)=1$。某属性分出4人的纯节点和6人的$(1,5)$节点：
 
-$$H(D\mid A)=\sum_v\frac{|D_v|}{|D|}H(D_v),\qquad Gain(A)=H(D)-H(D\mid A).$$
+$$H(D_{v_2})=-\frac16\log_2\frac16-\frac56\log_2\frac56=0.650022.$$
 
-例如父节点两类各 5 人，熵为 1。某分裂得到 4 人的纯节点，以及 6 人、类比例 $(1/6,5/6)$ 的节点：
+$$\begin{aligned}
+H(D\mid A)&=\frac4{10}(0)+\frac6{10}(0.650022)=0.390013,\\
+Gain(A)&=1-0.390013=\boxed{0.609987}.
+\end{aligned}$$
 
-$$H(D\mid A)=\frac4{10}\times0+\frac6{10}H(1/6,5/6)\approx0.390013.$$
+其他候选属性也按同样方式计算，再比较数值。
 
-故 $Gain(A)\approx0.609987$。对每个可用属性同样计算，选择最大者，然后在各子集递归。
+#### 3. 若改用增益率或 Gini，明确比较方向
 
-#### 3. 增益率为什么再除一个量
+同一个分裂的分支比例为$0.4,0.6$：
 
-多取值属性容易把训练数据切成很多小组，得到偏高的信息增益。C4.5 的增益率用分裂本身的熵归一化：
+$$\begin{aligned}
+SplitInfo(A)&=-0.4\log_2 0.4-0.6\log_2 0.6=0.970951,\\
+GainRatio(A)&\approx0.609986547/0.970950594\approx0.628236.
+\end{aligned}$$
 
-$$SplitInfo(A)=-\sum_v\frac{|D_v|}{|D|}\log_2\frac{|D_v|}{|D|},\qquad GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+Gini使用节点内类别比例：
 
-上例组比例为 0.4、0.6，$SplitInfo=0.970951$，增益率约为 $0.609987/0.970951=0.628236$。实际选择需排除分母为 0 的分裂，并处理低增益却比例偏高的情况。
+$$\begin{aligned}
+Gini(D)&=1-0.5^2-0.5^2=0.5,\\
+Gini_{split}(A)&=\frac4{10}(0)+\frac6{10}
+\left[1-\left(\frac16\right)^2-\left(\frac56\right)^2\right]
+=\frac16,\\
+\Delta Gini(A)&=\frac12-\frac16=\frac13.
+\end{aligned}$$
 
-#### 4. 若题目采用 Gini
-
-$$Gini(D)=1-\sum_c p_c^2,\qquad Gini_{split}(A)=\sum_v\frac{|D_v|}{|D|}Gini(D_v).$$
-
-它同样衡量类别混杂，但使用平方而非对数。上例父 Gini 为 0.5，子 Gini 为 $(4/10)\times0+(6/10)\times[1-(1/6)^2-(5/6)^2]=1/6$；选择加权子 Gini 最小、或 Gini 降低量最大的分裂。
-
+信息增益选最大；按增益率比较有效候选时选最大；按加权子Gini比较时选最小，等价于Gini降低量最大。原题只要求介绍一种选属性方法，写清第1部分即可；数值例子用于理解计算。
 
 ### English answer pattern
 
-Select the attribute with maximum information gain, recomputed from class proportions at the current node.
+At the current node, compute class entropy, split by each candidate attribute, and weight child entropies by child size. Select the largest information gain. If using Gini, select the smallest weighted child Gini, equivalently the largest Gini reduction.
 
-选择信息增益最大的属性；在当前节点上根据类别比例重新计算。
+在当前节点计算类别熵，按各候选属性分裂，并按子节点大小对其熵加权。选择信息增益最大的属性。若使用Gini，则选择加权子Gini最小的分裂，等价于Gini降低量最大的分裂。
 
 ### 知识点与公式总结
 
-- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
-- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
-- 增益率 $GainRatio=Gain/SplitInfo$，其中 $SplitInfo=-\sum_v q_v\log_2q_v$、$q_v=|D_v|/|D|$；分母为 0 的分裂不作此比值。
-- Gini 口径为 $1-\sum_c p_c^2$；同样按子集人数加权，选择子 Gini 最小的分裂。选题目要求的一套准则完成比较。
+- 信息增益：$Gain(A)=H(D)-H(D\mid A)$，取最大。
+- 分裂信息：$SplitInfo(A)=-\sum_vw_v\log_2w_v$，使用分支比例；增益率为$Gain/SplitInfo$。
+- Gini：节点内用类别比例$p_k$；对子Gini用分支权重$w_v$加权。
+- 选择加权子Gini最小，等价于选择$\Delta Gini$最大。
 
 
 ---
@@ -388,6 +645,59 @@ Select the attribute with maximum information gain, recomputed from class propor
 来源：当前完整七讲课件 · classification.pdf · 训练数据表 · PDF p.17；当前完整七讲课件 · classification.pdf · Exercise 1 · PDF p.24
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · 决策树：符号、公式与选属性规则
+
+### 先认清符号
+
+- $D$：**当前节点**的数据集，$|D|$ 为其中样本数。
+- $C_k$：第 $k$ 个**类别**；$p_k=n_k/|D|$ 为当前节点内该类占比。
+- $A$：待比较的**分裂属性**；$v$ 是它的一个取值。代入题目时，$A$ 可换成 B、Hair、Eye 等实际列名。
+- $D_v=\{x\in D:A(x)=v\}$：按 $A=v$ 分出的子集；$w_v=|D_v|/|D|$ 为该分支占父节点的比例。
+
+计算 $H(D_v)$ 时，用该子集内部的类别比例。所有对数以2为底，$0\log_2 0=0$。
+
+### ① 类别熵 Entropy：当前节点有多混杂
+
+$$H(D)=-\sum_k p_k\log_2p_k.$$
+
+只有一个类别时为0；二分类各占一半时为1 bit。
+
+### ② 条件熵 Conditional entropy：分裂后还剩多少混杂
+
+$$H(D\mid A)=\sum_v w_vH(D_v).$$
+
+先算每个子集的类别熵，再按子集人数占比加权。
+
+### ③ 信息增益 Information gain：熵减少了多少
+
+$$Gain(A)=H(D)-H(D\mid A).$$
+
+选择信息增益最大的属性，再对未纯净子节点重新计算。
+
+### ④ 分裂信息 Split information：样本怎样分配到分支
+
+$$SplitInfo(A)=-\sum_v w_v\log_2w_v.$$
+
+这里用的是**各分支人数比例 $w_v$**；类别熵用的是**各类别人数比例 $p_k$**。
+
+### ⑤ 增益率 Gain ratio：用分裂信息归一化增益
+
+$$GainRatio(A)=\frac{Gain(A)}{SplitInfo(A)}.$$
+
+按增益率准则比较有效候选时，取较大者；$SplitInfo(A)=0$ 的分裂跳过该比值。C4.5还结合信息增益筛选候选，避免仅由很小的分母获得较高比值。
+
+### ⑥ 基尼指数 Gini index：用平方比例衡量类别混杂
+
+$$\begin{aligned}
+Gini(D)&=1-\sum_k p_k^2,\\
+Gini_{split}(A)&=\sum_v w_vGini(D_v),\\
+\Delta Gini(A)&=Gini(D)-Gini_{split}(A).
+\end{aligned}$$
+
+选择**加权子 Gini 最小**的分裂，等价于选择 **$\Delta Gini$ 最大**的分裂。
+
+**计算顺序：** 当前节点类频数 → 子节点类频数与人数权重 → 代入公式 → 比较结果 → 画树。
 
 ### 原文
 
@@ -414,45 +724,49 @@ Please calculate the information gain of income, student, and credit_rating, res
 
 ### 逐步解答
 
-#### 1. 总体熵：先数 yes/no
+#### 1. 父节点：14人中9个 yes、5个 no
 
-14 条记录中 yes 有 9 条，no 有 5 条。二分类熵及信息增益为
+$$H(D)=-\frac9{14}\log_2\frac9{14}-\frac5{14}\log_2\frac5{14}=\boxed{0.940286}.$$
 
-$$H(p,n)=-\frac p{p+n}\log_2\frac p{p+n}-\frac n{p+n}\log_2\frac n{p+n},$$
+#### 2. 分别统计三个属性的分支类别人数
 
-$$\operatorname{Gain}(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v).$$
+下表每对计数均为$(yes,no)$。
 
-加权子熵表示“知道属性值以后还剩多少分类不确定性”；从原熵中减去它，得到此属性消除的不确定性。
+| 属性 | 分支类频数 | 对应子集熵 |
+| --- | --- | --- |
+| income | high:(2,2)；medium:(4,2)；low:(3,1) | 1；0.918296；0.811278 |
+| student | no:(3,4)；yes:(6,1) | 0.985228；0.591673 |
+| credit_rating | fair:(6,2)；excellent:(3,3) | 0.811278；1 |
 
-$$H(D)=H(9,5)=0.940286.$$
+例如student=yes的子集有7人，类别比例是$6/7,1/7$：
 
-#### 2. 按每个属性取值分组
+$$H(D_{student=yes})=-\frac67\log_2\frac67-\frac17\log_2\frac17=0.591673.$$
 
-下表每对计数依次为 $(yes,no)$。例如 income=medium 有 6 人，其中 4 yes、2 no。
-
-| 属性 | 分组计数 (yes,no) | 加权子熵 | 信息增益 |
-| --- | --- | --- | --- |
-| age | <=30: (2,3)；31..40: (4,0)；>40: (3,2) | 0.693536 | 0.246750 |
-| income | high: (2,2)；medium: (4,2)；low: (3,1) | 0.911063 | 0.029223 |
-| student | no: (3,4)；yes: (6,1) | 0.788450 | 0.151836 |
-| credit_rating | fair: (6,2)；excellent: (3,3) | 0.892159 | 0.048127 |
-
-#### 3. 展开一个属性的代入
+#### 3. 对每个属性完成“权重代入 → 条件熵 → 增益”
 
 $$\begin{aligned}
-E(income)&=\frac4{14}H(2,2)+\frac6{14}H(4,2)+\frac4{14}H(3,1)\\
-&=\frac4{14}(1)+\frac6{14}(0.918296)+\frac4{14}(0.811278)\\
-&=0.911063,\\
-\operatorname{Gain}(income)&=0.940286-0.911063=\boxed{0.029223}.
+H(D\mid income)&=\frac4{14}(1)+\frac6{14}(0.918296)
++\frac4{14}(0.811278)=0.911063,\\
+Gain(income)&=0.940286-0.911063=\boxed{0.029223}.
 \end{aligned}$$
 
-同理，$\operatorname{Gain}(student)=\boxed{0.151836}$，$\operatorname{Gain}(credit\_rating)=\boxed{0.048127}$。比较三个题目要求的属性时，student 最大；若在全部四个属性中选根，age 的增益 0.246750 最大。
+$$\begin{aligned}
+H(D\mid student)&=\frac7{14}(0.985228)+\frac7{14}(0.591673)=0.788450,\\
+Gain(student)&=0.940286-0.788450=\boxed{0.151836}.
+\end{aligned}$$
+
+$$\begin{aligned}
+H(D\mid credit\_rating)&=\frac8{14}(0.811278)+\frac6{14}(1)=0.892159,\\
+Gain(credit\_rating)&=0.940286-0.892159=\boxed{0.048127}.
+\end{aligned}$$
+
+题目要求的三个信息增益如上；在这三个候选属性中，student最大。计算先使用未舍入的子熵，最后保留6位小数。
 
 ### English answer pattern
 
-The gains are approximately 0.029223 for income, 0.151836 for student, and 0.048127 for credit_rating. Student is best among these three attributes.
+The information gains for income, student and credit_rating are 0.029223,0.151836 and 0.048127. Student is best among these three candidates.
 
-信息增益约为：income 0.029223，student 0.151836，credit_rating 0.048127。在这三个属性中 student 最佳。
+income、student和credit_rating的信息增益分别为0.029223、0.151836和0.048127。在这三个候选属性中，student最佳。
 
 ### 计算与内存分析
 
@@ -460,6 +774,7 @@ The gains are approximately 0.029223 for income, 0.151836 for student, and 0.048
 
 ### 知识点与公式总结
 
-- 类别熵 $H(D)=-\sum_c p_c\log_2p_c$，$p_c=n_c/|D|$；先数当前节点各类样本数，纯节点的熵为 0。
-- 信息增益 $Gain(A)=H(D)-\sum_v\frac{|D_v|}{|D|}H(D_v)$；按子节点人数加权，比较增益选属性。
-- 每个属性值分别统计 (yes,no)，再加权；题目比较 income、student、credit_rating，若另问全部属性的根才把 age 加入比较。
+- 父类频数为$(yes,no)=(9,5)$，父熵为$0.940286$。
+- income分支人数4、6、4；student为7、7；credit_rating为8、6。
+- 先求各子集内部类别熵，再按上述人数除以14加权。
+- 三个增益依次为$0.029223,0.151836,0.048127$；按题目指定的三个属性比较时，student最大。

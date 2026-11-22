@@ -200,3 +200,21 @@ html{scroll-padding-top:calc(var(--header-height) + 16px)}
 .progress-buttons .favorite-toggle.selected{background:#f6f0df;border-color:#c7b476;color:#735d24}
 :root[data-theme="dark"] .progress-buttons .favorite-toggle{background:#333;color:#ccc;border-color:#555}
 :root[data-theme="dark"] .progress-buttons .favorite-toggle.selected{background:#39352a;color:#e0cc91;border-color:#8e8057}
+
+/* One shared formula reference appears before every relevant problem. */
+.formula-guide{margin:0 26px 22px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:15px;line-height:1.8;min-width:0}
+.formula-guide>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;cursor:pointer;font-weight:600;list-style:none;color:var(--ink)}
+.formula-guide>summary::-webkit-details-marker{display:none}
+.formula-toggle:after{content:"＋";font-size:17px;font-weight:400}
+.formula-guide[open] .formula-toggle:after{content:"−"}
+.formula-guide-body{padding:0 18px 15px;min-width:0}
+.formula-guide-body h3{font-size:15px;margin:18px 0 8px;line-height:1.65}
+.formula-guide-body p{margin:9px 0}
+.formula-guide-body ul,.formula-guide-body ol{margin:8px 0;padding-left:1.45em}
+.formula-guide-body li{margin:5px 0}
+.formula-guide-body .katex-display{margin:10px 0!important;padding:5px 0;font-size:1em;max-width:100%;overflow-x:auto;overflow-y:hidden;text-align:left}
+.formula-guide-body .katex-display>.katex{text-align:left}
+.formula-guide-body .table-scroll{margin:10px 0}
+:root[data-theme="dark"] .formula-guide{background:#292929;border-color:#454545}
+@media(max-width:760px){.formula-guide{margin:0 18px 18px;font-size:14px;line-height:1.85}.formula-guide>summary{padding:13px 12px;font-size:14px}.formula-guide-body{padding:0 12px 13px}.formula-guide-body h3{font-size:14px}.formula-guide-body .katex-display{font-size:.95em}}
+@media print{.formula-guide{margin:3mm 0;background:white;border-color:#999;font-size:10pt}.formula-guide>summary{padding:2mm 3mm}.formula-guide-body{padding:0 3mm 2mm}.formula-toggle{display:none}.formula-guide-body h3{font-size:10.5pt;break-after:avoid}.formula-guide-body .katex-display{overflow:visible}}

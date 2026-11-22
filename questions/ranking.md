@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · MAE、NMAE 和 RMSE
+
+n 对评分的真实值为 $r_i$，预测为 $\widehat r_i$，误差 $e_i=\widehat r_i-r_i$。
+
+$$MAE=\frac{\sum_i|e_i|}{n},\quad NMAE=\frac{MAE}{r_{max}-r_{min}},\quad RMSE=\sqrt{\frac{\sum_i e_i^2}{n}}.$$
+
+$r_{max}-r_{min}$ 为题给评分尺度跨度；先列绝对误差和平方误差，再分别汇总。
+
 ### 原文
 
 Predicted ratings are (1,2,3,4,4), true ratings (3,5,3,2,1). Compute MAE,NMAE and RMSE on a 1–5 scale.
@@ -70,6 +78,14 @@ MAE=2，NMAE=0.5，RMSE≈2.280351。
 来源：当前完整七讲课件 · recommend.pdf · Evaluating Ranking · PDF p.29；当前完整七讲课件 · recommend.pdf · Example：Spearman/Kendall · PDF p.30
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · Spearman 与 Kendall
+
+同一物品的预测、真实名次差为 $d_i$；n 为物品数，无并列名次时：
+
+$$\rho=1-\frac{6\sum_i d_i^2}{n(n^2-1)},\qquad \tau=\frac{C-D}{\binom n2}.$$
+
+C、D 分别为先后顺序一致、不一致的物品对数；逐物品算平方差，逐对算一致性。
 
 ### 原文
 
@@ -134,6 +150,14 @@ Spearman ρ=0.4，Kendall τ=1/3。两对不一致物品对都涉及 i2。
 来源：当前完整七讲课件 · recommend.pdf · Relevance: Precision and Recall · PDF p.27；当前完整七讲课件 · recommend.pdf · Example：推荐列表 · PDF p.28
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · Precision、Recall 和 F1
+
+把相关物品视为正类、被推荐视为预测正类；先从表格识别 TP、FP、FN、TN。
+
+$$P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}=\frac{2TP}{2TP+FP+FN}.$$
+
+Precision 的分母为所有已推荐物品；Recall 的分母为所有实际相关物品。
 
 ### 原文
 

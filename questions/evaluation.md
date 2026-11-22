@@ -12,6 +12,16 @@
 
 状态：完整；形式：历年简答。
 
+### 本题公式 · 决策树过拟合与剪枝
+
+过拟合（overfitting）：训练误差很低，未见数据上的误差较高。预剪枝（pre-pruning）提前限制生长；后剪枝（post-pruning）根据验证表现简化已长成的树。
+
+代价复杂度剪枝（cost-complexity pruning）的一种准则为
+
+$$R_\alpha(T)=R(T)+\alpha\,|Leaves(T)|.$$
+
+$T$ 为树，$R(T)$ 为采用一致口径计算的预测误差，$|Leaves(T)|$ 为叶节点数，$\alpha\ge0$ 为复杂度惩罚。比较同一准则时选较小值；用验证集或交叉验证选择 $\alpha$。
+
 ### 原文
 
 How to overcome overfitting in decision trees? What is overfitting?
@@ -26,7 +36,16 @@ How to overcome overfitting in decision trees? What is overfitting?
 2. **Post-pruning 后剪枝：** 先生成树，再用验证误差或误差估计、代价复杂度等剪去不能改善泛化的子树。允许保留早期看似弱但后续有用的分裂。
 3. 用独立验证集或交叉验证选择树的复杂度；用未参与拟合的数据检查泛化表现。增加高质量数据、处理错误标签也有帮助。
 
-复杂度惩罚示例 $R_\alpha(T)=R(T)+\alpha|Leaves(T)|$，α 越大越偏向小树；这里是说明一种剪枝准则，不表示 C5.0 就直接采用这条公式。
+复杂度惩罚可用 $R_\alpha(T)=R(T)+\alpha|Leaves(T)|$ 表示，$\alpha$ 越大，对叶节点数的惩罚越大。
+
+**补充计算例：** 两棵候选树的误差分别为 $0.08,0.11$，叶节点数分别为8、3，取 $\alpha=0.01$：
+
+$$\begin{aligned}
+R_\alpha(T_1)&=0.08+0.01\times8=0.16,\\
+R_\alpha(T_2)&=0.11+0.01\times3=0.14.
+\end{aligned}$$
+
+该准则下选 $T_2$。它用较少的叶节点获得较低的总目标；实际剪枝参数由验证集选择。
 
 
 ### English answer pattern
@@ -52,6 +71,22 @@ Overfitting means fitting noise in the training data and generalizing poorly. Us
 
 状态：完整；形式：历年简答。
 
+### 本题公式 · 过拟合、正则化与早停
+
+训练损失 $\mathcal L_{train}$ 衡量对训练数据的拟合；验证损失 $\mathcal L_{val}$ 用于选模型和训练轮次。典型过拟合现象是训练损失继续下降，验证损失开始上升。
+
+**L2 正则化（L2 regularization）**
+
+$$\mathcal J(\theta)=\mathcal L_{data}(\theta)+\lambda\sum_\ell\|W^{(\ell)}\|_F^2.$$
+
+$\theta$ 为模型参数；$W^{(\ell)}$ 为第 $\ell$ 层权重；$\|W\|_F^2=\sum_{i,j}w_{ij}^2$；$\lambda\ge0$ 控制惩罚强度。若题目写 $\lambda/2$，按题给系数代入。
+
+**早停（early stopping）与选模**
+
+$$t^*=\arg\min_t\mathcal L_{val}(\theta_t),\qquad \overline E_{CV}=\frac1K\sum_{j=1}^K E_j.$$
+
+$t$ 为训练轮次，早停保留验证损失最低轮次的参数；$E_j$ 为第 $j$ 折验证误差，$K$ 折交叉验证取平均。训练集拟合参数，验证集选超参数，测试集评价最终方案。
+
 ### 原文
 
 A neural network classifier may consist of multiple hidden layers. How to overcome overfitting in a neural network classifier?
@@ -64,7 +99,7 @@ A neural network classifier may consist of multiple hidden layers. How to overco
 
 1. **Regularization 正则化**：在数据损失之外增加权重惩罚：
 
-$$\mathcal L=\mathcal L_{data}+\lambda\|W\|_F^2.$$
+$$\mathcal J(\theta)=\mathcal L_{data}(\theta)+\lambda\sum_\ell\|W^{(\ell)}\|_F^2.$$
 
 $\lambda$ 控制惩罚强度，通过验证集选择。
 2. **Early stopping 提前停止**：监测验证损失，在继续训练已不能改善泛化时停止，恢复最佳轮次参数。
@@ -72,7 +107,7 @@ $\lambda$ 控制惩罚强度，通过验证集选择。
 4. **More representative data / augmentation**：增加有效数据；增强操作须保持标签语义。
 5. **Dropout**：训练时随机屏蔽部分单元，减少共同适应，推理时使用对应缩放约定。
 
-输入标准化通常改善优化，不等价于防过拟合；BatchNorm 也不能替代独立验证与正则化。测试集只能用于最终评价，不能逐轮看测试集来早停。
+训练集拟合权重，验证集选择正则强度、网络规模和停止轮次，独立测试集评价最终选好的模型。输入标准化主要改善优化。
 
 
 ### English answer pattern
@@ -97,6 +132,22 @@ Use weight regularization, early stopping, capacity control, appropriate data au
 来源：当前 HW3 · Lab Q1；往届 HW2（hxd） · Lab Q1 (pruning parameter differs)
 
 状态：完整；形式：作业提炼 / 评估。
+
+### 本题公式 · 混淆矩阵与模型评价
+
+先指定正类（positive class）。$TP$：实际正、预测正；$FN$：实际正、预测负；$FP$：实际负、预测正；$TN$：实际负、预测负。总数 $N=TP+FN+FP+TN$。
+
+$$\begin{aligned}
+Accuracy&=\frac{TP+TN}{N},\\
+Precision&=\frac{TP}{TP+FP},\\
+Recall=Sensitivity&=\frac{TP}{TP+FN},\\
+Specificity&=\frac{TN}{TN+FP},\\
+F_1&=\frac{2TP}{2TP+FP+FN}.
+\end{aligned}$$
+
+准确率（accuracy）看总体；精确率（precision）看预测正类；召回率/敏感度（recall/sensitivity）看实际正类；特异度（specificity）看实际负类。分母为0时，该比例需单独说明约定。
+
+若题目给出误判代价，使用 $Cost=C_{FN}FN+C_{FP}FP$；$C_{FN},C_{FP}$ 分别是一次漏报和一次误报的代价，选择成本较低的模型。
 
 ### 原文
 
@@ -210,6 +261,22 @@ Conjoin the edge tests along each root-to-positive-leaf path. Count the root as 
 
 状态：实验题提炼；未重跑软件；形式：作业提炼 / 设计。
 
+### 本题公式 · 混淆矩阵与模型评价
+
+先指定正类（positive class）。$TP$：实际正、预测正；$FN$：实际正、预测负；$FP$：实际负、预测正；$TN$：实际负、预测负。总数 $N=TP+FN+FP+TN$。
+
+$$\begin{aligned}
+Accuracy&=\frac{TP+TN}{N},\\
+Precision&=\frac{TP}{TP+FP},\\
+Recall=Sensitivity&=\frac{TP}{TP+FN},\\
+Specificity&=\frac{TN}{TN+FP},\\
+F_1&=\frac{2TP}{2TP+FP+FN}.
+\end{aligned}$$
+
+准确率（accuracy）看总体；精确率（precision）看预测正类；召回率/敏感度（recall/sensitivity）看实际正类；特异度（specificity）看实际负类。分母为0时，该比例需单独说明约定。
+
+若题目给出误判代价，使用 $Cost=C_{FN}FN+C_{FP}FP$；$C_{FN},C_{FP}$ 分别是一次漏报和一次误报的代价，选择成本较低的模型。
+
 ### 原文
 
 Predict final-exam pass/fail from online learning behavior. Training data have 873 records and the supplied test data 461 records. Try decision trees, neural networks or logistic regression with different parameters and report a confusion matrix.
@@ -282,6 +349,22 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
+### 本题公式 · 过拟合、正则化与早停
+
+训练损失 $\mathcal L_{train}$ 衡量对训练数据的拟合；验证损失 $\mathcal L_{val}$ 用于选模型和训练轮次。典型过拟合现象是训练损失继续下降，验证损失开始上升。
+
+**L2 正则化（L2 regularization）**
+
+$$\mathcal J(\theta)=\mathcal L_{data}(\theta)+\lambda\sum_\ell\|W^{(\ell)}\|_F^2.$$
+
+$\theta$ 为模型参数；$W^{(\ell)}$ 为第 $\ell$ 层权重；$\|W\|_F^2=\sum_{i,j}w_{ij}^2$；$\lambda\ge0$ 控制惩罚强度。若题目写 $\lambda/2$，按题给系数代入。
+
+**早停（early stopping）与选模**
+
+$$t^*=\arg\min_t\mathcal L_{val}(\theta_t),\qquad \overline E_{CV}=\frac1K\sum_{j=1}^K E_j.$$
+
+$t$ 为训练轮次，早停保留验证损失最低轮次的参数；$E_j$ 为第 $j$ 折验证误差，$K$ 折交叉验证取平均。训练集拟合参数，验证集选超参数，测试集评价最终方案。
+
 ### 原文
 
 **(a)** What is overfitting? Explain its typical effect on training and validation performance.
@@ -310,8 +393,8 @@ Tune on training/validation data, prevent temporal leakage, and evaluate the sel
 
 **(b)** 可采用以下三种方法：
 
-- **L2 正则化：** 在数据损失上加入 $\lambda\|W\|_F^2$，限制过大权重。
-- **早停：** 根据验证损失停止训练，恢复验证损失最低轮次的模型。
+- **L2 正则化：** 最小化 $\mathcal J=\mathcal L_{data}+\lambda\sum_\ell\|W^{(\ell)}\|_F^2$，限制过大权重。
+- **早停：** 选择 $t^*=\arg\min_t\mathcal L_{val}(\theta_t)$，恢复该轮参数。
 - **Dropout：** 训练时随机屏蔽部分单元，减少共同适应。
 
 **(c)** 权重由训练集拟合；正则强度、网络规模和停止轮次由验证集或交叉验证选择；确定方案后在测试集上报告最终结果。
@@ -344,6 +427,21 @@ t^*&=\arg\min_t\mathcal L_{val}(\theta_t).
 
 真实类别概率越大，交叉熵越小。第二项惩罚过大的权重，$\lambda$ 控制惩罚强度；$\|W\|_F^2$ 为矩阵全部权重的平方和。$t^*$ 是验证损失最低的训练轮次；早停后恢复该轮保存的权重。若题目采用平方误差，沿用题给损失，正则与验证的思路相同。
 
+#### 补充计算：正则项和早停怎样代入
+
+若数据损失为0.20，示例权重为 $0.3,-0.4$，取 $\lambda=0.1$：
+
+$$\begin{aligned}
+\|W\|_F^2&=0.3^2+(-0.4)^2=0.25,\\
+\mathcal J&=0.20+0.1\times0.25=\boxed{0.225}.
+\end{aligned}$$
+
+验证损失在第1至4轮依次为 $0.50,0.38,0.35,0.37$ 时，
+
+$$t^*=\arg\min_{t\in\{1,2,3,4\}}\mathcal L_{val}(\theta_t)=\boxed{3}.$$
+
+因此保存并恢复第3轮参数。以上数字为说明公式的补充例子。
+
 #### 至少三种措施及原理
 
 | 措施 | 原理 | 参数如何选 |
@@ -356,9 +454,9 @@ t^*&=\arg\min_t\mathcal L_{val}(\theta_t).
 
 #### 模型选择与最终评价
 
-训练集拟合权重；验证集或交叉验证选择模型容量、正则强度和停止轮次；最终测试集评价选好的模型。比较多个方案时保持相同的数据划分与评价指标，使差别能反映方案本身。小样本时可用 $k$ 折交叉验证，平均验证误差为
+训练集拟合权重；验证集或交叉验证选择模型容量、正则强度和停止轮次；最终测试集评价选好的模型。比较多个方案时保持相同的数据划分与评价指标，使差别能反映方案本身。小样本时可用 $K$ 折交叉验证，平均验证误差为
 
-$$\overline E_{CV}=\frac1k\sum_{j=1}^{k}E_j.$$
+$$\overline E_{CV}=\frac1K\sum_{j=1}^{K}E_j.$$
 
 按验证指标选定方案后，锁定超参数与训练规则，再进行最终测试评价。
 
@@ -389,6 +487,14 @@ $$\overline E_{CV}=\frac1k\sum_{j=1}^{k}E_j.$$
 来源：当前完整七讲课件 · classification.pdf · Exercise 1 · PDF p.67
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · Bagging 多数投票
+
+第 $b$ 个基分类器记为 $h_b$。对输入 $x$，先分别求预测，再统计每个类别 $c$ 的票数：
+
+$$\hat y=\arg\max_c\sum_{b=1}^{B}\mathbf1[h_b(x)=c].$$
+
+$B$ 为模型数；条件成立时指示函数 $\mathbf1[\cdot]$ 为1，否则为0。等权 Bagging 选择票数最多的类别；票数相同时按题给规则处理。
 
 ### 原文
 
@@ -443,6 +549,22 @@ The three classifiers predict -1,+1,-1. Equal-weight majority voting therefore p
 来源：当前完整七讲课件 · classification.pdf · Exercise 1 · PDF p.84；当前完整七讲课件 · classification.pdf · Exercise 1 答案页 · PDF p.85
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · 混淆矩阵与模型评价
+
+先指定正类（positive class）。$TP$：实际正、预测正；$FN$：实际正、预测负；$FP$：实际负、预测正；$TN$：实际负、预测负。总数 $N=TP+FN+FP+TN$。
+
+$$\begin{aligned}
+Accuracy&=\frac{TP+TN}{N},\\
+Precision&=\frac{TP}{TP+FP},\\
+Recall=Sensitivity&=\frac{TP}{TP+FN},\\
+Specificity&=\frac{TN}{TN+FP},\\
+F_1&=\frac{2TP}{2TP+FP+FN}.
+\end{aligned}$$
+
+准确率（accuracy）看总体；精确率（precision）看预测正类；召回率/敏感度（recall/sensitivity）看实际正类；特异度（specificity）看实际负类。分母为0时，该比例需单独说明约定。
+
+若题目给出误判代价，使用 $Cost=C_{FN}FN+C_{FP}FP$；$C_{FN},C_{FP}$ 分别是一次漏报和一次误报的代价，选择成本较低的模型。
 
 ### 原文
 

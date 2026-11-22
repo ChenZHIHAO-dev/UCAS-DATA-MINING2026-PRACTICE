@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
 ### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=50%.
@@ -35,7 +43,7 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 
 #### 1. 换算整数阈值，扫描单项
 
-$$q=\left\lceil N\times min\_sup\right\rceil=5.$$
+$$q=\left\lceil N\times min\_sup\right\rceil=\left\lceil 10\times 0.5\right\rceil=5.$$
 
 | 物品 Item | 支持计数 Count | 是否保留 |
 | --- | --- | --- |
@@ -172,6 +180,14 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
 ### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=30%.
@@ -195,7 +211,7 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 
 #### 1. 换算整数阈值，扫描单项
 
-$$q=\left\lceil N\times min\_sup\right\rceil=3.$$
+$$q=\left\lceil N\times min\_sup\right\rceil=\left\lceil 10\times 0.3\right\rceil=3.$$
 
 | 物品 Item | 支持计数 Count | 是否保留 |
 | --- | --- | --- |
@@ -340,6 +356,14 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
 ### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=60%.
@@ -357,7 +381,7 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 
 #### 1. 换算整数阈值，扫描单项
 
-$$q=\left\lceil N\times min\_sup\right\rceil=3.$$
+$$q=\left\lceil N\times min\_sup\right\rceil=\left\lceil 4\times 0.6\right\rceil=3.$$
 
 | 物品 Item | 支持计数 Count | 是否保留 |
 | --- | --- | --- |
@@ -470,6 +494,14 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
 ### 原文
 
 Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pattern bases and conditional FP-trees for every item. min_support=40%.
@@ -488,7 +520,7 @@ Find all frequent itemsets using FP-growth. Present the FP-tree, conditional pat
 
 #### 1. 换算整数阈值，扫描单项
 
-$$q=\left\lceil N\times min\_sup\right\rceil=2.$$
+$$q=\left\lceil N\times min\_sup\right\rceil=\left\lceil 5\times 0.4\right\rceil=2.$$
 
 | 物品 Item | 支持计数 Count | 是否保留 |
 | --- | --- | --- |
@@ -631,6 +663,20 @@ A conditional pattern base contains weighted prefix paths leading to the suffix 
 - 同频按 A<B<C<D<E；规则小问只算给定规则，不另设 min_conf。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · FP-growth 与指定规则置信度
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
+$X,Y$ 为非空且不相交的项集，$N$ 为事务总数，$count(Z)$ 为包含 Z 全部物品的事务数：
+
+$$supp(X\Rightarrow Y)=\frac{count(X\cup Y)}N,\qquad conf(X\Rightarrow Y)=\frac{count(X\cup Y)}{count(X)}.$$
+
+先数同时包含前后件的事务，再以前件计数为分母算置信度。
 
 ### 原文
 
@@ -789,6 +835,14 @@ There are seven frequent itemsets: A, B, C, AB, AC, BC and ABC, with counts 5,5,
 来源：当前完整七讲课件 · ARM.pdf · Exercise 3；pp.50–51 为课件解答 · PDF p.49
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
 
 ### 原文
 

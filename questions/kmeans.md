@@ -12,6 +12,16 @@
 
 状态：原卷点数矛盾；按可见六点解；形式：计算 / 推导。
 
+### 本题公式 · K-means：距离、分配和新中心
+
+$x_i$ 为 d 维数据点，$\mu_j$ 为第 j 个中心。每轮用同一套旧中心先完成分配，再更新均值：
+
+$$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i,\mu_j).$$
+
+$$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
+
+逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
+
 ### 原文
 
 Given 8 sample points, perform K-means to generate 3 clusters, initially using points 1,2,3 as centers. List clusters at each iteration. The visible table contains only: (1,1),(1,2),(2,1),(3,4),(3,5),(4,5).
@@ -35,6 +45,16 @@ c_i^{(t)}&=\arg\min_j\|x_i-\mu_j^{(t)}\|_2^2,\\
 
 初始中心为 $(1,1),(1,2),(2,1)$。平方距离如下。
 
+例如点 4 为 $(3,4)$：
+
+$$\begin{aligned}
+d_1^2&=(3-1)^2+(4-1)^2=4+9=13,\\
+d_2^2&=(3-1)^2+(4-2)^2=4+4=8,\\
+d_3^2&=(3-2)^2+(4-1)^2=1+9=10.
+\end{aligned}$$
+
+最小平方距离为 8，故该点第一轮进入 C2。
+
 | 点 | 坐标 | 到中心1 | 到中心2 | 到中心3 | 分配 |
 | --- | --- | --- | --- | --- | --- |
 | 1 | (1,1) | 0 | 1 | 1 | C1 |
@@ -52,7 +72,7 @@ $$\mu_2^{(1)}=\left(\frac{1+3+3+4}{4},\frac{2+4+5+5}{4}\right)=\left(\frac{11}4,
 
 #### 3. 第二轮：用更新后的三个中心重新分配
 
-点 2 到三个旧中心的平方距离分别为 $1,113/16,2$，所以改入 C1；点 4、5、6 继续属于 C2。此时
+点 2 到三个旧中心的平方距离分别为 $1,113/16,2$，其中到 C2 的值是 $(1-11/4)^2+(2-4)^2=49/16+4=113/16$，所以改入 C1；点 4、5、6 继续属于 C2。此时
 
 $$\begin{aligned}
 C_1&=\{1,2\},&\mu_1&=(1,1.5),\\
@@ -88,6 +108,16 @@ The scanned table has six points despite the statement saying eight. Under the s
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · K-means：距离、分配和新中心
+
+$x_i$ 为 d 维数据点，$\mu_j$ 为第 j 个中心。每轮用同一套旧中心先完成分配，再更新均值：
+
+$$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i,\mu_j).$$
+
+$$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
+
+逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
+
 ### 原文
 
 Cluster the ten 3D points into three clusters using Euclidean distance, initialized at A1,B1,C1. Show first-round centroids and final clusters.
@@ -122,6 +152,16 @@ c_i^{(t)}&=\arg\min_j\|x_i-\mu_j^{(t)}\|_2^2,\\
 
 #### 2. 第一轮距离与分簇
 
+例如 $A2=(10,5,2)$ 到三个旧中心的平方距离为：
+
+$$\begin{aligned}
+d_1^2&=(10-4)^2+(5-2)^2+(2-5)^2=36+9+9=54,\\
+d_2^2&=(10-1)^2+(5-1)^2+(2-1)^2=81+16+1=98,\\
+d_3^2&=(10-11)^2+(5-9)^2+(2-2)^2=1+16+0=17.
+\end{aligned}$$
+
+最小值为 17，故 A2 分入第 3 簇。其他点按相同方法得到下表。
+
 | Point | D² to initial 1 | D² to initial 2 | D² to initial 3 | First cluster |
 | --- | --- | --- | --- | --- |
 | A1 | 0 | 26 | 107 | 1 |
@@ -153,7 +193,12 @@ $$\begin{aligned}
 &=\left(\frac{27}6,\frac{27}6,\frac{41}6\right)=(4.5,4.5,6.833333\ldots).
 \end{aligned}$$
 
-第二、三簇各有两个点，均值为 $(1.5,2,1.5)$ 与 $(10.5,7,2)$。使用这三个新中心进行第二轮分配，点集不变，故达到稳定。
+第二、三簇各有两个点，逐坐标代入为：
+
+$$\mu_2=\frac{(1,1,1)+(2,3,2)}2=(1.5,2,1.5),\qquad
+\mu_3=\frac{(10,5,2)+(11,9,2)}2=(10.5,7,2).$$
+
+使用这三个新中心进行第二轮分配，点集不变，故达到稳定。
 
 
 ### English answer pattern
@@ -191,6 +236,16 @@ Assign by squared Euclidean distance and recompute coordinate-wise means. The se
 - 一轮定义为全量分配后统一更新；距离平局选编号小的簇。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · K-means：距离、分配和新中心
+
+$x_i$ 为 d 维数据点，$\mu_j$ 为第 j 个中心。每轮用同一套旧中心先完成分配，再更新均值：
+
+$$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i,\mu_j).$$
+
+$$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
+
+逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
 
 ### 原文
 
@@ -312,6 +367,20 @@ After the first update the centers are 10/3 and 17. After the second assignment,
 来源：往届 HW3（hxd） · Lab 雷达信号分选
 
 状态：完整；形式：作业提炼 / 算法选择。
+
+### 本题公式 · K-means：SSE 与平均距离
+
+$x_i$ 为 d 维数据点，$\mu_j$ 为第 j 个中心。每轮用同一套旧中心先完成分配，再更新均值：
+
+$$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i,\mu_j).$$
+
+$$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
+
+逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
+
+$$SSE=\sum_i\|x_i-\mu_{c_i}\|^2,\qquad MD=\frac1N\sum_i\|x_i-\mu_{c_i}\|.$$
+
+$N$ 为点数；本题 mean distortion 用普通距离平均。不同 K 使用相同缩放与评价口径后再比较下降幅度。
 
 ### 原文
 

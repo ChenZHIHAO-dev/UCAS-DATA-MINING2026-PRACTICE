@@ -12,6 +12,25 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 条件概率与贝叶斯：公式和分母
+
+**条件概率与联合概率。** $P(A\mid B)$ 表示已知 B 发生时 A 的概率，分母限定在 B 中：
+
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)},\qquad P(A\cap B)=P(A\mid B)P(B).$$
+
+**全概率与贝叶斯。** 若类别 $C_1,\ldots,C_K$ 互斥且覆盖全部样本，观察证据 x 后：
+
+$$\begin{aligned}
+P(x)&=\sum_kP(x\mid C_k)P(C_k),\\
+P(C_c\mid x)&=\frac{P(x\mid C_c)P(C_c)}{\sum_kP(x\mid C_k)P(C_k)}.
+\end{aligned}$$
+
+**朴素贝叶斯。** 给定类别后，假设各属性条件独立。先验用“该类人数/总人数”，条件概率用“该类内符合属性的人数/该类人数”：
+
+$$s_c=P(C_c)\prod_jP(x_j\mid C_c),\qquad P_{NB}(C_c\mid x)=\frac{s_c}{\sum_k s_k}.$$
+
+按“类人数→条件计数→相乘得分→比较类别→需要时归一化”计算。分类取分数最大者；条件概率与归一化均要求分母大于 0。题目指定平滑时，按同一规则调整各类条件计数。
+
 ### 原文
 
 Use Naïve Bayesian Classifier to predict the class of (A=0,B=1,C=0).
@@ -39,7 +58,7 @@ Use Naïve Bayesian Classifier to predict the class of (A=0,B=1,C=0).
 
 $$s_c=P(C_c)P(A=0\mid C_c)P(B=1\mid C_c)P(C=0\mid C_c).$$
 
-先验 $P(C_c)$ 的分母是总人数 10；每个条件概率的分母是对应类别人数 5。选择分数最大者；若需要后验，再计算 $P(C_c\mid x)=s_c/(s_1+s_2)$。
+先验 $P(C_c)$ 的分母是总人数 10；每个条件概率的分母是对应类别人数 5。选择分数最大者；若需要后验，再计算 $P_{NB}(C_c\mid x)=s_c/(s_1+s_2)$。
 
 #### 1. 逐项计数
 
@@ -51,11 +70,11 @@ $$s_c=P(C_c)P(A=0\mid C_c)P(B=1\mid C_c)P(C=0\mid C_c).$$
 #### 2. 代入分数并分类
 
 $$\begin{aligned}
-s_1&=\frac5{10}\frac25\frac15\frac15=0.008,\\
-s_2&=\frac5{10}\frac35\frac15\frac05=0.
+s_1&=\frac5{10}\times\frac25\frac15\frac15=0.008,\\
+s_2&=\frac5{10}\times\frac35\frac15\frac05=0.
 \end{aligned}$$
 
-$$P(C_1\mid x)=\frac{0.008}{0.008+0}=1,\qquad P(C_2\mid x)=0.$$
+$$P_{NB}(C_1\mid x)=\frac{0.008}{0.008+0}=1,\qquad P_{NB}(C_2\mid x)=0.$$
 
 #### 最终答案
 
@@ -95,6 +114,25 @@ Laplace 的每个类条件分母为该类样本数 + 属性可取值数，，对
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 条件概率与贝叶斯：公式和分母
+
+**条件概率与联合概率。** $P(A\mid B)$ 表示已知 B 发生时 A 的概率，分母限定在 B 中：
+
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)},\qquad P(A\cap B)=P(A\mid B)P(B).$$
+
+**全概率与贝叶斯。** 若类别 $C_1,\ldots,C_K$ 互斥且覆盖全部样本，观察证据 x 后：
+
+$$\begin{aligned}
+P(x)&=\sum_kP(x\mid C_k)P(C_k),\\
+P(C_c\mid x)&=\frac{P(x\mid C_c)P(C_c)}{\sum_kP(x\mid C_k)P(C_k)}.
+\end{aligned}$$
+
+**朴素贝叶斯。** 给定类别后，假设各属性条件独立。先验用“该类人数/总人数”，条件概率用“该类内符合属性的人数/该类人数”：
+
+$$s_c=P(C_c)\prod_jP(x_j\mid C_c),\qquad P_{NB}(C_c\mid x)=\frac{s_c}{\sum_k s_k}.$$
+
+按“类人数→条件计数→相乘得分→比较类别→需要时归一化”计算。分类取分数最大者；条件概率与归一化均要求分母大于 0。题目指定平滑时，按同一规则调整各类条件计数。
+
 ### 原文
 
 Using the Q1 training table, what would a naïve Bayesian classifier classify Z=(Height=Short,Hair=Blond,Eye=Brown)?
@@ -109,7 +147,7 @@ Using the Q1 training table, what would a naïve Bayesian classifier classify Z=
 
 $$s_c=P(C_c)P(Short\mid C_c)P(Blond\mid C_c)P(Brown\mid C_c).$$
 
-若要求后验概率，使用 $P(C_c\mid Z)=s_c/(s_1+s_2)$。下面沿用 Q1 的九个训练样本；未知样本 Z 只用于预测。
+若要求后验概率，使用 $P_{NB}(C_c\mid Z)=s_c/(s_1+s_2)$。下面沿用 Q1 的九个训练样本；未知样本 Z 只用于预测。
 
 #### 1. 先验和类内条件概率
 
@@ -127,7 +165,7 @@ s_1&=\frac59\frac25\frac25\frac35=\frac4{75}\approx0.053333,\\
 s_2&=\frac49\frac14\frac24\frac04=0.
 \end{aligned}$$
 
-$$P(C_1\mid Z)=\frac{4/75}{4/75+0}=1,\qquad P(C_2\mid Z)=0.$$
+$$P_{NB}(C_1\mid Z)=\frac{4/75}{4/75+0}=1,\qquad P_{NB}(C_2\mid Z)=0.$$
 
 #### 最终答案
 
@@ -157,6 +195,25 @@ The unsmoothed classifier predicts C1. Multiplying class-conditional probabiliti
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 条件概率与贝叶斯：公式和分母
+
+**条件概率与联合概率。** $P(A\mid B)$ 表示已知 B 发生时 A 的概率，分母限定在 B 中：
+
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)},\qquad P(A\cap B)=P(A\mid B)P(B).$$
+
+**全概率与贝叶斯。** 若类别 $C_1,\ldots,C_K$ 互斥且覆盖全部样本，观察证据 x 后：
+
+$$\begin{aligned}
+P(x)&=\sum_kP(x\mid C_k)P(C_k),\\
+P(C_c\mid x)&=\frac{P(x\mid C_c)P(C_c)}{\sum_kP(x\mid C_k)P(C_k)}.
+\end{aligned}$$
+
+**朴素贝叶斯。** 给定类别后，假设各属性条件独立。先验用“该类人数/总人数”，条件概率用“该类内符合属性的人数/该类人数”：
+
+$$s_c=P(C_c)\prod_jP(x_j\mid C_c),\qquad P_{NB}(C_c\mid x)=\frac{s_c}{\sum_k s_k}.$$
+
+按“类人数→条件计数→相乘得分→比较类别→需要时归一化”计算。分类取分数最大者；条件概率与归一化均要求分母大于 0。题目指定平滑时，按同一规则调整各类条件计数。
+
 ### 原文
 
 The fraction of undergraduates who smoke is 15%, and the fraction of graduates who smoke is 23%. One-fifth of students are graduates. (a) What is P(graduate|smokes)? (b) Is a random student more likely graduate or undergraduate? (c) 30% of graduates and 10% of undergraduates live in a dorm. Given smoking and dorm residence, which class is more likely? Assume independence for the two behaviors.
@@ -185,11 +242,15 @@ $$P(G\mid S)=\frac{P(S\mid G)P(G)}{P(S)}=\frac{0.046}{0.166}=\frac{23}{83}\appro
 
 #### 4. 同时吸烟且住校
 
-按题目独立假设，采用类条件独立 $S\perp D\mid class$。计算两个联合分数：
+采用题意中的类条件独立 $S\perp D\mid class$，先写联合概率的分解式：
+
+$$P(S,D\mid c)=P(S\mid c)P(D\mid c),\qquad s_c=P(c)P(S\mid c)P(D\mid c).$$
+
+再代入两类的先验及条件概率：
 
 $$\begin{aligned}
-score(G)&=0.2\times0.23\times0.30=0.0138,\\
-score(U)&=0.8\times0.15\times0.10=0.012.
+s_G&=0.2\times0.23\times0.30=0.0138,\\
+s_U&=0.8\times0.15\times0.10=0.012.
 \end{aligned}$$
 
 $$P(G\mid S,D)=\frac{0.0138}{0.0138+0.012}=\frac{23}{43}\approx\boxed{0.534884}.$$
@@ -223,6 +284,25 @@ P(S|G) 在研究生中数吸烟者，P(G|S) 在吸烟者中数研究生；第三
 来源：当前完整七讲课件 · classification.pdf · Exercise；答案见 pp.39–40 · PDF p.38
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · 条件概率与贝叶斯：公式和分母
+
+**条件概率与联合概率。** $P(A\mid B)$ 表示已知 B 发生时 A 的概率，分母限定在 B 中：
+
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)},\qquad P(A\cap B)=P(A\mid B)P(B).$$
+
+**全概率与贝叶斯。** 若类别 $C_1,\ldots,C_K$ 互斥且覆盖全部样本，观察证据 x 后：
+
+$$\begin{aligned}
+P(x)&=\sum_kP(x\mid C_k)P(C_k),\\
+P(C_c\mid x)&=\frac{P(x\mid C_c)P(C_c)}{\sum_kP(x\mid C_k)P(C_k)}.
+\end{aligned}$$
+
+**朴素贝叶斯。** 给定类别后，假设各属性条件独立。先验用“该类人数/总人数”，条件概率用“该类内符合属性的人数/该类人数”：
+
+$$s_c=P(C_c)\prod_jP(x_j\mid C_c),\qquad P_{NB}(C_c\mid x)=\frac{s_c}{\sum_k s_k}.$$
+
+按“类人数→条件计数→相乘得分→比较类别→需要时归一化”计算。分类取分数最大者；条件概率与归一化均要求分母大于 0。题目指定平滑时，按同一规则调整各类条件计数。
 
 ### 原文
 
@@ -272,11 +352,11 @@ $$s_c=P(c)\prod_{j=1}^{4}P(x_j\mid c),\qquad \hat c=\arg\max_c s_c.$$
 #### 3. 相乘并给结论
 
 $$\begin{aligned}
-s_{yes}&=\frac9{14}\frac29\frac49\frac69\frac69=0.0282187,\\
-s_{no}&=\frac5{14}\frac35\frac25\frac15\frac25=0.00685714.
+s_{yes}&=\frac9{14}\times\frac29\frac49\frac69\frac69=\frac{16}{567}\approx0.0282187,\\
+s_{no}&=\frac5{14}\times\frac35\frac25\frac15\frac25=\frac6{875}\approx0.00685714.
 \end{aligned}$$
 
-$$P_{NB}(yes\mid X)=\frac{0.0282187}{0.0282187+0.00685714}=0.804505.$$
+$$P_{NB}(yes\mid X)=\frac{16/567}{16/567+6/875}=\frac{1000}{1243}\approx0.804505.$$
 
 预测为 $\boxed{buys\_computer=yes}$。所有条件计数均非零，本题可直接使用未平滑的频数估计。
 

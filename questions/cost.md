@@ -12,6 +12,12 @@
 
 状态：完整；形式：补充变式 / 内存。
 
+### 本题公式 · 矩阵、位图与邻居表存储
+
+总字节数等于“元素数×每元素字节”。完整 n×n float64 矩阵为 $8n^2$ bytes；K 条、每条 n 位的未压缩位图为 $nK/8$ bytes。
+
+n 个用户各存 k 个邻居，每条 ID 和权重分别占 $b_{id},b_w$ bytes，则 $M=nk(b_{id}+b_w)$。十进制 GB=$10^9$ bytes，二进制 GiB=$2^{30}$ bytes。
+
 ### 原文
 
 Estimate storage for: (a) a full float64 pairwise matrix for N=10^6; (b) uncompressed bitmaps for N=10^8,K=10^4; (c) top-50 user neighbors for 10^6 users, 4-byte IDs and 4-byte weights.
@@ -69,6 +75,12 @@ Convert bits to bytes explicitly and separate numeric payloads from implementati
 来源：整理者补充变式 · 依据 ARM 的复杂度分析
 
 状态：完整；形式：补充变式 / 复杂度。
+
+### 本题公式 · 候选数量与树存储的规模
+
+m 个不同频繁单项最多形成 $\binom m2=m(m-1)/2$ 个无序候选二项集；每条计数记录占 b bytes 时，载荷为 $b\binom m2$。
+
+过滤后事务总长度 $B=\sum_t|t'|$ 给出 FP-tree 节点数的最坏量级；若 m 个物品总共同出现，非空频繁项集输出有 $2^m-1$ 个。
 
 ### 原文
 

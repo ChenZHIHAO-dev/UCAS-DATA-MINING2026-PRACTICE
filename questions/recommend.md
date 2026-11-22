@@ -12,6 +12,20 @@
 
 状态：题面未指定预测公式；列出两种口径；形式：计算 / 推导。
 
+### 本题公式 · 欧氏邻居与两种评分聚合
+
+只在共同已评分列 J 上计算距离；问号为缺失值。
+
+$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=1/d(u,v).$$
+
+按距离从小到大选择邻居；原评分加权为 $\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$。
+
+均值修正先减去邻居自己的均值，再加回目标用户均值：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+
+$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
+
 ### 原文
 
 List the top 2 most similar users of User 2 based on Euclidean distance. Predict User 2’s rating for Product 2.
@@ -92,6 +106,14 @@ Use only Product1, Product3 and Product4 to compare users. State how neighbor ra
 来源：2020 年扫描卷 · Q5(1-2) / 14 points · PDF p.2
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 欧氏邻居与反距离评分
+
+只在共同已评分列 J 上计算距离；问号为缺失值。
+
+$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=1/d(u,v).$$
+
+按距离从小到大选择邻居；原评分加权为 $\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$。
 
 ### 原文
 
@@ -174,6 +196,20 @@ Student2 距离 √14≈3.741657，应按距离排序后选择最近两人；不
 - 明确采用课件的均值修正预测，用户均值用各自全部已知评分。
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
+
+### 本题公式 · 余弦邻居与均值修正
+
+J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+
+$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+
+选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+
+均值修正先减去邻居自己的均值，再加回目标用户均值：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+
+$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
 
 ### 原文
 
@@ -304,6 +340,16 @@ The two cosine neighbors are U1 and U3. With the specified mean-centered formula
 
 状态：完整；形式：补充变式。
 
+### 本题公式 · 余弦邻居与原评分加权
+
+J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+
+$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+
+选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+
+原评分加权：$\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$；分别预测候选后选较高者。
+
 ### 原文
 
 Target U has known ratings (1,2) on shared items A,B. Three neighbors have A,B ratings V=(2,4), W=(2,1), Z=(0,3). Their ratings on candidate C,D are V=(5,1), W=(4,2), Z=(2,5). Use top-2 cosine neighbors and raw weighted prediction.
@@ -363,6 +409,20 @@ Select V and Z by cosine similarity, then normalize the weighted rating sum.
 来源：当前完整七讲课件 · recommend.pdf · Example：Jane 邻居计算；p.22 评分预测 · PDF p.21
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 余弦邻居与均值修正
+
+J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+
+$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+
+选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+
+均值修正先减去邻居自己的均值，再加回目标用户均值：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+
+$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
 
 ### 原文
 

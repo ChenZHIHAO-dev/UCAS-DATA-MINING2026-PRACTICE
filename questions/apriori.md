@@ -12,6 +12,14 @@
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 支持度、整数阈值与逐层计数
+
+设 $N$ 为原事务数，$count(X)$ 为包含项集 $X$ 中全部物品的事务数，支持度阈值比例为 $s$。
+
+$$supp(X)=\frac{count(X)}N,\qquad q=\lceil Ns\rceil,\qquad X\text{ 频繁}\iff count(X)\ge q.$$
+
+Apriori：由 $L_{k-1}$ 连接并检查所有 $(k-1)$ 项子集，再给留下的 $C_k$ 扫描计数，得到 $L_k$。
+
 ### 原文
 
 Find all frequent itemsets using Apriori, with min_support=50%. Present candidates and frequent itemsets at each level.
@@ -90,6 +98,14 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 
 状态：完整；形式：计算 / 推导。
 
+### 本题公式 · 支持度、整数阈值与逐层计数
+
+设 $N$ 为原事务数，$count(X)$ 为包含项集 $X$ 中全部物品的事务数，支持度阈值比例为 $s$。
+
+$$supp(X)=\frac{count(X)}N,\qquad q=\lceil Ns\rceil,\qquad X\text{ 频繁}\iff count(X)\ge q.$$
+
+Apriori：由 $L_{k-1}$ 连接并检查所有 $(k-1)$ 项子集，再给留下的 $C_k$ 扫描计数，得到 $L_k$。
+
 ### 原文
 
 Find all frequent itemsets using Apriori, with min_support=60%. Present candidates and frequent itemsets at each level.
@@ -161,6 +177,14 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 来源：往届 HW3（hxd） · Written Q1(a)
 
 状态：完整；形式：计算 / 推导。
+
+### 本题公式 · 支持度、整数阈值与逐层计数
+
+设 $N$ 为原事务数，$count(X)$ 为包含项集 $X$ 中全部物品的事务数，支持度阈值比例为 $s$。
+
+$$supp(X)=\frac{count(X)}N,\qquad q=\lceil Ns\rceil,\qquad X\text{ 频繁}\iff count(X)\ge q.$$
+
+Apriori：由 $L_{k-1}$ 连接并检查所有 $(k-1)$ 项子集，再给留下的 $C_k$ 扫描计数，得到 $L_k$。
 
 ### 原文
 
@@ -234,6 +258,14 @@ Join frequent itemsets, prune candidates with infrequent subsets, count candidat
 来源：当前完整七讲课件 · ARM.pdf · Exercise 1 · PDF p.25
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · 支持度、整数阈值与逐层计数
+
+设 $N$ 为原事务数，$count(X)$ 为包含项集 $X$ 中全部物品的事务数，支持度阈值比例为 $s$。
+
+$$supp(X)=\frac{count(X)}N,\qquad q=\lceil Ns\rceil,\qquad X\text{ 频繁}\iff count(X)\ge q.$$
+
+Apriori：由 $L_{k-1}$ 连接并检查所有 $(k-1)$ 项子集，再给留下的 $C_k$ 扫描计数，得到 $L_k$。
 
 ### 原文
 
@@ -331,6 +363,12 @@ The minimum count is 2. L1 has 5 itemsets, L2 has 6, and L3 contains {I1,I2,I3} 
 来源：当前完整七讲课件 · ARM.pdf · Exercise 2 · PDF p.39
 
 状态：完整课件练习；形式：课件计算 / 逐步练习。
+
+### 本题公式 · DIC：阈值与启动后的计数
+
+全库阈值为 $q=\lceil Ns\rceil$。候选 $X$ 从其启动位置开始累计覆盖事务中的 $count_{seen}(X)$，与原全库阈值 $q$ 比较。
+
+“是否达到 $q$”和“是否已扫描完整一圈”是两个判断。已达 $q$ 可以成为方形状态；全库支持计数要到该候选计满一圈后确定。
 
 ### 原文
 
