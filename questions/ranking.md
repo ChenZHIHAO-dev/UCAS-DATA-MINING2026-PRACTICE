@@ -87,6 +87,8 @@ $$\rho=1-\frac{6\sum_i d_i^2}{n(n^2-1)},\qquad \tau=\frac{C-D}{\binom n2}.$$
 
 C、D 分别为先后顺序一致、不一致的物品对数；逐物品算平方差，逐对算一致性。
 
+**与普通相关系数的联系。** Spearman 的 $\rho$ 是对两列**名次**求 Pearson 相关；无并列名次时可化成这里的名次差平方和简式。这里 $d_i$ 是第 i 个物品的名次差。Kendall 的 $\tau$ 按物品对的一致 / 反序数量计算，是另一项排序指标。
+
 ### 原文
 
 For the same items i1,i2,i3,i4, predicted ranks are (1,2,3,4), true ranks (1,4,2,3). Compute Spearman ρ and Kendall τ.
@@ -158,6 +160,12 @@ Spearman ρ=0.4，Kendall τ=1/3。两对不一致物品对都涉及 i2。
 $$P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R}=\frac{2TP}{2TP+FP+FN}.$$
 
 Precision 的分母为所有已推荐物品；Recall 的分母为所有实际相关物品。
+
+**F1 两种写法的关系。** 将 $P=TP/(TP+FP)$、$R=TP/(TP+FN)$ 代入 $2PR/(P+R)$，通分并约去公共因子，得到
+
+$$F_1=\frac{2TP}{2TP+FP+FN}.$$
+
+两式使用同一张计数表，按方便的形式代入即可。
 
 ### 原文
 

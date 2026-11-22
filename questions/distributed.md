@@ -176,6 +176,12 @@ $$n'=n+1,\quad LS'=LS+x,\quad SS'=SS+x\odot x,\quad \mu'=LS'/n'.$$
 
 其中 $x\odot x$ 表示逐坐标平方；$SSE=\sum_rSS_r-\|LS\|^2/n$。有衰减时先按时间因子同时缩放 n、LS、SS，再加入新点。
 
+**在线式由“总和除点数”直接化出。** 无衰减时原向量和 $LS=n\mu$：
+
+$$\mu'=\frac{LS+x}{n+1}=\frac{n\mu+x}{n+1}=\mu+\frac{x-\mu}{n+1}.$$
+
+该式与维护 LS、n 后重新相除是同一次更新；本题使用时间衰减时先衰减摘要，再按衰减后的权重更新。
+
 ### 原文
 
 A data stream is continuous, ordered, fast-changing and possibly infinite. Present a K-means-based efficient single-scan clustering algorithm that discovers clusters and provides their evolution, in pseudocode.
@@ -204,19 +210,36 @@ $$SSE=\sum_r SS_r-\frac{\|LS\|_2^2}{n}.$$
 可给一个固定预算的在线摘要方案。每簇保存 n、LS、SS、last_time，中心 μ=LS/n；用指数衰减适应漂移，用固定长度快照环保存演化。
 
 ```text
-initialize at most Kmax clusters from a small bounded warm-up buffer
+function NEW_SUMMARY(x,t):
+    return (fresh_ID, n=1, LS=x, SS=x*x, mu=x, last_update=t)
+
+initialize an empty set of at most Kmax summaries
 for each arriving (x,t):
-    decay cluster n,LS,SS by exp(-lambda*(t-last_update))
-    j = nearest current centroid to x
-    if clusters empty OR distance(x,mu[j]) > radius_threshold:
-        create a new cluster if budget permits
-        otherwise retire a weak stale cluster or record x as an anomaly
+    for each summary j:
+        a = exp(-lambda*(t-last_update[j]))
+        n[j] *= a; LS[j] *= a; SS[j] *= a
+        last_update[j] = t
+    expire summaries whose effective weight is below a declared threshold
+
+    if no summary remains:
+        create NEW_SUMMARY(x,t)
     else:
-        n[j]+=1; LS[j]+=x; SS[j]+=x*x
-        mu[j]=LS[j]/n[j]
-    periodically save cluster IDs,centers,weights,dispersion into a fixed ring
-    expire obsolete summaries; record births,deaths and large shifts
+        j = nearest current centroid to x
+        if distance(x,mu[j]) > radius_threshold:
+            if summary count < Kmax:
+                create NEW_SUMMARY(x,t)
+            else if a weak stale summary can be retired:
+                record its retirement; replace it by NEW_SUMMARY(x,t)
+            else:
+                record x as an anomaly
+        else:
+            n[j] += 1; LS[j] += x; SS[j] += x*x
+            mu[j] = LS[j]/n[j]
+    periodically save IDs, centers, weights and dispersion in a fixed ring
+    record cluster births, retirements and large center shifts
 ```
+
+创建摘要时即以新点初始化 $n=1,LS=x,SS=x\odot x,\mu=x$；每次衰减后把更新时间推进到当前 t，使下一次只计算新的时间间隔。同乘衰减因子保持原 $LS/n$ 中心不变；吸收新点后再用更新的和与权重求中心。空摘要集合先创建首个摘要，然后才进行后续的最近中心分配。
 
 每点仅处理一次，空间随 Kmax、维数和快照预算固定。衰减时 n 可以为实数，表示有效权重。若采用窗口则须另说明如何移除过期点；只保留 LS/n 不足以精确删除某个已遗忘样本。
 
@@ -313,7 +336,7 @@ Mine locally with threshold ceil(sNp), union the local frequent itemsets, and re
 按 ceil(sNp) 阈值进行本地挖掘，合并本地频繁项集，再对每个候选进行全局计数。每个全局频繁项集必在某站点频繁。根据全局计数生成规则，通信传送项集和计数向量，无须传输原始事务。
 
 <details>
-<summary>补充解释与 SQL（展开）</summary>
+<summary>补充解释（展开）</summary>
 
 
 ### 补充详解

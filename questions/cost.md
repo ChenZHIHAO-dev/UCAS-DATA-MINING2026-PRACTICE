@@ -8,15 +8,15 @@
 
 ## SUP-COST · 内存计算：距离矩阵、位图与邻居列表
 
-来源：整理者补充变式 · 依据各章算法分析自设数量级
+来源：整理者补充练习 · 依据各章算法分析自设数量级
 
 状态：完整；形式：补充变式 / 内存。
 
 ### 本题公式 · 矩阵、位图与邻居表存储
 
-总字节数等于“元素数×每元素字节”。完整 n×n float64 矩阵为 $8n^2$ bytes；K 条、每条 n 位的未压缩位图为 $nK/8$ bytes。
+总字节数等于“元素数×每元素字节”。N 表示本题的对象 / 记录总数。完整 N×N float64 矩阵为 $8N^2$ bytes；K 条、每条 N 位的未压缩位图为 $NK/8$ bytes。
 
-n 个用户各存 k 个邻居，每条 ID 和权重分别占 $b_{id},b_w$ bytes，则 $M=nk(b_{id}+b_w)$。十进制 GB=$10^9$ bytes，二进制 GiB=$2^{30}$ bytes。
+N 个用户各存 k 个邻居，每条 ID 和权重分别占 $b_{id},b_w$ bytes，则 $M=Nk(b_{id}+b_w)$。十进制 GB=$10^9$ bytes，二进制 GiB=$2^{30}$ bytes。
 
 ### 原文
 
@@ -72,7 +72,7 @@ Convert bits to bytes explicitly and separate numeric payloads from implementati
 
 ## SUP-APR-COST · Apriori 候选爆炸与 FP-tree 内存
 
-来源：整理者补充变式 · 依据 ARM 的复杂度分析
+来源：整理者补充练习 · 依据 ARM 的复杂度分析
 
 状态：完整；形式：补充变式 / 复杂度。
 

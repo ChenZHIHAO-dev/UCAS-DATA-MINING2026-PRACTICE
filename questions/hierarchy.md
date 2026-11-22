@@ -20,6 +20,12 @@ $$s(A,B)=\max_{x\in A,y\in B}s(x,y),\quad s(A\cup B,C)=\max\{s(A,C),s(B,C)\}.$$
 
 若树状图以距离为高度，可用 $d=1-s$；每合并一次更新其到其他簇的值。
 
+**相似度最大与距离最小的关系。** 本题 $s(x,y)$ 表示相似度，取 $d(x,y)=1-s(x,y)$ 后：
+
+$$d_{single}(A,B)=\min_{x\in A,y\in B}(1-s(x,y))=1-\max_{x\in A,y\in B}s(x,y)=1-s(A,B).$$
+
+因此从相似度表选择最大值合并，与从转换后的距离表选择最小值合并得到同一顺序。
+
 ### 原文
 
 Use the following similarity matrix to perform AGNES clustering. Draw a dendrogram showing the merge order. Numbers indicate similarities.
@@ -93,7 +99,7 @@ Merge the largest similarity. With single linkage, the merges occur at .98, .85,
 
 ## SUP-HIER · 补充变式：single 与 complete 的差别
 
-来源：整理者补充变式 · 依据 clustering pp.39–43
+来源：整理者补充练习 · 依据 clustering pp.39–43
 
 状态：完整；形式：补充变式。
 

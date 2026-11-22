@@ -22,6 +22,12 @@ $$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
 
 逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
 
+**距离与平方距离的对应。**
+
+$$d(x,\mu)=\sqrt{\sum_r(x_r-\mu_r)^2},\qquad d^2(x,\mu)=\sum_r(x_r-\mu_r)^2.$$
+
+平方根在非负数上单调递增，所以 $\arg\min_j d(x,\mu_j)=\arg\min_j d^2(x,\mu_j)$。分簇时比较平方距离即可；求实际距离、平均距离时按相应公式保留开方。
+
 ### 原文
 
 Given 8 sample points, perform K-means to generate 3 clusters, initially using points 1,2,3 as centers. List clusters at each iteration. The visible table contains only: (1,1),(1,2),(2,1),(3,4),(3,5),(4,5).
@@ -118,6 +124,12 @@ $$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
 
 逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
 
+**距离与平方距离的对应。**
+
+$$d(x,\mu)=\sqrt{\sum_r(x_r-\mu_r)^2},\qquad d^2(x,\mu)=\sum_r(x_r-\mu_r)^2.$$
+
+平方根在非负数上单调递增，所以 $\arg\min_j d(x,\mu_j)=\arg\min_j d^2(x,\mu_j)$。分簇时比较平方距离即可；求实际距离、平均距离时按相应公式保留开方。
+
 ### 原文
 
 Cluster the ten 3D points into three clusters using Euclidean distance, initialized at A1,B1,C1. Show first-round centroids and final clusters.
@@ -162,7 +174,7 @@ d_3^2&=(10-11)^2+(5-9)^2+(2-2)^2=1+16+0=17.
 
 最小值为 17，故 A2 分入第 3 簇。其他点按相同方法得到下表。
 
-| Point | D² to initial 1 | D² to initial 2 | D² to initial 3 | First cluster |
+| Point | d² to initial 1 | d² to initial 2 | d² to initial 3 | First cluster |
 | --- | --- | --- | --- | --- |
 | A1 | 0 | 26 | 107 | 1 |
 | A2 | 54 | 98 | 17 | 3 |
@@ -246,6 +258,12 @@ $$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i
 $$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
 
 逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
+
+**距离与平方距离的对应。**
+
+$$d(x,\mu)=\sqrt{\sum_r(x_r-\mu_r)^2},\qquad d^2(x,\mu)=\sum_r(x_r-\mu_r)^2.$$
+
+平方根在非负数上单调递增，所以 $\arg\min_j d(x,\mu_j)=\arg\min_j d^2(x,\mu_j)$。分簇时比较平方距离即可；求实际距离、平均距离时按相应公式保留开方。
 
 ### 原文
 
@@ -381,6 +399,14 @@ $$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
 $$SSE=\sum_i\|x_i-\mu_{c_i}\|^2,\qquad MD=\frac1N\sum_i\|x_i-\mu_{c_i}\|.$$
 
 $N$ 为点数；本题 mean distortion 用普通距离平均。不同 K 使用相同缩放与评价口径后再比较下降幅度。
+
+**距离与平方距离的对应。**
+
+$$d(x,\mu)=\sqrt{\sum_r(x_r-\mu_r)^2},\qquad d^2(x,\mu)=\sum_r(x_r-\mu_r)^2.$$
+
+平方根在非负数上单调递增，所以 $\arg\min_j d(x,\mu_j)=\arg\min_j d^2(x,\mu_j)$。分簇时比较平方距离即可；求实际距离、平均距离时按相应公式保留开方。
+
+**两种目标的计算顺序。** SSE 先对每条距离平方再求和；MD 先求每条欧氏距离再除以 N。二者的区别来自逐点是否平方，题中分别按各自定义代入。
 
 ### 原文
 

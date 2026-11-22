@@ -218,3 +218,8 @@ html{scroll-padding-top:calc(var(--header-height) + 16px)}
 :root[data-theme="dark"] .formula-guide{background:#292929;border-color:#454545}
 @media(max-width:760px){.formula-guide{margin:0 18px 18px;font-size:14px;line-height:1.85}.formula-guide>summary{padding:13px 12px;font-size:14px}.formula-guide-body{padding:0 12px 13px}.formula-guide-body h3{font-size:14px}.formula-guide-body .katex-display{font-size:.95em}}
 @media print{.formula-guide{margin:3mm 0;background:white;border-color:#999;font-size:10pt}.formula-guide>summary{padding:2mm 3mm}.formula-guide-body{padding:0 3mm 2mm}.formula-toggle{display:none}.formula-guide-body h3{font-size:10.5pt;break-after:avoid}.formula-guide-body .katex-display{overflow:visible}}
+
+.source-explanation{font-size:12px;line-height:1.8;color:var(--muted);margin:10px 0 0}
+
+.solution-intro{padding:20px 0 6px}
+.solution-intro>p:last-child{margin-bottom:0}

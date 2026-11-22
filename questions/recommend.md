@@ -12,19 +12,19 @@
 
 状态：题面未指定预测公式；列出两种口径；形式：计算 / 推导。
 
-### 本题公式 · 欧氏邻居与两种评分聚合
+### 本题公式 · 欧氏距离选邻居，再代入课件评分式
 
-只在共同已评分列 J 上计算距离；问号为缺失值。
+$J_{uv}$ 为共同已评分的物品集合，按欧氏距离从小到大选邻居：
 
-$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=1/d(u,v).$$
+$$d(u,v)=\sqrt{\sum_{i\in J_{uv}}(r_{ui}-r_{vi})^2}.$$
 
-按距离从小到大选择邻居；原评分加权为 $\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$。
+距离小表示接近；加权时需要“越近越大”的相似度。2020 原题指定 $\operatorname{sim}(u,v)=1/d(u,v)$；2017 解答也明确采用这一补充定义。距离为 1 时权重为 1，距离为 $\sqrt{10}$ 时权重为 $1/\sqrt{10}$。
 
-均值修正先减去邻居自己的均值，再加回目标用户均值：
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
 
-$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
 
-$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
 
 ### 原文
 
@@ -42,49 +42,59 @@ List the top 2 most similar users of User 2 based on Euclidean distance. Predict
 
 ### 逐步解答
 
-#### 1. 只在共同已评分列计算距离
+#### 1. 在共同评分列算欧氏距离
 
-设 $J$ 是目标用户与邻居共同评分的物品集合：
+User2 的 Product2 未知；共同已知列为 $J=\{Product1,Product3,Product4\}$，向量为 $(3,5,4)$。使用
 
-$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=\frac1{d(u,v)}.$$
+$$d(2,v)=\sqrt{\sum_{i\in J}(r_{2i}-r_{vi})^2}.$$
 
-问号表示缺失，在本题的距离中不参与；距离越小，相似度越大。选定邻居后采用加权原评分式：
+| 用户 | 共同列向量 | 距离的数值代入 |
+| --- | --- | --- |
+| User1 | (3,5,3) | $\sqrt{(3-3)^2+(5-5)^2+(4-3)^2}=1$ |
+| User3 | (1,2,1) | $\sqrt{(3-1)^2+(5-2)^2+(4-1)^2}=\sqrt{22}$ |
+| User4 | (4,2,1) | $\sqrt{(3-4)^2+(5-2)^2+(4-1)^2}=\sqrt{19}$ |
+| User5 | (2,2,4) | $\sqrt{(3-2)^2+(5-2)^2+(4-4)^2}=\sqrt{10}$ |
 
-$$\widehat r_{ui}=\frac{\sum_{v\in N_u}s(u,v)r_{vi}}{\sum_{v\in N_u}s(u,v)}.$$
+因此 $1<\sqrt{10}<\sqrt{19}<\sqrt{22}$，最近两个用户为 **User1、User5**。
 
-#### 2. 共同列与邻居排序
+#### 2. 将距离转为权重，计算各人均值
 
-共同列为 Product1、Product3、Product4；目标向量为 $(3,5,4)$。
+原卷指定欧氏邻居；这里沿用 2020 同类题的距离倒数作为补充相似度定义，再使用课件第 20 页的均值修正评分式：
 
-| 邻居 | 共同评分向量 | 平方距离 | 距离 | 反距离权重 |
-| --- | --- | --- | --- | --- |
-| User1 | (3,5,3) | $0+0+1=1$ | $1$ | $1$ |
-| User3 | (1,2,1) | $4+9+9=22$ | $\sqrt{22}$ | $1/\sqrt{22}$ |
-| User4 | (4,2,1) | $1+9+9=19$ | $\sqrt{19}$ | $1/\sqrt{19}$ |
-| User5 | (2,2,4) | $1+9+0=10$ | $\sqrt{10}$ | $1/\sqrt{10}$ |
+$$\operatorname{sim}(2,1)=1/1=1,\qquad\operatorname{sim}(2,5)=1/\sqrt{10}.$$
 
-最近的两个用户为 **User1、User5**。
+较近的 User1 得到更大权重。每人均值取其全部已知评分：
 
-#### 3. 采用反距离加权原评分
+$$\begin{aligned}
+\bar r_2&=(3+5+4)/3=4,\\
+\bar r_1&=(3+1+5+3)/4=3,\\
+\bar r_5&=(2+2+2+4)/4=2.5.
+\end{aligned}$$
 
-两位邻居对 Product2 的评分为 1、2：
+#### 3. 按课件公式预测 Product2
 
-$$\widehat r_{2,2}=\frac{1\times1+\frac1{\sqrt{10}}\times2}{1+\frac1{\sqrt{10}}}\approx\boxed{1.240253}.$$
+User1 对 Product2 的偏差为 $1-3=-2$，User5 为 $2-2.5=-0.5$。先加权这些偏差，再加回 User2 的均值：
 
-#### 4. 采用课件均值修正式时
+$$\begin{aligned}
+\widehat r_{2,2}&=\bar r_2+\frac{\operatorname{sim}(2,1)(r_{1,2}-\bar r_1)+\operatorname{sim}(2,5)(r_{5,2}-\bar r_5)}{\operatorname{sim}(2,1)+\operatorname{sim}(2,5)}\\
+&=4+\frac{1(1-3)+\frac1{\sqrt{10}}(2-2.5)}{1+\frac1{\sqrt{10}}}\\
+&\approx\boxed{2.360380}.
+\end{aligned}$$
 
-原题未指定评分聚合式。若使用课程中的均值修正，先求每人的全部已评分均值：$\bar r_2=4,\bar r_1=3,\bar r_5=2.5$。
+分子分母同乘 $\sqrt{10}$，同一个预测值也可写成
 
-$$\widehat r_{2,2}=4+\frac{1(1-3)+\frac1{\sqrt{10}}(2-2.5)}{1+\frac1{\sqrt{10}}}\approx\boxed{2.360380}.$$
+$$4+\frac{-2\sqrt{10}-0.5}{\sqrt{10}+1}.$$
 
-该式先加权“相对邻居自身均值的偏好”，再加回目标均值。两个预测值分别对应已明确写出的两种公式；邻居选择结果相同。
+#### 最终答案
+
+最近邻为 **User1、User5**；采用上述距离倒数权重与课件均值修正式，Product2 预测为 **2.360380**。分母把邻居权重归一化，实际加权的是相对各人均值的偏差。
 
 
 ### English answer pattern
 
-Use only Product1, Product3 and Product4 to compare users. State how neighbor ratings are aggregated.
+The two nearest users are User1 and User5. Using inverse-distance weights as an explicit supplementary definition and the course mean-centered prediction formula, the means are 4, 3 and 2.5, and the predicted rating for Product2 is 2.360380.
 
-只使用商品 1、3、4 比较用户。说明怎样聚合邻居评分。
+最近的两个用户为 User1、User5。将距离倒数明确作为补充权重定义，并使用课件均值修正预测公式，三人的均值为 4、3、2.5，Product2 的预测评分为 2.360380。
 
 ### 易错点与约定
 
@@ -92,9 +102,9 @@ Use only Product1, Product3 and Product4 to compare users. State how neighbor ra
 
 ### 知识点与公式总结
 
-- 只在共同已评分物品上算 $d(u,v)=\sqrt{\sum_i(r_{ui}-r_{vi})^2}$；距离越小越近，取题目要求的 Top-2。
-- 题给反距离权重为 $s=1/d$；原评分预测为 $\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$，权重需归一化。
-- 原题未指定评分聚合式，写清采用原评分加权还是均值修正；后者先减邻居均值、加权后再加目标均值。
+- 欧氏距离只在共同已评分列计算，距离越小越近；本题选 User1、User5。
+- 2017 原卷未给距离转权重公式，解答明确补充 $\operatorname{sim}(u,v)=1/d(u,v)$，与 2020 同类题一致。
+- 按课件公式：先减邻居各自均值，加权平均偏差，再加回目标均值；本题计算 $4+[1(-2)+(1/\sqrt{10})(-0.5)]/[1+1/\sqrt{10}]$。
 
 
 ---
@@ -107,13 +117,19 @@ Use only Product1, Product3 and Product4 to compare users. State how neighbor ra
 
 状态：完整；形式：计算 / 推导。
 
-### 本题公式 · 欧氏邻居与反距离评分
+### 本题公式 · 欧氏距离选邻居，再代入课件评分式
 
-只在共同已评分列 J 上计算距离；问号为缺失值。
+$J_{uv}$ 为共同已评分的物品集合，按欧氏距离从小到大选邻居：
 
-$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=1/d(u,v).$$
+$$d(u,v)=\sqrt{\sum_{i\in J_{uv}}(r_{ui}-r_{vi})^2}.$$
 
-按距离从小到大选择邻居；原评分加权为 $\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$。
+距离小表示接近；加权时需要“越近越大”的相似度。2020 原题指定 $\operatorname{sim}(u,v)=1/d(u,v)$；2017 解答也明确采用这一补充定义。距离为 1 时权重为 1，距离为 $\sqrt{10}$ 时权重为 $1/\sqrt{10}$。
+
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
 
 ### 原文
 
@@ -130,42 +146,56 @@ List the top 2 most similar students of Student1 based on Euclidean distance. Wh
 
 ### 逐步解答
 
-#### 1. 只在共同已评分列计算距离
+#### 1. 欧氏距离与最近两位学生
 
-设 $J$ 是目标用户与邻居共同评分的物品集合：
+共同已评分列为 $J=\{item1,item3,item4\}$，Student1 的向量为 $(3,1,2)$。
 
-$$d(u,v)=\sqrt{\sum_{i\in J}(r_{ui}-r_{vi})^2},\qquad s(u,v)=\frac1{d(u,v)}.$$
+| 学生 | 共同列向量 | 距离的完整代入 |
+| --- | --- | --- |
+| Student2 | (1,4,3) | $\sqrt{(3-1)^2+(1-4)^2+(2-3)^2}=\sqrt{14}$ |
+| Student3 | (3,1,5) | $\sqrt{(3-3)^2+(1-1)^2+(2-5)^2}=3$ |
+| Student4 | (2,3,4) | $\sqrt{(3-2)^2+(1-3)^2+(2-4)^2}=3$ |
 
-问号表示缺失，在本题的距离中不参与；距离越小，相似度越大。选定邻居后采用加权原评分式：
+最近为 **Student3、Student4**。原题给定 $\operatorname{sim}=1/d$，所以两人的权重均为 $1/3$。
 
-$$\widehat r_{ui}=\frac{\sum_{v\in N_u}s(u,v)r_{vi}}{\sum_{v\in N_u}s(u,v)}.$$
+#### 2. 计算均值和候选评分偏差
 
-#### 2. 算出三个距离，选两个最近用户
+预测使用课件第 20 页的均值修正公式。每人的均值由全部已评分物品计算：
 
-目标用户在 item1、item3、item4 上的向量为 $(3,1,2)$。
+$$\begin{aligned}
+\bar r_1&=(3+1+2)/3=2,\\
+\bar r_3&=(3+3+1+5+4)/5=3.2,\\
+\bar r_4&=(2+1+3+4+1)/5=2.2.
+\end{aligned}$$
 
-| 学生 | 共同评分向量 | 平方距离的展开 | 距离 | 权重 |
-| --- | --- | --- | --- | --- |
-| 2 | (1,4,3) | $(3-1)^2+(1-4)^2+(2-3)^2=14$ | $\sqrt{14}$ | $1/\sqrt{14}$ |
-| 3 | (3,1,5) | $0^2+0^2+(-3)^2=9$ | $3$ | $1/3$ |
-| 4 | (2,3,4) | $1^2+(-2)^2+(-2)^2=9$ | $3$ | $1/3$ |
+| 邻居 | item2 相对其均值的偏差 | item5 相对其均值的偏差 |
+| --- | --- | --- |
+| Student3 | $3-3.2=-0.2$ | $4-3.2=0.8$ |
+| Student4 | $1-2.2=-1.2$ | $1-2.2=-1.2$ |
 
-选择 Student3 与 Student4；两人的权重相同。
+#### 3. 分别代入同一个课件预测式
 
-#### 3. 分别预测两个候选，给出 Top-1
+$$\begin{aligned}
+\widehat r_{1,2}&=2+\frac{\frac13(3-3.2)+\frac13(1-2.2)}{\frac13+\frac13}=\boxed{1.3},\\[5pt]
+\widehat r_{1,5}&=2+\frac{\frac13(4-3.2)+\frac13(1-2.2)}{\frac13+\frac13}=\boxed{1.8}.
+\end{aligned}$$
 
-$$\widehat r_{1,2}=\frac{\frac13\times3+\frac13\times1}{\frac13+\frac13}=\boxed{2}.$$
+两个权重均为 $1/3$，在分子、分母中约去同一因子后，得到偏差的普通平均：
 
-$$\widehat r_{1,5}=\frac{\frac13\times4+\frac13\times1}{\frac13+\frac13}=\boxed{2.5}.$$
+$$2+\frac{-0.2-1.2}{2}=1.3,\qquad 2+\frac{0.8-1.2}{2}=1.8.$$
 
-因此推荐 **item5**。若另行声明采用课件均值修正式，目标均值为 2、两个邻居均值为 3.2 与 2.2，预测分别为 1.3 与 1.8，Top-1 仍为 item5；卷面需写清所采用的预测公式。
+最后加回的 2 是目标用户均值。
+
+#### 最终答案
+
+最近邻为 **Student3、Student4**；item2 预测 **1.3**，item5 预测 **1.8**，推荐 **item5**。
 
 
 ### English answer pattern
 
-The two nearest students are 3 and 4. Equal inverse-distance weights give 2 for item2 and 2.5 for item5, so recommend item5.
+Student3 and Student4 are the nearest neighbors, both at distance 3 and with the specified similarity 1/3. Applying the course mean-centered formula with means 2, 3.2 and 2.2 gives 1.3 for item2 and 1.8 for item5. Recommend item5.
 
-最近的两个学生为 3、4。相同的距离倒数权重给出 item2 评分 2、item5 评分 2.5，因此推荐 item5。
+Student3、Student4 是最近邻，距离均为 3，指定相似度均为 1/3。使用课件均值修正式及均值 2、3.2、2.2，得到 item2 评分 1.3、item5 评分 1.8。推荐 item5。
 
 ### 易错点与约定
 
@@ -173,9 +203,9 @@ Student2 距离 √14≈3.741657，应按距离排序后选择最近两人；不
 
 ### 知识点与公式总结
 
-- 只在共同已评分物品上算 $d(u,v)=\sqrt{\sum_i(r_{ui}-r_{vi})^2}$；距离越小越近，取题目要求的 Top-2。
-- 题给反距离权重为 $s=1/d$；原评分预测为 $\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$，权重需归一化。
-- 对 item2、item5 分别用同一组邻居预测，再选预测更高的一项；共同评分列用于距离，候选列用于最后的预测。
+- 共同列为 item1、item3、item4；按欧氏距离选 Student3、Student4。
+- 原题指定 $\operatorname{sim}=1/d$；两个距离均为 3，所以两个权重均为 $1/3$。
+- 用课件均值修正式，先加权 $(r_{vi}-\bar r_v)$ 再加回 $\bar r_1=2$；两候选得到 1.3、1.8。
 
 
 ---
@@ -197,19 +227,19 @@ Student2 距离 √14≈3.741657，应按距离排序后选择最近两人；不
 
 以下为可完整作答的复原练习；补配数值不是原卷原值。
 
-### 本题公式 · 余弦邻居与均值修正
+### 本题公式 · 课件推荐公式：余弦相似度与均值修正
 
-J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+$J_{uv}$ 为 u、v 共同已评分的物品集合。课件第 19 页的余弦相似度为
 
-$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+$$\operatorname{sim}(u,v)=\frac{\sum_{i\in J_{uv}}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J_{uv}}r_{ui}^2}\sqrt{\sum_{i\in J_{uv}}r_{vi}^2}}.$$
 
-选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+分子是逐项相乘再相加的点积；两个根号分别是两个用户向量的模长。先分别写出数值，再除以两个模长，相似度越大越近。$\sqrt a\sqrt b=\sqrt{ab}$（$a,b\ge0$），两种根号写法等价。
 
-均值修正先减去邻居自己的均值，再加回目标用户均值：
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
 
-$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
 
-$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
 
 ### 原文
 
@@ -254,30 +284,33 @@ Here each $\bar r_u$ is the mean of all observed ratings of user u; similarities
 
 ### 逐步解答
 
-#### 本题公式
+共同列为 item1、item3、item4；问号不参与相似度计算。
 
-余弦比较共同评分向量的方向：
+#### 1. 共同评分向量、点积和模长
 
-$$s(u,v)=\frac{u^Tv}{\|u\|_2\|v\|_2}=\frac{\sum_i u_iv_i}{\sqrt{\sum_i u_i^2}\sqrt{\sum_i v_i^2}}.$$
+目标用户 U2 在共同列上的向量为 $(3,1,2)$，其模长为
 
-#### 1. 共同评分列与向量
+$$\|r_{U2,J}\|=\sqrt{3^2+1^2+2^2}=\sqrt{14}.$$
 
-$$J=\{item1,item3,item4\}.$$
-$$u_2=(3,1,2),\qquad\lVert u_2\rVert^2=14.$$
-$$s(2,v)=\frac{u_2^Tu_v}{\sqrt{14}\,\lVert u_v\rVert}.$$
+| 邻居及共同列向量 | 点积的逐项计算 | 邻居模长的计算 |
+| --- | --- | --- |
+| U1：$(3,1,2)$ | $3\times3+1\times1+2\times2=14$ | $\sqrt{3^2+1^2+2^2}=\sqrt{14}$ |
+| U3：$(3,1,5)$ | $3\times3+1\times1+2\times5=20$ | $\sqrt{3^2+1^2+5^2}=\sqrt{35}$ |
+| U4：$(2,4,1)$ | $3\times2+1\times4+2\times1=12$ | $\sqrt{2^2+4^2+1^2}=\sqrt{21}$ |
+| U5：$(1,3,4)$ | $3\times1+1\times3+2\times4=14$ | $\sqrt{1^2+3^2+4^2}=\sqrt{26}$ |
 
-| Neighbor | Vector on J | Dot product | $\lVert u_v\rVert^2$ | Cosine |
-| --- | --- | --- | --- | --- |
-| U1 | (3, 1, 2) | 14 | 14 | 1.000000000 |
-| U3 | (3, 1, 5) | 20 | 35 | 0.903507903 |
-| U4 | (2, 4, 1) | 12 | 21 | 0.699854212 |
-| U5 | (1, 3, 4) | 14 | 26 | 0.733799386 |
+#### 2. 将点积和两个模长完整代入余弦式
 
-按相似度排序：$U1>U3>U5>U4$，所以选 **U1、U3**。其中
+$$\begin{aligned}
+\operatorname{sim}(U2,U1)&=\frac{14}{\sqrt{14}\sqrt{14}}\approx 1.000000000\\[5pt]
+\operatorname{sim}(U2,U3)&=\frac{20}{\sqrt{14}\sqrt{35}}\approx 0.903507903\\[5pt]
+\operatorname{sim}(U2,U4)&=\frac{12}{\sqrt{14}\sqrt{21}}\approx 0.699854212\\[5pt]
+\operatorname{sim}(U2,U5)&=\frac{14}{\sqrt{14}\sqrt{26}}\approx 0.733799386
+\end{aligned}$$
 
-$$s(2,1)=1,\qquad s(2,3)=\frac{20}{\sqrt{490}}\approx0.903507903.$$
+按相似度从大到小为 U1、U3、U5、U4，选 **U1、U3**。
 
-#### 2. 均值与偏差
+#### 3. 均值与偏差
 
 $$\begin{aligned}
 \bar r_2&=\frac{3+1+2}{3}=2,\\[6pt]
@@ -290,23 +323,27 @@ $$\begin{aligned}
 | U1 | 2.4 | 1.6 | -0.4 |
 | U3 | 3.2 | -1.2 | 1.8 |
 
-#### 3. 分别计算候选评分
+#### 4. 分别计算候选评分
 
-令 $s=20/\sqrt{490}$，保留其未舍入值：
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
 
-$$\hat r_{2,2}=2+\frac{1\times1.6+s\times(-1.2)}{1+s}
-\approx 2.270968413.$$
-$$\hat r_{2,5}=2+\frac{1\times(-0.4)+s\times1.8}{1+s}
-\approx 2.644239104.$$
+代入前表中的均值、相似度和偏差，两个候选使用同一组邻居：
+
+$$\begin{aligned}
+\widehat r_{2,2}&=2+\frac{1(4-2.4)+\frac{20}{\sqrt{14}\sqrt{35}}(2-3.2)}{1+\frac{20}{\sqrt{14}\sqrt{35}}}\\
+&\approx\boxed{2.270968},\\[5pt]
+\widehat r_{2,5}&=2+\frac{1(2-2.4)+\frac{20}{\sqrt{14}\sqrt{35}}(5-3.2)}{1+\frac{20}{\sqrt{14}\sqrt{35}}}\\
+&\approx\boxed{2.644239}.
+\end{aligned}$$
 
 | Candidate | Predicted rating (6 decimals) | Top-1 |
 | --- | --- | --- |
 | item2 | 2.270968 |  |
 | item5 | 2.644239 | ✓ |
 
-#### 4. 解释推荐
+#### 最终答案
 
-均值修正先比较邻居相对自身平均水平的偏爱，再加回 U2 的平均水平。item5 的预测高于 item2，故只推荐 **item5**。本题依题给口径，用未中心化余弦选邻居，再用均值修正式预测评分。
+均值修正先比较邻居相对自身平均水平的偏爱，再加回 U2 的平均水平。item5 的预测高于 item2，故只推荐 **item5**。按课件余弦相似度选邻居，再用题目给出的均值修正式预测评分。
 
 
 ### English answer pattern
@@ -325,9 +362,9 @@ The two cosine neighbors are U1 and U3. With the specified mean-centered formula
 
 ### 知识点与公式总结
 
-- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
-- 均值修正预测 $\hat r_{ui}=\bar r_u+\frac{\sum_v s_{uv}(r_{vi}-\bar r_v)}{\sum_v s_{uv}}$；每人均值使用其全部已观察评分。
-- 相似度计算不提前舍入；先列邻居对各候选的“评分减均值”，分别代入，再按最高预测评分给出 Top-1。
+- 在 item1、item3、item4 上计算点积与两个模长，分别写入余弦分子和分母。
+- 选 U1、U3；均值分别用各人的全部已知评分算，目标均值为 2，邻居均值为 2.4、3.2。
+- 按课件/题给均值修正式分别预测 item2、item5；保留中间精度，最后比较 2.270968 与 2.644239，推荐 item5。
 
 
 ---
@@ -336,68 +373,94 @@ The two cosine neighbors are U1 and U3. With the specified mean-centered formula
 
 ## SUP-COS · 补充变式：余弦邻居与两候选评分
 
-来源：整理者补充变式 · 自设完整矩阵，对应 2025 回忆题型
+来源：整理者补充练习 · 自设完整矩阵，对应 2025 回忆题型
 
 状态：完整；形式：补充变式。
 
-### 本题公式 · 余弦邻居与原评分加权
+### 本题公式 · 课件推荐公式：余弦相似度与均值修正
 
-J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+$J_{uv}$ 为 u、v 共同已评分的物品集合。课件第 19 页的余弦相似度为
 
-$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+$$\operatorname{sim}(u,v)=\frac{\sum_{i\in J_{uv}}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J_{uv}}r_{ui}^2}\sqrt{\sum_{i\in J_{uv}}r_{vi}^2}}.$$
 
-选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+分子是逐项相乘再相加的点积；两个根号分别是两个用户向量的模长。先分别写出数值，再除以两个模长，相似度越大越近。$\sqrt a\sqrt b=\sqrt{ab}$（$a,b\ge0$），两种根号写法等价。
 
-原评分加权：$\widehat r_{ui}=\sum_{v\in N_u}s(u,v)r_{vi}/\sum_{v\in N_u}s(u,v)$；分别预测候选后选较高者。
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
 
 ### 原文
 
-Target U has known ratings (1,2) on shared items A,B. Three neighbors have A,B ratings V=(2,4), W=(2,1), Z=(0,3). Their ratings on candidate C,D are V=(5,1), W=(4,2), Z=(2,5). Use top-2 cosine neighbors and raw weighted prediction.
+Target U has known ratings (1,2) on shared items A,B. Three neighbors have A,B ratings V=(2,4), W=(2,1), Z=(0,3). Their ratings on candidate C,D are V=(5,1), W=(4,2), Z=(2,5). Use top-2 cosine neighbors and the course mean-centered prediction formula. Compute each user’s mean from all their observed ratings. Predict C and D, then recommend one.
 
-目标用户 U 在共同物品 A、B 上的已知评分为 (1,2)。三个邻居在 A、B 上的评分为 V=(2,4)、W=(2,1)、Z=(0,3)。他们对候选 C、D 的评分为 V=(5,1)、W=(4,2)、Z=(2,5)。使用余弦相似度最高的两个邻居，并用原始评分加权预测。
+目标 U 在共同物品 A、B 上的已知评分为 (1,2)。三个邻居在 A、B 上的评分为 V=(2,4)、W=(2,1)、Z=(0,3)。他们在候选 C、D 上的评分为 V=(5,1)、W=(4,2)、Z=(2,5)。使用前两位余弦邻居和课件的均值修正预测公式。根据每个用户的全部已观察评分计算该用户均值。预测 C、D，然后推荐其中一个。
 
 ### 逐步解答
 
-#### 本题公式
+#### 1. 共同评分向量、点积和模长
 
-余弦比较共同评分向量的方向：
+目标用户 U 在共同列上的向量为 $(1,2)$，其模长为
 
-$$s(u,v)=\frac{u^Tv}{\|u\|_2\|v\|_2}=\frac{\sum_i u_iv_i}{\sqrt{\sum_i u_i^2}\sqrt{\sum_i v_i^2}}.$$
+$$\|r_{U,J}\|=\sqrt{1^2+2^2}=\sqrt{5}.$$
 
-#### 2. 展开三个余弦，选 Top-2
+| 邻居及共同列向量 | 点积的逐项计算 | 邻居模长的计算 |
+| --- | --- | --- |
+| V：$(2,4)$ | $1\times2+2\times4=10$ | $\sqrt{2^2+4^2}=\sqrt{20}$ |
+| W：$(2,1)$ | $1\times2+2\times1=4$ | $\sqrt{2^2+1^2}=\sqrt{5}$ |
+| Z：$(0,3)$ | $1\times0+2\times3=6$ | $\sqrt{0^2+3^2}=\sqrt{9}$ |
 
-目标向量 $U=(1,2)$，平方长度为 5。
+#### 2. 将点积和两个模长完整代入余弦式
 
-| 邻居 | 点积 | 邻居平方长度 | 余弦 |
-| --- | --- | --- | --- |
-| V=(2,4) | $1\times2+2\times4=10$ | 20 | $10/\sqrt{100}=1$ |
-| W=(2,1) | $1\times2+2\times1=4$ | 5 | $4/5=0.8$ |
-| Z=(0,3) | $1\times0+2\times3=6$ | 9 | $6/\sqrt{45}=2/\sqrt5\approx0.894427$ |
+$$\begin{aligned}
+\operatorname{sim}(U,V)&=\frac{10}{\sqrt{5}\sqrt{20}}\approx 1.000000000\\[5pt]
+\operatorname{sim}(U,W)&=\frac{4}{\sqrt{5}\sqrt{5}}\approx 0.800000000\\[5pt]
+\operatorname{sim}(U,Z)&=\frac{6}{\sqrt{5}\sqrt{9}}\approx 0.894427191
+\end{aligned}$$
 
-选择 V、Z。V 的向量是 U 的两倍，方向完全相同，所以余弦为 1。
+因此余弦大小为 $V>Z>W$，选 **V、Z**。其中 $6/(\sqrt5\sqrt9)=6/(3\sqrt5)=2/\sqrt5$，是同一个权重的等价简写。
 
-#### 3. 加权原评分并比较候选
+#### 3. 根据全部已观察评分求均值
 
-令 $s=2/\sqrt5$，使用未舍入权重：
+U 的 C、D 未知，因此 U 的均值只用 A、B；各邻居的四项评分均已知：
 
-$$\widehat r_C=\frac{1\times5+s\times2}{1+s}\approx\boxed{3.583592}.$$
+| 用户 | 均值计算 |
+| --- | --- |
+| U | $(1+2)/2=1.5$ |
+| V | $(2+4+5+1)/4=3$ |
+| W | $(2+1+4+2)/4=2.25$ |
+| Z | $(0+3+2+5)/4=2.5$ |
 
-$$\widehat r_D=\frac{1\times1+s\times5}{1+s}\approx\boxed{2.888544}.$$
+#### 4. 代入课件均值修正预测式
 
-因此推荐 **C**。这里使用题目要求的原评分加权，目标用户均值不进入预测公式。
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+将上面已求出的均值与相似度代入，$\operatorname{sim}(U,V)=1$，$\operatorname{sim}(U,Z)=2/\sqrt5$：
+
+$$\begin{aligned}
+\widehat r_{U,C}&=1.5+\frac{1(5-3)+\frac2{\sqrt5}(2-2.5)}{1+\frac2{\sqrt5}}\\
+&\approx\boxed{2.319660},\\[5pt]
+\widehat r_{U,D}&=1.5+\frac{1(1-3)+\frac2{\sqrt5}(5-2.5)}{1+\frac2{\sqrt5}}\\
+&\approx\boxed{1.624612}.
+\end{aligned}$$
+
+#### 最终答案
+
+邻居为 **V、Z**；C 的预测为 **2.319660**，D 为 **1.624612**，推荐 **C**。
 
 
 ### English answer pattern
 
-Select V and Z by cosine similarity, then normalize the weighted rating sum.
+The top two cosine neighbors are V and Z. The means of U, V and Z are 1.5, 3 and 2.5. With the course mean-centered formula, the predictions are 2.319660 for C and 1.624612 for D. Recommend C.
 
-按余弦选择 V、Z，再对加权评分和归一化。
+前两位余弦邻居为 V、Z。U、V、Z 的均值为 1.5、3、2.5。按课件均值修正式，C 的预测为 2.319660，D 为 1.624612。推荐 C。
 
 ### 知识点与公式总结
 
-- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
-- 本题按原评分加权：$\hat r_{ui}=\sum_v s_{uv}r_{vi}/\sum_v s_{uv}$；对 C、D 分别算分子，分母使用相同邻居权重和。
-- 余弦比较方向，向量长度成比例时可得相似度 1；先选邻居，再比较两个候选的预测分数。
+- 点积为“对应评分相乘再求和”，每个向量模长为“各分量平方和开方”；余弦分母保留两个模长可直接核查。
+- 根据 A、B 的共同列选 V、Z；计算各人均值时，邻居已知的 C、D 评分也应计入。
+- 统一使用课件均值修正式，先加权邻居相对均值的偏差，再加回目标均值 1.5；预测 C 更高。
 
 
 ---
@@ -410,19 +473,19 @@ Select V and Z by cosine similarity, then normalize the weighted rating sum.
 
 状态：完整；形式：计算 / 推导。
 
-### 本题公式 · 余弦邻居与均值修正
+### 本题公式 · 课件推荐公式：余弦相似度与均值修正
 
-J 为共同评分列，用户 u、v 在这些列上的余弦相似度为
+$J_{uv}$ 为 u、v 共同已评分的物品集合。课件第 19 页的余弦相似度为
 
-$$s(u,v)=\frac{\sum_{i\in J}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J}r_{ui}^2}\sqrt{\sum_{i\in J}r_{vi}^2}}.$$
+$$\operatorname{sim}(u,v)=\frac{\sum_{i\in J_{uv}}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J_{uv}}r_{ui}^2}\sqrt{\sum_{i\in J_{uv}}r_{vi}^2}}.$$
 
-选相似度最高的邻居；题中有效的 0 分要参与运算，缺失问号跳过。
+分子是逐项相乘再相加的点积；两个根号分别是两个用户向量的模长。先分别写出数值，再除以两个模长，相似度越大越近。$\sqrt a\sqrt b=\sqrt{ab}$（$a,b\ge0$），两种根号写法等价。
 
-均值修正先减去邻居自己的均值，再加回目标用户均值：
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
 
-$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
 
-$\bar r_u,\bar r_v$ 按各用户全部已观察评分计算；相似度仍使用题目规定的共同列。
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
 
 ### 原文
 
@@ -440,50 +503,77 @@ Predict Jane’s Aladdin rating using top-2 cosine neighbors and the mean-center
 
 ### 逐步解答
 
-#### 本题公式
+共同列为 Lion King、Mulan、Anastasia；0 是有效评分，问号才表示缺失。
 
-余弦比较共同评分向量的方向：
+#### 1. 共同评分向量、点积和模长
 
-$$s(u,v)=\frac{u^Tv}{\|u\|_2\|v\|_2}=\frac{\sum_i u_iv_i}{\sqrt{\sum_i u_i^2}\sqrt{\sum_i v_i^2}}.$$
+目标用户 Jane 在共同列上的向量为 $(3,1,0)$，其模长为
 
-#### 2. 在共同三列比较全部候选邻居
+$$\|r_{Jane,J}\|=\sqrt{3^2+1^2+0^2}=\sqrt{10}.$$
 
-共同列为 Lion King、Mulan、Anastasia；Jane 的向量为 $(3,1,0)$，平方长度为 10。0 是有效评分，参与长度和均值计算；问号才表示缺失。
+| 邻居及共同列向量 | 点积的逐项计算 | 邻居模长的计算 |
+| --- | --- | --- |
+| John：$(3,3,3)$ | $3\times3+1\times3+0\times3=12$ | $\sqrt{3^2+3^2+3^2}=\sqrt{27}$ |
+| Joe：$(5,0,2)$ | $3\times5+1\times0+0\times2=15$ | $\sqrt{5^2+0^2+2^2}=\sqrt{29}$ |
+| Jill：$(1,4,2)$ | $3\times1+1\times4+0\times2=7$ | $\sqrt{1^2+4^2+2^2}=\sqrt{21}$ |
+| Jorge：$(2,0,1)$ | $3\times2+1\times0+0\times1=6$ | $\sqrt{2^2+0^2+1^2}=\sqrt{5}$ |
 
-| 邻居 | 共同评分向量 | 点积 | 邻居平方长度 | 余弦 |
-| --- | --- | --- | --- | --- |
-| John | (3,3,3) | 12 | 27 | $12/\sqrt{270}=0.730297$ |
-| Joe | (5,0,2) | 15 | 29 | $15/\sqrt{290}=0.880830$ |
-| Jill | (1,4,2) | 7 | 21 | $7/\sqrt{210}=0.483046$ |
-| Jorge | (2,0,1) | 6 | 5 | $6/\sqrt{50}=0.848528$ |
+#### 2. 将点积和两个模长完整代入余弦式
 
-选 **Joe、Jorge**。余弦只使用共同三列；用户均值使用该用户全部已观察评分。
+$$\begin{aligned}
+\operatorname{sim}(Jane,John)&=\frac{12}{\sqrt{10}\sqrt{27}}\approx 0.730296743\\[5pt]
+\operatorname{sim}(Jane,Joe)&=\frac{15}{\sqrt{10}\sqrt{29}}\approx 0.880830329\\[5pt]
+\operatorname{sim}(Jane,Jill)&=\frac{7}{\sqrt{10}\sqrt{21}}\approx 0.483045892\\[5pt]
+\operatorname{sim}(Jane,Jorge)&=\frac{6}{\sqrt{10}\sqrt{5}}\approx 0.848528137
+\end{aligned}$$
 
-#### 3. 均值与相对偏好
+选相似度最高的 **Joe、Jorge**。上式的两个根号分别对应 Jane 与邻居的模长；将其合为 $\sqrt{290}$ 或 $\sqrt{50}$ 只是等价简写。
 
-$$\bar r_{Jane}=\frac{3+1+0}{3}=\frac43,\quad\bar r_{Joe}=\frac{5+4+0+2}{4}=2.75,\quad\bar r_{Jorge}=\frac{2+2+0+1}{4}=1.25.$$
+#### 3. 全部已评分均值与 Aladdin 偏差
 
-两位邻居对 Aladdin 的偏差分别为 $4-2.75=1.25$ 和 $2-1.25=0.75$。
+$$\begin{aligned}
+\bar r_{Jane}&=(3+1+0)/3=4/3,\\
+\bar r_{Joe}&=(5+4+0+2)/4=2.75,\\
+\bar r_{Jorge}&=(2+2+0+1)/4=1.25.
+\end{aligned}$$
 
-#### 4. 代入均值修正公式
+Joe 对 Aladdin 的偏差为 $4-2.75=1.25$，Jorge 为 $2-1.25=0.75$。
 
-$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}s(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}s(u,v)}.$$
+#### 4. 按课件均值修正式逐项代入
 
-令 $s_1=15/\sqrt{290}$、$s_2=6/\sqrt{50}$：
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
 
-$$\widehat r_{Jane,Aladdin}=\frac43+\frac{s_1\times1.25+s_2\times0.75}{s_1+s_2}\approx\boxed{2.338003}.$$
+先把前面求出的相似度和偏差代入分子、分母，分别算清楚：
 
-两位邻居都比各自平均水平更喜欢 Aladdin，所以预测高于 Jane 的均值。课件先将均值和相似度舍入后得到约 2.33；保留中间精度得到这里的结果。
+**加权偏差和（分子）：**
+
+$$\frac{15}{\sqrt{10}\sqrt{29}}(4-2.75)+\frac6{\sqrt{10}\sqrt5}(2-1.25)
+=1.737434014\ldots$$
+
+**相似度之和（分母）：**
+
+$$\frac{15}{\sqrt{10}\sqrt{29}}+\frac6{\sqrt{10}\sqrt5}=1.729358466\ldots$$
+
+**加回 Jane 的均值：**
+
+$$\widehat r_{Jane,Aladdin}=\frac43+\frac{1.737434014\ldots}{1.729358466\ldots}
+\approx\boxed{2.338003}.$$
+
+计算中保留根号形式的原始精度，以上小数只用于展示中间结果。
+
+#### 最终答案
+
+邻居为 **Joe、Jorge**，预测评分为 **2.338003**。课件第 22 页显示 2.33；保留中间精度复算为 2.338003。两位邻居对 Aladdin 的评分均高于各自平均水平，所以预测高于 Jane 的均值。
 
 
 ### English answer pattern
 
-Use cosine weights with the stated mean-centered prediction rule; that does not turn the weights into Pearson correlations.
+The two cosine neighbors are Joe and Jorge. Their similarities are $15/(\sqrt{10}\sqrt{29})$ and $6/(\sqrt{10}\sqrt5)$. The mean-centered formula, using means 4/3, 2.75 and 1.25, predicts Jane’s Aladdin rating as 2.338003.
 
-使用余弦权重及规定的去均值预测规则；这些权重仍是余弦相似度。
+两个余弦邻居为 Joe、Jorge。相似度分别为 $15/(\sqrt{10}\sqrt{29})$ 和 $6/(\sqrt{10}\sqrt5)$。均值修正式使用均值 4/3、2.75、1.25，预测 Jane 的 Aladdin 评分为 2.338003。
 
 ### 知识点与公式总结
 
-- 共同评分向量上的余弦 $s(u,v)=u^Tv/(\|u\|_2\|v\|_2)$；相似度越大越近，取 Top-2 后再预测。
-- 均值修正预测 $\hat r_{ui}=\bar r_u+\frac{\sum_v s_{uv}(r_{vi}-\bar r_v)}{\sum_v s_{uv}}$；每人均值使用其全部已观察评分。
-- 0 是有效评分，参与向量和均值；问号才表示缺失。计算 Joe、Jorge 的 Aladdin 偏差，加权后加回 Jane 均值。
+- 共同三列中的 Jane 向量为 (3,1,0)，模长为 $\sqrt{10}$；每个邻居另算自己的点积和模长。
+- 余弦排序选 Joe、Jorge；均值用全部已评分项计算，0 也计入分母和加总。
+- 使用课件均值修正式：先减各邻居均值，加权后加回 $4/3$，得到 2.338003。

@@ -22,6 +22,8 @@ $$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
 
 Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
 
+**标准差记号对应。** SD 是 standard deviation 的文字缩写；采用总体口径时 $\mathrm{SD}=\sigma$，采用样本口径时 $\mathrm{SD}=s$。这两种标准差分别使用 n 与 n−1 的方差分母，按题给条件选择。Z-score 中 $\mu$ 表示本题采用的均值；由当前数列计算时，其值就是 $\bar x=\sum_i x_i/n$。
+
 ### 原文
 
 Use min-max normalization to transform age 49 to [0,1]. Use z-score normalization to transform body fat 41.2, where the standard deviation of body fat is 9.25.
@@ -166,6 +168,8 @@ $$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
 Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
 
 Decimal scaling：$x'=x/10^j$，取使全部 $|x'|<1$ 的最小非负整数 $j$。
+
+**标准差记号对应。** SD 是 standard deviation 的文字缩写；采用总体口径时 $\mathrm{SD}=\sigma$，采用样本口径时 $\mathrm{SD}=s$。这两种标准差分别使用 n 与 n−1 的方差分母，按题给条件选择。Z-score 中 $\mu$ 表示本题采用的均值；由当前数列计算时，其值就是 $\bar x=\sum_i x_i/n$。
 
 ### 原文
 
@@ -328,6 +332,8 @@ $$x'=a+\frac{x-x_{\min}}{x_{\max}-x_{\min}}(b-a).$$
 目标为 $[0,1]$ 时，化为 $x'=(x-x_{\min})/(x_{\max}-x_{\min})$；所有值使用同一组极值。
 
 Z-score 为 $z=(x-\mu)/\mathrm{SD}$，$\mu$ 为该列均值，SD 为采用的标准差；题面给出均值或标准差时直接沿用给定量。
+
+**标准差记号对应。** SD 是 standard deviation 的文字缩写；采用总体口径时 $\mathrm{SD}=\sigma$，采用样本口径时 $\mathrm{SD}=s$。这两种标准差分别使用 n 与 n−1 的方差分母，按题给条件选择。Z-score 中 $\mu$ 表示本题采用的均值；由当前数列计算时，其值就是 $\bar x=\sum_i x_i/n$。
 
 ### 原文
 

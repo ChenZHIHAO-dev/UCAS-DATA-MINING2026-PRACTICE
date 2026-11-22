@@ -92,7 +92,7 @@ Build features from labeled messages, fit a supervised classifier, validate with
 从带标签邮件构建特征，拟合监督分类器，进行无泄漏验证，再把同一特征流程应用到新邮件。
 
 <details>
-<summary>补充解释与 SQL（展开）</summary>
+<summary>补充解释（展开）</summary>
 
 
 ### 补充详解
@@ -107,13 +107,13 @@ Build features from labeled messages, fit a supervised classifier, validate with
 
 #### 用朴素贝叶斯训练和预测
 
-给出一种完整可行方案：多项式朴素贝叶斯（multinomial Naïve Bayes）。设训练邮件数为 $N$，第 $c$ 类邮件数为 $N_c$，第 $c$ 类中词 $w$ 的总次数为 $n_{wc}$。使用加一平滑：
+给出一种完整可行方案：多项式朴素贝叶斯（multinomial Naïve Bayes）。设训练邮件数为 $N$，第 $c$ 类邮件数为 $N_c$，第 $c$ 类中词 $w$ 的总次数为 $n_{cw}$。使用加一平滑：
 
 $$\begin{aligned}
 P(c)&=\frac{N_c}{N},\\
-P(w\mid c)&=\frac{n_{wc}+1}{\sum_{v\in V}n_{vc}+|V|},\\
-score(c\mid x)&=\log P(c)+\sum_{w\in V}x_w\log P(w\mid c),\\
-\hat c&=\arg\max_c score(c\mid x).
+P(w\mid c)&=\frac{n_{cw}+1}{\sum_{v\in V}n_{cv}+|V|},\\
+S(c)&=\log P(c)+\sum_{w\in V}x_w\log P(w\mid c),\\
+\hat c&=\arg\max_c S(c).
 \end{aligned}$$
 
 先验 $P(c)$ 表示各类的常见程度；词概率表示某类邮件使用该词的倾向；加一平滑为训练中未出现的词保留正概率。取对数把大量小概率的连乘转成求和，预测仍选得分最高的类别。
@@ -135,9 +135,9 @@ $$Precision=\frac{TP}{TP+FP},\qquad Recall=\frac{TP}{TP+FN}.$$
 
 ### 知识点与公式总结
 
-- 邮件分类流程：带标签数据 → 特征 → 训练 → 验证选参 → 测试 → 新邮件预测。
-- 朴素贝叶斯按 $P(c)\prod_wP(w\mid c)^{x_w}$ 比较类别，取对数后为加和；$x_w$ 是词频。
-- 词表及变换在训练集确定，新邮件使用同一流程；未见词可用平滑处理。
+- 邮件分类按“带标签历史数据→特征→训练→验证选参→测试→新邮件预测”组织。
+- 对数分数 $S(c)=\log P(c)+\sum_wx_w\log P(w\mid c)$；$x_w$ 为新邮件词频，$n_{cw}$ 为 c 类训练邮件中的词 w 总次数。
+- 词表与转换在训练集确定；词表内的类内零计数用平滑处理，新邮件继续使用同一词表编码。
 
 
 ---
@@ -211,32 +211,33 @@ Can you describe other possible kind of knowledge that needs to be discovered by
 
 ### 逐步解答
 
-#### 1. 给出一项具体任务
+#### 1. 提出一种新的知识形式
 
-例如“设备故障前的时间先后模式”：从设备传感器时间序列中，发现“温度持续升高 → 振动增强 → 一定时间内发生故障”的模式，用于提前预警和安排维护。
+可以提出“维护策略对设备故障风险的影响”。沿用设备故障场景，问题是：在可比较的设备和运行条件下，提前维护能使后续故障风险降低多少？输出知识是策略改变带来的风险变化，可用于决定何时维护。
 
-#### 2. 把输入、输出与用途接起来
+#### 2. 将数据、方法和用途接起来
 
-| 部分 | 本例写法 |
+| 部分 | 本例回答 |
 | --- | --- |
-| 输入 | 带时间戳的温度、振动、运行负载及历史故障事件 |
-| 挖掘知识 | 事件发生顺序及时间间隔约束，例如升温后 2 小时内出现振动异常 |
-| 可选方法 | 序列模式挖掘；若预测是否即将故障，也可训练分类器 |
-| 验证 | 在较晚时间段检查预警精确率、召回率及提前量 |
-| 用途 | 在设备失效前检查，减少停机损失 |
+| 输入 | 设备历史状态、负载、维护操作、故障结果及对应时间。 |
+| 发现的知识 | 相同条件下，采用不同维护策略时故障风险的变化。 |
+| 方法思路 | 使用随机对照，或在明确的因果假设下控制影响维护选择和故障风险的共同因素。 |
+| 验证 | 在可靠对照或后续实际部署中，比较故障风险与维护成本。 |
+| 用途 | 选择有实际收益的维护策略，减少停机损失。 |
 
-#### 3. 开放题通用写法
+#### 3. 解释为什么这一知识有用
 
-用“数据是什么 → 想发现什么关系或模式 → 用哪类方法 → 如何验证 → 对谁有什么用”组织一段答案。题目要求课堂未提到的知识；考试时可选老师尚未举过的具体场景，并明确该场景中新知识的形式。
+设备负载高时可能既更常维护、又更易故障，因此要建立可靠的比较条件，才能将风险变化解释为维护策略的效果。最终回答应同时写清“想发现什么知识、需要什么数据、如何验证、支持什么决定”。
+
 
 ### English answer pattern
 
-One example is a time-constrained precursor pattern for equipment failures. Mine sensor-event sequences, validate the patterns on future periods, and use them for early maintenance.
+One possible task is to discover how a maintenance policy changes equipment failure risk. Use time-stamped equipment states, loads, maintenance actions and outcomes. Estimate the policy effect with a randomized comparison or justified causal assumptions, validate the effect, and use it to improve maintenance decisions.
 
-一个例子是带时间约束的设备故障前兆模式。挖掘传感器事件序列，在未来时间段验证模式，并用于提前维护。
+一种可能的任务是发现维护策略如何改变设备故障风险。使用带时间戳的设备状态、负载、维护操作和结果。通过随机对照或有依据的因果假设估计策略效果，验证该效果，并用于改善维护决策。
 
 ### 知识点与公式总结
 
-- 开放题按“输入数据 → 要发现的知识 → 输出形式 → 应用”组织。
-- 可给出因果或反事实等发现任务，说明它与课堂已讲预测/关联任务的联系及区别。
-- 任务、数据和评价方式应相互对应，举一个具体场景即可。
+- 开放题先给清楚的知识形式；本例是“策略改变会使故障风险怎样变化”。
+- 数据、方法与用途对应：历史状态及操作→可靠比较→策略效果→维护决策。
+- 采用课堂尚未展开的具体任务；讨论因果效果时，应说明对照或识别假设。
