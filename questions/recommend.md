@@ -577,3 +577,180 @@ The two cosine neighbors are Joe and Jorge. Their similarities are $15/(\sqrt{10
 - 共同三列中的 Jane 向量为 (3,1,0)，模长为 $\sqrt{10}$；每个邻居另算自己的点积和模长。
 - 余弦排序选 Joe、Jorge；均值用全部已评分项计算，0 也计入分母和加总。
 - 使用课件均值修正式：先减各邻居均值，加权后加回 $4/3$，得到 2.338003。
+
+
+---
+
+<a id="E26-07"></a>
+
+## E26-07 · 2026 · 第7题：为指定用户和商品编写协同过滤预测代码
+
+来源：2026 年期末考后回忆 · Q7
+
+状态：回忆整理（代码任务明确，参数细节缺失）；形式：2026 考后回忆 / 代码设计。
+
+**回忆记录：** 为指定用户和商品编写协同过滤预测代码
+
+**尚缺信息：** 具体相似度、k、评分矩阵及其他实现限定未完整记回；解答明确提供一种课件示范方案。
+
+**相关已有题：** E17-07、E20-05、E25-07、SL-JANE。
+
+### 本题公式 · 课件推荐公式：余弦相似度与均值修正
+
+$J_{uv}$ 为 u、v 共同已评分的物品集合。课件第 19 页的余弦相似度为
+
+$$\operatorname{sim}(u,v)=\frac{\sum_{i\in J_{uv}}r_{ui}r_{vi}}{\sqrt{\sum_{i\in J_{uv}}r_{ui}^2}\sqrt{\sum_{i\in J_{uv}}r_{vi}^2}}.$$
+
+分子是逐项相乘再相加的点积；两个根号分别是两个用户向量的模长。先分别写出数值，再除以两个模长，相似度越大越近。$\sqrt a\sqrt b=\sqrt{ab}$（$a,b\ge0$），两种根号写法等价。
+
+**评分用课件 recommend.pdf 第 20 页的均值修正式。** $r_{ui}$ 是已有评分，$\widehat r_{ui}$ 是预测；$\bar r_u$ 是用户 u 全部已观察评分的均值，$N_u$ 为选出的邻居：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+先算邻居评分比其自身均值高/低多少，用相似度加权平均，再加回目标用户均值。分母是所用邻居的相似度总和。均值包含有效的 0 分，跳过缺失的问号。 题干中的 $s(u,v)$ 与这里的 $\operatorname{sim}(u,v)$ 表示同一个相似度，代入时使用前面算出的数值。
+
+### 英文题干（根据考后回忆整理）
+
+A rating matrix contains N users and M items. Write code to predict a specified user's rating for a specified item using similar users.
+
+评分矩阵包含N名用户和M个商品。编写代码，利用相似用户预测指定用户对指定商品的评分。
+
+### 解答
+
+采用课件的用户余弦相似度与均值修正作为示范方案。先用共同已评分物品计算相似度，再用给目标商品评过分的邻居预测：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+```text
+function PREDICT(R, u, item, k):
+    if R[u,item] is known: return R[u,item]
+    mean_u = mean of known ratings in row u
+    if row u has no known ratings: return global known-rating mean
+    candidates = []
+    for each user v other than u who rated item:
+        skip v if the co-rated vectors have a zero norm
+        sim = cosine of u and v on their co-rated items
+        if sim > 0:
+            mean_v = mean of known ratings in row v
+            save (sim, v, R[v,item] - mean_v) in candidates
+    neighbors = top k candidates by sim
+    if neighbors is empty: return mean_u
+    return mean_u + sum(sim * deviation) / sum(sim)
+```
+
+0 分参与计算，缺失值跳过。以上伪代码先展示核心步骤；下方完整 Python 用堆维护前 k 人，并处理零模长及回退。
+
+
+### English answer · 英文作答
+
+One complete implementation uses co-rated-item cosine similarity and the course mean-centered predictor. Consider only users who rated the target item, retain the top-k positive similarities, and normalize the weighted rating deviations before adding the target user mean. Skip missing values without treating valid zeros as missing. Use the user mean, or the global mean for a user without ratings, when a prediction has no supporting neighbors.
+
+一种完整实现使用共同评分商品上的余弦相似度和课件均值修正预测式。只考虑对目标商品打过分的用户，保留前 k 个正相似度，归一化加权评分偏差后加回目标用户均值。跳过缺失值，不把有效的零分当作缺失。在预测缺少邻居支持时，使用用户均值；用户没有评分时使用全局均值。
+
+<details>
+<summary>补充解释（展开）</summary>
+
+
+### 补充详解
+
+#### 1. 用课件方法给出一个完整实现
+
+下面示范课件的“用户余弦相似度＋均值修正预测”。具体代码采用这些明确约定：None 表示缺失，0 为有效评分；只考虑给目标商品打过分的其他用户；选前 k 个正相似度邻居，同相似度优先较小用户编号。k 为函数参数。
+
+设 $J_{uv}$ 为 u、v 共同已评分的商品，$N_u$ 为本次选中的邻居：
+
+$$\operatorname{sim}(u,v)=\frac{\sum_{j\in J_{uv}}r_{uj}r_{vj}}{\sqrt{\sum_{j\in J_{uv}}r_{uj}^2}\sqrt{\sum_{j\in J_{uv}}r_{vj}^2}}.$$
+
+各用户的均值 $\bar r$ 使用其全部已知评分。预测时先减邻居均值，加权后加回目标用户均值：
+
+$$\widehat r_{ui}=\bar r_u+\frac{\sum_{v\in N_u}\operatorname{sim}(u,v)(r_{vi}-\bar r_v)}{\sum_{v\in N_u}\operatorname{sim}(u,v)}.$$
+
+#### 2. 按公式写代码
+
+代码中的用户u与商品item使用从0开始的下标。
+
+```python
+from math import sqrt
+from heapq import heappush, heapreplace
+
+def predict(ratings, u, item, k=10):
+    """None is missing; 0 is a valid rating; k must be positive."""
+    if k < 1:
+        raise ValueError("k must be positive")
+    if ratings[u][item] is not None:
+        return float(ratings[u][item])
+
+    def mean(row):
+        total, count = 0.0, 0
+        for value in row:
+            if value is not None:
+                total += value
+                count += 1
+        return total / count if count else None
+
+    user_mean = mean(ratings[u])
+    if user_mean is None:
+        total, count = 0.0, 0
+        for row in ratings:
+            for value in row:
+                if value is not None:
+                    total += value
+                    count += 1
+        return total / count if count else None
+
+    heap = []
+    for v, row in enumerate(ratings):
+        if v == u or row[item] is None:
+            continue
+        dot, norm_u2, norm_v2 = 0.0, 0.0, 0.0
+        for a, b in zip(ratings[u], row):
+            if a is not None and b is not None:
+                dot += a * b
+                norm_u2 += a * a
+                norm_v2 += b * b
+        if norm_u2 == 0 or norm_v2 == 0:
+            continue
+        sim = dot / (sqrt(norm_u2) * sqrt(norm_v2))
+        if sim <= 0:                # declared positive-neighbor policy
+            continue
+        offset = row[item] - mean(row)
+        entry = (sim, -v, offset)   # equal similarity: smaller user ID first
+        if len(heap) < k:
+            heappush(heap, entry)
+        elif entry[:2] > heap[0][:2]:
+            heapreplace(heap, entry)
+
+    if not heap:
+        return user_mean
+    weight_sum = sum(sim for sim, _, _ in heap)
+    correction = sum(sim * offset for sim, _, offset in heap) / weight_sum
+    return user_mean + correction
+```
+
+#### 3. 各分支对应的含义
+
+- 目标评分已经存在时，直接返回该评分。
+- 共同评分向量的模长为 0 时跳过该用户；正相似度筛选是本示范算法的邻居策略。
+- 无合格邻居时返回目标用户均值；目标用户没有已知评分时返回全体有效评分均值；矩阵全缺失时返回 None。
+- 小根堆只保留当前最优 k 人；最后用“相似度乘评分偏差”的和除以权重和，再加回用户均值。
+
+#### 最终作答要点
+
+代码完成“读共同评分→算相似度→筛选并保留邻居→算均值偏差→归一化预测”，并处理缺失和空邻域。余弦及均值修正来自课件；上述 k、正相似度和回退处理是为完整代码明确的示范选择。
+
+
+### 易错点与约定
+
+代码中的 sim<=0 筛选、同分编号规则和回退均已声明为示范选择；不将它们写成原卷已经指定的条件。所有有效 0 都参与均值及共同评分运算。
+
+### 计算与内存分析
+
+对一个用户—商品查询，最多比较 N 位用户，每次扫描 M 项，时间为 $O(NM+N\log k)$，k=1 时堆操作按常数计。代码逐行计算均值，不另存全部 N 个相似度或均值，只需 $O(k)$ 额外堆空间与常数累计量；评分矩阵本身的 $O(NM)$ 输入存储另计。 上方伪代码若存下全部候选，额外空间为O(N)；下方堆实现只保留k名邻居，额外空间为O(k)，均不含输入评分矩阵。
+
+</details>
+
+### 知识点与公式总结
+
+- 用共同已评分集合 $J_{uv}$ 算余弦，但只有已评目标商品的用户能贡献 $r_{vi}$。
+- 课件预测式是目标均值加上邻居评分偏差的归一化加权和。
+- None 为缺失、0 有效；跳过零模长，明确 top-k、相似度筛选和空邻域回退。

@@ -36,6 +36,8 @@ Please design a data warehouse model for the airline's tasks. (12 points)
 
 $$g_t=\frac{V_t-V_{t-1}}{V_{t-1}}\times100\%,\quad V_{t-1}>0.$$
 
+**单事实方案也可成立：** 若按食品消费明细记录，quantity可求和；乘次与票价按乘机去重，并覆盖无食品消费的乘机记录。关键在于粒度及聚合规则。
+
 ### English answer · 英文作答
 
 Use a passenger-flight-leg travel fact and a separate product-consumption fact. Share Passenger, FlightLeg, Date and Route dimensions, and add Product to the consumption fact. Sum passenger_count and quantity by route and period. Aggregate the facts separately. Compute traffic growth as $(V_t-V_{t-1})/V_{t-1}$ when the previous volume is positive.
@@ -118,6 +120,11 @@ $$g_t=\frac{V_t-V_{t-1}}{V_{t-1}}\times100\%.$$
 
 先分别聚合两个时期，再计算增长率。若同时展示客流和餐饮量，先将两张事实各聚合到共同的路线—年月或路线—季节粒度，再按这一唯一分组键连接。直接连接两张明细会把一条乘坐事实随多条餐饮明细重复。
 
+#### 单事实表方案的适用条件
+
+单张事实表也可以成立，判断依据是**一行代表什么、每个度量怎样聚合**。例如一行表示“一名乘客在一次航段中的一条食品消费明细”，$SUM(quantity)$ 能得到食品消费量；同次乘机出现多条明细时，客流用不同的 $(passenger\_key,flight\_leg\_key)$ 组合数统计，票价先按乘机粒度取唯一值再汇总。若还要覆盖全部乘坐人次，需保留没有食品消费的乘机记录，例如记录其无商品消费的状态和0数量。
+
+双事实方案把乘机事件与食品明细分别保存，能直接按各自粒度汇总；这是避免重复计算的一种方便设计，并非唯一可行的表数。
 
 ### 易错点与约定
 
@@ -135,6 +142,7 @@ $$g_t=\frac{V_t-V_{t-1}}{V_{t-1}}\times100\%.$$
 - **客流与消费：** $V=SUM(passenger\_count)$；$Q=SUM(quantity)$，两张事实各自聚合到共同粒度后连接。
 - **增长率：** $g=(V_t-V_{t-1})/V_{t-1}$；分母是上期同口径客流。
 - **季节比较：** 日期保留年份与季节，路线保留明细，其余不展示的轴上卷到ALL。
+- **单表可行性：** 食品明细粒度能汇总quantity；乘次与票价需按乘机去重，且要覆盖无消费的乘机记录。表数由业务粒度与聚合要求决定。
 
 
 ---
@@ -1431,3 +1439,124 @@ WHERE d1.level_2 = 'A'
 - **物化选择：** 结合查询频次、单元数与空间预算，优先保存高频方体。
 - **Drill-down：** 在保留的数据上转到更细的概念层次。
 - **Drill-through：** 携带全部单元格坐标与筛选条件，通过原记录键取得关系明细。
+
+
+---
+
+<a id="E26-01"></a>
+
+## E26-01 · 2026 · 第1题：航空仓库设计与月度食品/饮品销量OLAP
+
+来源：2026 年期末考后回忆 · Q1(a) 8分；Q1(b) 4分，共12分
+
+状态：考后回忆整理；形式：回忆题 / 仓库设计与OLAP。
+
+**回忆记录：** 航空公司数据仓库，设计题8分；OLAP题4分，涉及某航司客户的月度机上商品销量。设计背景与2020航空题接近。
+
+**尚缺信息：** 完整题面及原图未保留；第二问商品称呼的语音表述不清，按航空场景归纳为机上食品/饮品销量；具体客户分组层级、商品分类层级与筛选值未记清；答案用变量及相应聚合变体表示。
+
+**相关已有题：** E20-01。
+
+### 英文题干（根据考后回忆整理）
+
+(a) Design a data warehouse for an airline to analyze customer travel, passenger traffic on different routes, and on-board food/drink consumption or sales. State the fact grain, dimensions and measures. (8 points)
+
+（a）为航空公司设计数据仓库，分析客户出行、不同航线的客流，以及机上食品/饮品消费或销售。说明事实粒度、维度和度量。（8分）
+
+(b) Describe the OLAP operations needed to obtain monthly sales quantities of on-board food/drink products for customers of a selected airline. (4 points)
+
+（b）说明获取指定航空公司客户月度机上食品/饮品销量所需的OLAP操作。（4分）
+
+### 解答
+
+![航空公司事实星座：四个共享维度与商品维度](../assets/solutions/detail-airline-constellation.svg)
+
+**(a) 仓库设计（8分）。** 推荐按业务粒度使用两张事实表：FactTravel 一行是一名乘客的一次具体航段，PK为$(passenger\_key,flight\_leg\_key)$，度量passenger_count=1；FactCatering 一行是一条机上食品/饮品销售明细，PK为consumption_key，度量quantity，金额可另记amount。共享Passenger、FlightLeg、Date、Route维，销售事实另连Product维；航段维保存承运航司airline_code。
+
+单表按“乘客—航段—商品明细”粒度也可汇总销量；乘次和票价按乘机去重，分析全部客流时还要覆盖未购买者。方案的可行性取决于粒度和聚合规则。
+
+**(b) 月度销量OLAP（4分）。** 按客户分别统计时，从$[Passenger,FlightLeg,Day,Route,Product]$出发，Slice：$FlightLeg.airline\_code=A$；Day→YearMonth，FlightLeg、Route、Product在筛选后→ALL，保留Passenger。最终为$[Passenger,ALL,YearMonth,ALL,ALL]$，按客户、年月求$SUM(quantity)$。
+
+若题目还要求按商品类别区分，则将Product上卷到Category并保留；若只求航司月总量，则Passenger也上卷到ALL。具体筛选值及是否保留商品类别未记全，以题面为准。
+
+### English answer · 英文作答
+
+Use passenger-flight-leg travel facts and separate on-board product-sales-line facts with shared Passenger, FlightLeg, Date and Route dimensions; add Product to sales facts. Slice to the selected airline. For monthly quantities by customer, roll Day to YearMonth and FlightLeg, Route and Product to ALL, retain Passenger, and sum quantity. A single fact can also work if its grain and aggregation rules preserve the required measures.
+
+使用旅客—具体航段的出行事实与独立的机上商品销售明细事实，共享Passenger、FlightLeg、Date和Route维，销售事实另加Product维。切片限定所选航司。按客户统计月度数量时，将Day上卷到YearMonth，将FlightLeg、Route和Product上卷到ALL，保留Passenger，求quantity之和。若粒度和聚合规则能够保留所需度量，单张事实表也可成立。
+
+<details>
+<summary>补充解释与 SQL（展开）</summary>
+
+
+### 补充详解
+
+#### (a) 用明确粒度组织航空公司的两类业务
+
+2020原卷Q1的任务是常客出行趋势、航线客流的季节变化与增长，以及各航班食品和饮料的消费情况。2026回忆与该设计背景接近，并新增4分OLAP小问。以下用两张事实表表达不同粒度，月度销量要求记录真实销售数量。
+
+![航空公司事实星座：四个共享维度与商品维度](../assets/solutions/detail-airline-constellation.svg)
+
+| 表 | 一行的粒度与主键 | 外键 / 度量 |
+| --- | --- | --- |
+| FactTravel | 一名乘客乘坐一个具体航段；PK(passenger_key,flight_leg_key) | FK连接Passenger、FlightLeg、Date、Route；passenger_count=1，票价可记fare |
+| FactCatering | 一条机上食品/饮品销售明细；PK consumption_key | FK连接同样四维，另含product_key；quantity，金额可记amount |
+| DimPassenger | PK passenger_key | 常客标志与等级等客户属性 |
+| DimFlightLeg | PK flight_leg_key | 具体航段、航班号；airline_code表示本航段承运航司 |
+| DimDate | PK date_key | calendar_year、year_month；year_month同时标识年份和月份 |
+| DimRoute | PK route_key | route_code、始发与到达地点 |
+| DimProduct | PK product_key | 食品/饮品名称与category |
+
+图沿用已有航空公司事实星座；在航段维中以airline_code支持本小问的航司筛选。日期维是共享的日历，事实中的date_key分别按相应业务事件的记录日期赋值。食品销量由销售明细的quantity表示；消费量、销售金额、乘坐人次是各自独立的度量。
+
+典型层次有Day→YearMonth→Year→ALL、Product→Category→ALL；Passenger可按常客等级分组，FlightLeg可按承运航司汇总。各维度键唯一，每条事实通过外键连接对应维度记录。
+
+#### (b) 月度食品/饮品销量：先明确输出粒度
+
+回忆未保留完整筛选值及客户分组层级。下面按“指定航司、每位客户、每个年月的销量”给出操作；$A$表示未记清的航司取值。
+
+1. **Base cuboid：** $[Passenger,FlightLeg,Day,Route,Product]$，使用食品/饮品销售事实FactCatering；Customer沿用图中的Passenger维。
+2. **Slice：** $FlightLeg.airline\_code=A$，限定该航司的明细。若原题还给时间、客户集合等条件，与此条件一起先做Dice。
+3. **Roll-up：** Day→YearMonth，保留Passenger；FlightLeg、Route、Product在已筛定范围内→ALL。
+4. **Aggregate：** 按客户和年月求$SUM(quantity)$。最终方体为$[Passenger,ALL,YearMonth,ALL,ALL]$。
+
+$$Q_{p,m}^{(A)}=\sum_{f:\,passenger(f)=p,\,month(f)=m,\,airline(f)=A}quantity(f).$$
+
+这里$m$是带年份的月份，如“2026-11”。若按食品类别输出，Product→Category并保留该轴；若只求某航司的月总销量，Passenger也→ALL。上卷只合并已选范围内的事实，航司条件一直有效。
+
+#### 对应 SQL：用于理解上述操作
+
+```sql
+SELECT f.passenger_key, d.year_month,
+       SUM(f.quantity) AS monthly_food_quantity
+FROM FactCatering AS f
+JOIN DimDate AS d ON d.date_key=f.date_key
+JOIN DimFlightLeg AS l ON l.flight_leg_key=f.flight_leg_key
+WHERE l.airline_code=:airline_code
+GROUP BY f.passenger_key,d.year_month;
+```
+
+参数`:airline_code`对应$A$。本设计的FactCatering保存机上食品/饮品销售记录；若事实还包含其他商品，应先增加对应类别筛选。要按商品类别分组时，再连接DimProduct并在SELECT、GROUP BY中保留category。FlightLeg、Route、Product不进入GROUP BY，体现为ALL；Passenger仍参与分组，因此按客户分别输出。
+
+#### 单张事实表何时也可成立
+
+一行统一为“一名乘客在一次航段中的一条食品购买明细”时，单张事实表可以正确统计$SUM(quantity)$。同次乘机若有多条食品购买，乘次和票价会随明细重复；客流需按不同的$(passenger\_key,flight\_leg\_key)$组合计数，票价需先回到乘机粒度。要分析全部客流，还应覆盖没有购买食品的乘机记录。
+
+因此判断设计要核对事实粒度、维度、度量与聚合规则。单事实与双事实都可以有合理实现；双事实更便于分别保存乘机事件与商品明细。
+
+### 易错点与约定
+
+同一乘机对应多条商品明细时，不能把每条明细上的passenger_count或完整票价直接相加。只记购买者的表无法覆盖未购买食品的客流。月度销量需要数量记录；仅有偏好标签不能直接计算销量。
+
+### 计算与内存分析
+
+对销售事实N行扫描筛选并哈希聚合，期望时间约$O(N)$、分组状态$O(G)$，G为输出的客户—年月组数。按日期分区及物化常用客户—年月数量汇总可减少重复扫描，需另计索引、物化空间和刷新成本。
+
+</details>
+
+### 知识点与公式总结
+
+- **先定粒度：** 乘机事件与食品销售明细具有不同粒度，双事实便于分别汇总；单事实需要处理重复的乘次/票价。
+- **销量：** $SUM(quantity)$；乘坐人次与票价总额分别按相应乘机粒度计算。
+- **OLAP：** 先筛选航司，再明确客户、年月及商品分类哪些轴保留、哪些到ALL。
+- **月份：** 采用YearMonth或$(year,month)$，区分不同年份的同名月份。

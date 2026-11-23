@@ -961,3 +961,135 @@ FP 树使用顺序 I2、I1、I3、I4、I5。递归条件挖掘得到 13 个频�
 - 先求 $q=\lceil N\,min\_sup\rceil$（本题 $N=9$、$min\_sup=0.2$），按单项频数降序过滤、重排事务，再合并共同前缀建 FP-tree。
 - 取后缀的前缀路径形成条件模式基，路径权重取对应后缀节点计数；同名节点合计才是该项支持计数。
 - 条件树继续用原整数门槛 q；递归挖掘后拼接当前后缀。空条件树仍保留频繁后缀单项，最后汇总全部长度的项集。
+
+
+---
+
+<a id="E26-03"></a>
+
+## E26-03 · 2026 · 第3题：四笔事务 FP-growth 与 Apriori 比较
+
+来源：2026 年期末考后回忆 · Q3
+
+状态：回忆整理：单项计数和过滤后事务可计算；形式：考后回忆 / 按回忆整理。
+
+**回忆记录：** 回忆为4笔事务、X4/Y3/V3/Z2/W2、最小支持度60%，构建FP-tree并比较FP-growth与Apriori。
+
+**尚缺信息：** 原事务中Z、W的位置；原题完整措辞与分值。
+
+**相关已有题：** HW3-03、E25-03。
+
+### 本题公式 · FP-growth：节点计数与条件投影
+
+设原事务数为 $N$、支持度阈值为 $s$：$q=\lceil Ns\rceil$，$supp(X)=count(X)/N$。
+
+对后缀 $a$，其条件模式基由根到各 $a$ 节点之前的前缀路径组成；每条路径的权重为该 $a$ 节点计数。条件物品计数为包含它的路径权重之和。
+
+同名节点计数相加得到该物品支持计数；筛选条件树时始终使用原 $q$，递归扩展后将后缀接回，最后列出全部项集及计数。
+
+### 英文题干（根据考后回忆整理）
+
+This recall preserves four transactions after filtering infrequent items, together with the following singleton counts. The original placement of Z and W within transactions was not retained.
+
+本次回忆保留了四笔事务筛除非频繁物品后的内容，以及以下单项支持计数；Z、W 在原事务中的具体分布未保留。
+
+| Item | X | Y | V | Z | W |
+| --- | --- | --- | --- | --- | --- |
+| Recalled count | 4 | 3 | 3 | 2 | 2 |
+
+| TID | Recalled transaction after filtering Z and W |
+| --- | --- |
+| T1 | X,V,Y |
+| T2 | X,V,Y |
+| T3 | X |
+| T4 | X,V,Y |
+
+**(a)** With minimum support 60%, construct the FP-tree and find all nonempty frequent itemsets with their support counts. For this worked reconstruction, use descending singleton frequency and place V before Y when their counts tie.
+
+**(a)** 最小支持度为 60%。构建 FP-tree，列出全部非空频繁项集及支持计数。本解答按单项计数降序排列；V、Y 同频时固定 V 在 Y 前。
+
+**(b)** Compare FP-growth with Apriori.
+
+**(b)** 比较 FP-growth 与 Apriori。题面根据考后回忆重新表述。
+
+### 逐步解答
+
+#### (a) 先换算门槛并过滤
+
+原事务总数 $N=4$，$min\_sup=60\%=0.6$：
+
+$$q=\lceil N\,min\_sup\rceil=\lceil4\times0.6\rceil=\lceil2.4\rceil=\boxed{3}.$$
+
+回忆单项计数为 $X:4,Y:3,V:3,Z:2,W:2$，所以保留 X、V、Y，筛除 Z、W。固定顺序为 $X\prec V\prec Y$，过滤后事务如下：
+
+| 事务 | 过滤并排序的序列 |
+| --- | --- |
+| T1 | $X\to V\to Y$ |
+| T2 | $X\to V\to Y$ |
+| T3 | $X$ |
+| T4 | $X\to V\to Y$ |
+
+该表记录的是**筛选后事务**；原 Z、W 的位置仍保持缺失。
+
+#### (a) 合并公共前缀，写节点计数
+
+T1、T2、T4 共享完整路径，T3 只增加 X 的计数，所以
+
+$$\boxed{root\to X:4\to V:3\to Y:3}.$$
+
+![2026 回忆筛选后数据：主 FP-tree 与后缀 Y、V 的条件树](../assets/solutions/recall2026-fp.svg)
+
+头表支持计数为 X:4、V:3、Y:3；X 的节点计数为四笔事务，V、Y 的节点计数为包含完整前缀的三笔事务。
+
+#### (a) 条件投影与全部频繁项集
+
+| 后缀 | 条件模式基 | 条件树及输出 |
+| --- | --- | --- |
+| Y | $\langle X,V:3\rangle$ | $root\to X:3\to V:3$；输出 Y、XY、VY、XVY，计数均为 3 |
+| V | $\langle X:3\rangle$ | $root\to X:3$；输出 V、XV，计数均为 3 |
+| X | 空前缀，计数 4 | 条件树为空；输出单项 X:4 |
+
+在 Y 的条件树继续以 V 为后缀，前缀为 X:3，得到三项集 XVY:3。全程保持整数门槛 $q=3$。
+
+| 项集 | 支持计数 | 支持度 |
+| --- | ---: | --- |
+| $\{X\}$ | 4 | $4/4=1$ |
+| $\{V\}$ | 3 | $3/4=0.75$ |
+| $\{Y\}$ | 3 | $3/4=0.75$ |
+| $\{X,V\}$ | 3 | $3/4=0.75$ |
+| $\{X,Y\}$ | 3 | $3/4=0.75$ |
+| $\{V,Y\}$ | 3 | $3/4=0.75$ |
+| $\{X,V,Y\}$ | 3 | $3/4=0.75$ |
+
+共 $3+3+1=\boxed{7}$ 个非空频繁项集。Z、W 单项已低于门槛，包含它们的更大项集也低于门槛，因此未保存它们的原始分布仍足以计算上述频繁结果。
+
+#### (b) 用方法、原因与代价比较
+
+| 方面 | Apriori | FP-growth |
+| --- | --- | --- |
+| 处理方法 | 连接、子集剪枝，逐层扫描候选计数 | 排序后共享前缀，用条件投影递归扩展 |
+| 本例 | 保留 3 个单项，检查 3 个二项和 1 个三项候选 | 三笔相同有序事务压成共享的 X→V→Y 路径 |
+| 原库扫描 | 标准逐层实现扫描单项、二项、三项各层 | 标准建主树通常两遍；条件树递归另有计算 |
+| 空间与适用性 | 存候选和计数器，候选多时占用增长 | 存主树、头表与递归条件树；公共前缀少时压缩较弱 |
+
+本例共享前缀多，FP-tree 很紧凑。两种算法在相同阈值下输出相同的 7 个频繁项集。
+
+### English answer pattern
+
+The minimum count is $\lceil4\times0.6\rceil=3$. Keep X, V and Y. With order X before V before Y, the tree is root→X:4→V:3→Y:3. The seven frequent itemsets are X, V, Y, XV, XY, VY and XVY. X has count 4; all other listed itemsets have count 3.
+
+最小计数为 $\lceil4\times0.6\rceil=3$。保留 X、V、Y。按 X、V、Y 的顺序，树为 root→X:4→V:3→Y:3。七个频繁项集为 X、V、Y、XV、XY、VY、XVY。X 的计数为 4，其余列出的项集计数均为 3。
+
+### 易错点与约定
+
+回忆表是过滤后的事务表。阈值 60% 对应整数计数 3；条件树继续用同一整数阈值，支持度始终除以原事务数 4。
+
+### 计算与内存分析
+
+本例主树除根外有 3 个节点。一般设过滤后总篮长 $B=\sum_t|t|$，主树节点数至多为 $O(B)$；排序、头表及递归条件树另计。Apriori 的开销受候选总数和扫描层数影响。
+
+### 知识点与公式总结
+
+- 频繁门槛为 $q=\lceil N\,min\_sup\rceil$；本题 $q=3$，先筛除计数 2 的 Z、W。
+- 同一顺序重排事务，前缀共享时将节点计数相加；条件路径的权重取后缀节点计数。
+- 回忆的过滤后数据足以得到七个频繁项集；原 Z、W 分布没有补造。

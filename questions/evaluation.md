@@ -612,3 +612,100 @@ Sensitivity is 99.3429%, specificity is 86.2667%, precision is 94.4067%, and acc
 - 先按真实标签行、预测标签列，确定 $TP,TN,FP,FN$。
 - $Sensitivity=TP/(TP+FN)$，$Specificity=TN/(TN+FP)$；$Precision=TP/(TP+FP)$，$Accuracy=(TP+TN)/N$。
 - Recall 看真实正类总数，Precision 看预测正类总数；代入前先写分母。
+
+
+---
+
+<a id="E26-05"></a>
+
+## E26-05 · 2026 · 第5题：过拟合及神经网络、决策树的防治
+
+来源：2026 年期末考后回忆 · Q5
+
+状态：回忆整理（三问任务明确）；形式：2026 考后回忆 / 简答分析。
+
+**回忆记录：** 过拟合及神经网络、决策树的防治
+
+**尚缺信息：** 除三问任务外，没有记回更多限定条件；不另补数值要求。
+
+**相关已有题：** E25-05、E17-03、E20-03D。
+
+### 本题公式 · 过拟合、正则化与早停
+
+训练损失 $\mathcal L_{train}$ 衡量对训练数据的拟合；验证损失 $\mathcal L_{val}$ 用于选模型和训练轮次。典型过拟合现象是训练损失继续下降，验证损失开始上升。
+
+**L2 正则化（L2 regularization）**
+
+$$\mathcal J(\theta)=\mathcal L_{data}(\theta)+\lambda\sum_\ell\|W^{(\ell)}\|_F^2.$$
+
+$\theta$ 为模型参数；$W^{(\ell)}$ 为第 $\ell$ 层权重；$\|W\|_F^2=\sum_{i,j}w_{ij}^2$；$\lambda\ge0$ 控制惩罚强度。若题目写 $\lambda/2$，按题给系数代入。
+
+**早停（early stopping）与选模**
+
+$$t^*=\arg\min_t\mathcal L_{val}(\theta_t),\qquad \overline E_{CV}=\frac1K\sum_{j=1}^K E_j.$$
+
+$t$ 为训练轮次，早停保留验证损失最低轮次的参数；$E_j$ 为第 $j$ 折验证误差，$K$ 折交叉验证取平均。训练集拟合参数，验证集选超参数，测试集评价最终方案。
+
+### 英文题干（根据考后回忆整理）
+
+(a) What is overfitting?
+
+（a）什么是过拟合？
+
+(b) How can overfitting be reduced in a neural network classifier?
+
+（b）如何减轻神经网络分类器的过拟合？
+
+(c) How can overfitting be reduced in a decision tree?
+
+（c）如何减轻决策树的过拟合？
+
+### 逐步解答
+
+#### (a) 过拟合的定义与表现
+
+过拟合（overfitting）是模型过度适应训练数据中的噪声或偶然规律，导致对未见样本的泛化表现较差。典型现象是训练损失继续下降，验证损失不再改善或开始上升。
+
+#### (b) 神经网络：三种常用方法
+
+| 方法 | 如何减少过拟合 |
+| --- | --- |
+| L2 regularization（正则化） | 惩罚过大的权重，限制对有限训练样本的过度适应。 |
+| Early stopping（早停） | 监测验证损失，停止继续拟合并恢复验证效果最好的轮次。 |
+| Dropout（随机失活） | 训练时随机屏蔽部分单元，减少网络对少数单元组合的依赖。 |
+
+设数据损失为 $\mathcal L_{data}$，权重矩阵为 W，L2 目标为
+
+$$\mathcal J=\mathcal L_{data}+\lambda\|W\|_F^2.$$
+
+$\lambda\ge0$ 控制惩罚强度，$\|W\|_F^2$ 是全部权重的平方和。早停可写为 $t^*=\arg\min_t\mathcal L_{val}(\theta_t)$，选择并恢复验证损失最低轮次的参数。正则强度、失活率和轮次都用验证数据选择。
+
+#### (c) 决策树：剪枝与复杂度选择
+
+| 方法 | 做法与作用 |
+| --- | --- |
+| Pre-pruning（预剪枝） | 建树时限制最大深度、最小叶样本数或最小增益，避免为少量或噪声样本反复分裂。 |
+| Post-pruning（后剪枝） | 先生成树，再比较保留子树与替换为叶节点的验证表现，剪去无助泛化的分支。 |
+
+在同一验证集或交叉验证划分上选择树的复杂度。预剪枝可减少建树工作，但过早停止可能欠拟合；后剪枝能先观察完整子树的效果，再作取舍。
+
+#### 最终作答要点
+
+先写过拟合定义和训练/验证的典型现象；神经网络列三种方法并解释作用；决策树说明预剪枝、后剪枝及验证选复杂度。训练集拟合参数，验证集选方案，独立测试集评价选好的模型。
+
+
+### English answer pattern
+
+Overfitting means fitting training noise or accidental patterns so that generalization becomes poor. For neural networks, use L2 regularization, early stopping and dropout. For decision trees, use pre-pruning to restrict growth and post-pruning to remove branches that do not improve validation performance. Select complexity with validation data and evaluate the final model on an independent test set.
+
+过拟合指拟合训练噪声或偶然模式，使泛化表现变差。神经网络可采用 L2 正则化、早停和随机失活。决策树可通过预剪枝限制生长，通过后剪枝删除不能改善验证表现的分支。使用验证数据选择复杂度，并在独立测试集上评价最终模型。
+
+### 易错点与约定
+
+早停与复杂度选择依据验证数据；最终测试数据留作评价。每种方法配一句机制说明，比只列方法名称更完整。
+
+### 知识点与公式总结
+
+- 过拟合关注对未见数据的表现：训练损失继续改善，验证表现却变差。
+- 神经网络可答 L2、早停、Dropout，每项说明怎样限制过度适应。
+- 决策树说明预剪枝、后剪枝和验证选复杂度；测试集用于最终评价。

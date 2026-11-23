@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="26.0.0">
+  <diagram name="2026 recalled filtered FP trees">
+    <mxGraphModel page="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="2026 recall: filtered transactions, minimum count = 3" style="text;html=1;fontFamily=Times New Roman;fontSize=21;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="310" y="8" width="280" height="34" />
+        </mxCell>
+        <mxCell id="3" value="Main FP-tree" style="text;html=1;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="10" y="45" width="280" height="34" />
+        </mxCell>
+        <mxCell id="4" value="root" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="85" y="93" width="130" height="44" />
+        </mxCell>
+        <mxCell id="5" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="150" y="137" />
+            <mxPoint as="targetPoint" x="150" y="171" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6" value="X : 4" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="85" y="171" width="130" height="44" />
+        </mxCell>
+        <mxCell id="7" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="150" y="215" />
+            <mxPoint as="targetPoint" x="150" y="249" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8" value="V : 3" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="85" y="249" width="130" height="44" />
+        </mxCell>
+        <mxCell id="9" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="150" y="293" />
+            <mxPoint as="targetPoint" x="150" y="327" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="Y : 3" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="85" y="327" width="130" height="44" />
+        </mxCell>
+        <mxCell id="11" value="Conditional suffix Y" style="text;html=1;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="310" y="45" width="280" height="34" />
+        </mxCell>
+        <mxCell id="12" value="root" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="385" y="93" width="130" height="44" />
+        </mxCell>
+        <mxCell id="13" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="450" y="137" />
+            <mxPoint as="targetPoint" x="450" y="171" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" value="X : 3" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="385" y="171" width="130" height="44" />
+        </mxCell>
+        <mxCell id="15" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="450" y="215" />
+            <mxPoint as="targetPoint" x="450" y="249" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="16" value="V : 3" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="385" y="249" width="130" height="44" />
+        </mxCell>
+        <mxCell id="17" value="Conditional suffix V" style="text;html=1;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="610" y="45" width="280" height="34" />
+        </mxCell>
+        <mxCell id="18" value="root" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="685" y="93" width="130" height="44" />
+        </mxCell>
+        <mxCell id="19" style="endArrow=none;strokeColor=#000000;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="sourcePoint" x="750" y="137" />
+            <mxPoint as="targetPoint" x="750" y="171" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" value="X : 3" style="rounded=0;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=19;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="685" y="171" width="130" height="44" />
+        </mxCell>
+        <mxCell id="21" value="Suffix X: empty prefix; singleton X still has count 4." style="text;html=1;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="310" y="408" width="280" height="34" />
+        </mxCell>
+        <mxCell id="22" value="Recursive suffix VY: root -&gt; X : 3; output XVY : 3." style="text;html=1;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="310" y="439" width="280" height="34" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

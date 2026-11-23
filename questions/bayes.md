@@ -371,3 +371,117 @@ yes 与 no 的未归一化分数分别为 0.0282187 和 0.00685714。归一化�
 - 朴素贝叶斯分数 $s_c=P(C_c)\prod_jP(x_j\mid C_c)$；先验按全体人数计算，条件概率按对应类别人数计算。
 - 分类取 $\arg\max_c s_c$；需要后验时再归一化：$P(C_c\mid x)=s_c/\sum_k s_k$。
 - 四个属性分别在 yes/no 类内计数，相乘后比较；共同分母 P(X) 对两个类别相同，分类时可先省略。
+
+
+---
+
+<a id="E26-04"></a>
+
+## E26-04 · 2026 · 第4题：二元组合频数表的贝叶斯分类
+
+来源：2026 年期末考后回忆 · Q4
+
+状态：回忆整理（频数与目标缺失，保留通用解法）；形式：2026 考后回忆 / 频数表计算。
+
+**回忆记录：** 二元组合频数表的贝叶斯分类
+
+**尚缺信息：** 七行具体的 X/Y/Z 组合、两类频数、目标 S；只记得前两行及最后一行 C1 较小、中间四行 C1 较大，这些大小关系不足以恢复人数。
+
+**相关已有题：** E16-04、HW2-02、PPT-CL38。
+
+### 本题公式 · 条件概率与贝叶斯：公式和分母
+
+**条件概率与联合概率。** $P(A\mid B)$ 表示已知 B 发生时 A 的概率，分母限定在 B 中：
+
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)},\qquad P(A\cap B)=P(A\mid B)P(B).$$
+
+**全概率与贝叶斯。** 若类别 $C_1,\ldots,C_K$ 互斥且覆盖全部样本，观察证据 x 后：
+
+$$\begin{aligned}
+P(x)&=\sum_kP(x\mid C_k)P(C_k),\\
+P(C_c\mid x)&=\frac{P(x\mid C_c)P(C_c)}{\sum_kP(x\mid C_k)P(C_k)}.
+\end{aligned}$$
+
+**朴素贝叶斯。** 给定类别后，假设各属性条件独立。先验用“该类人数/总人数”，条件概率用“该类内符合属性的人数/该类人数”：
+
+$$s_c=P(C_c)\prod_jP(x_j\mid C_c),\qquad P_{NB}(C_c\mid x)=\frac{s_c}{\sum_k s_k}.$$
+
+按“类人数→条件计数→相乘得分→比较类别→需要时归一化”计算。分类取分数最大者；条件概率与归一化均要求分母大于 0。题目指定平滑时，按同一规则调整各类条件计数。
+
+### 英文题干（根据考后回忆整理）
+
+A table gives seven combinations of binary attributes X, Y and Z and the frequency counts for classes C1 and C2. Use a naïve Bayesian classifier to classify the given sample S.
+
+表格给出二元属性X、Y、Z的七种组合，以及类别C1、C2的频数。使用朴素贝叶斯分类器对给定样本S分类。
+
+### 逐步解答
+
+#### 1. 先读懂频数列
+
+表中一行是一种属性组合；C1、C2 列分别保存该组合下两类的人数。一行若是 $(0,2)$，表示这个组合对应 0 个 C1、2 个 C2。一般一行 $(a,b)$ 就贡献 a 个 C1 和 b 个 C2，即使 $a>b$，两个人数都要保留。
+
+可以直接在频数表上求和，无须把它展开成很多条重复记录。这里把第 $\ell$ 行的两类频数记为 $n_{\ell1},n_{\ell2}$，$\ell=1,\ldots,7$；待预测样本记为 $S=(x^*,y^*,z^*)$。
+
+#### 2. 汇总类别人数，计算先验
+
+$$N_k=\sum_{\ell=1}^{7}n_{\ell k},\qquad N=N_1+N_2,\qquad P(C_k)=\frac{N_k}{N}.$$
+
+把七行 C1 列加总得到 $N_1$，C2 列加总得到 $N_2$。分母是样本总人数 N，行数 7 只表示属性组合的数量。
+
+#### 3. 分别汇总与 S 匹配的属性人数
+
+先找到 X 列等于 $x^*$ 的所有行，再把这些行的 Ck 人数相加：
+
+$$m_{Xk}=\sum_{\ell:X_\ell=x^*}n_{\ell k},\qquad P(X=x^*\mid C_k)=\frac{m_{Xk}}{N_k}.$$
+
+Y、Z 也分别这样做：
+
+$$\begin{aligned}
+m_{Yk}&=\sum_{\ell:Y_\ell=y^*}n_{\ell k},&P(Y=y^*\mid C_k)&=\frac{m_{Yk}}{N_k},\\
+m_{Zk}&=\sum_{\ell:Z_\ell=z^*}n_{\ell k},&P(Z=z^*\mid C_k)&=\frac{m_{Zk}}{N_k}.
+\end{aligned}$$
+
+每个条件概率分别按一个属性筛行，并使用对应类的全部人数作分母。
+
+#### 4. 乘先验与三个条件概率，再比较
+
+采用给定类别后的属性条件独立假设，两个类的未归一化分数为
+
+$$\begin{aligned}
+s_1&=\frac{N_1}{N}\times\frac{m_{X1}}{N_1}\times\frac{m_{Y1}}{N_1}\times\frac{m_{Z1}}{N_1},\\
+s_2&=\frac{N_2}{N}\times\frac{m_{X2}}{N_2}\times\frac{m_{Y2}}{N_2}\times\frac{m_{Z2}}{N_2}.
+\end{aligned}$$
+
+| 类别 | 类人数 | X 匹配人数 | Y 匹配人数 | Z 匹配人数 |
+| --- | --- | --- | --- | --- |
+| C1 | $N_1$ | $m_{X1}$ | $m_{Y1}$ | $m_{Z1}$ |
+| C2 | $N_2$ | $m_{X2}$ | $m_{Y2}$ | $m_{Z2}$ |
+
+列好这八个中间量后即可代入。若要求后验概率，再计算
+
+$$P_{NB}(C_1\mid S)=\frac{s_1}{s_1+s_2},\qquad P_{NB}(C_2\mid S)=\frac{s_2}{s_1+s_2}.$$
+
+#### 最终作答
+
+取分数较大的类别；先验和条件概率都按每行的类频数加权。完整七行频数和 S 尚未记回，因此这里保留可直接代入的解答模板，不填写一个推测的数值类别。
+
+
+### English answer pattern
+
+Treat the C1 and C2 entries as class counts. Sum the columns to obtain class priors. For each attribute of S, sum the corresponding class counts over all matching rows and divide by the class total. Multiply the prior and the three class-conditional probabilities, then select the larger score. A numerical prediction requires the missing counts and S.
+
+将 C1、C2 的条目视为类别人数。将各列求和以计算类别先验。对 S 的每个属性，在全部匹配行上汇总对应类的人数，再除以该类总人数。将先验与三个类条件概率相乘，选择较大的分数。数值预测需要缺失的频数及 S。
+
+### 易错点与约定
+
+人数列应分别累加；按一行哪类人数较大只保留一个标签，会丢掉该行的样本数量及另一类信息。题目指定平滑时再按要求调整条件概率。
+
+### 计算与内存分析
+
+对 R 行、d 个属性、K 类的频数表，累计中间量可在 $O(RdK)$ 时间内完成，额外计数空间为 $O(dK)$；本回忆 $R=7,d=3,K=2$，不需要按总人数展开记录。
+
+### 知识点与公式总结
+
+- 一行 $(a,b)$ 表示 a 个 C1 和 b 个 C2，两类人数分别参与统计。
+- $P(C_k)=N_k/N$；条件概率将“匹配属性行的 Ck 人数之和”除以 $N_k$。
+- 贝叶斯分数为先验乘三个条件概率；要概率时归一化，要类别时比较大小。

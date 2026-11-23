@@ -446,3 +446,126 @@ Use comparable scales, exclude the specified field, and distinguish mean distanc
 - $SSE=\sum_i\|x_i-\mu_{c_i}\|_2^2$；原作业 mean distortion 为 $\frac1N\sum_i\|x_i-\mu_{c_i}\|_2$，一个平方、一个不平方。
 - 按题目排除到达时间，并处理剩余属性的量纲；对相同缩放的数据，用多个初始化比较不同 K。
 - 误差随 K 增大通常下降，结合肘部、聚类稳定性与业务解释选 K；同时检查迭代上限和容差是否导致过早停止。
+
+
+---
+
+<a id="E26-06"></a>
+
+## E26-06 · 2026 · 第6题：一维 K-means 代码（原数列与初始条件缺失）
+
+来源：2026 年期末考后回忆 · Q6
+
+状态：回忆整理：原数列及初始条件缺失；形式：考后回忆 / 按回忆整理。
+
+**回忆记录：** 回忆为有序的一维奇数或质数数列的K-means代码题；数列类型与初始条件尚未确认。
+
+**尚缺信息：** 原始数列；奇数还是质数的确认；簇数k与初始中心；要求的迭代次数 / 停止条件；原题完整措辞与分值。
+
+**相关已有题：** E25-06、HW3-01、E20-07。
+
+### 本题公式 · K-means：距离、分配和新中心
+
+$x_i$ 为 d 维数据点，$\mu_j$ 为第 j 个中心。每轮用同一套旧中心先完成分配，再更新均值：
+
+$$d^2(x_i,\mu_j)=\sum_{r=1}^{d}(x_{ir}-\mu_{jr})^2,\qquad c_i=\arg\min_j d^2(x_i,\mu_j).$$
+
+$$\mu_j^{new}=\frac1{|C_j|}\sum_{x_i\in C_j}x_i.$$
+
+逐坐标求和、除以簇内点数；比较平方距离与比较欧氏距离得到相同最近中心。
+
+**距离与平方距离的对应。**
+
+$$d(x,\mu)=\sqrt{\sum_r(x_r-\mu_r)^2},\qquad d^2(x,\mu)=\sum_r(x_r-\mu_r)^2.$$
+
+平方根在非负数上单调递增，所以 $\arg\min_j d(x,\mu_j)=\arg\min_j d^2(x,\mu_j)$。分簇时比较平方距离即可；求实际距离、平均距离时按相应公式保留开方。
+
+### 英文题干（根据考后回忆整理）
+
+Write a K-means algorithm for an ordered one-dimensional data set. Show how points are assigned to clusters and how the cluster centers are updated.
+
+为有序的一维数据集编写K-means算法。说明如何分配数据点，以及如何更新簇中心。
+
+### 逐步解答
+
+#### 1. 输入参数与一维计算公式
+
+输入为数列 $x_1,\ldots,x_N$、簇数 k、初始中心 $\mu_1,\ldots,\mu_k$ 与迭代上限 I。回忆缺失的数列和初始条件作为参数读取。
+
+一维平方距离、分配和更新分别为
+
+$$d_{ij}^2=(x_i-\mu_j^{old})^2,\qquad label_i=\arg\min_j d_{ij}^2,$$
+
+$$n_j=\sum_i\mathbf1[label_i=j],\quad S_j=\sum_{i:label_i=j}x_i,\quad
+\mu_j^{new}=S_j/n_j\quad(n_j>0).$$
+
+先比较旧中心的距离，再汇总每簇点数与坐标和。下面代码采用明确约定：距离平局取编号小者；空簇保留旧中心。
+
+#### 2. 批量 Lloyd 伪代码
+
+```text
+Input: x[1..N], k, initial mu[1..k], iteration limit I
+for t = 1 .. I:
+    old = copy(mu)
+    count[1..k] = 0
+    sum[1..k] = 0
+    for i = 1 .. N:
+        best = 1
+        best_d2 = (x[i] - old[1])^2
+        for j = 2 .. k:
+            d2 = (x[i] - old[j])^2
+            if d2 < best_d2:
+                best = j
+                best_d2 = d2
+        label[i] = best
+        count[best] += 1
+        sum[best] += x[i]
+    for j = 1 .. k:
+        if count[j] > 0:
+            mu[j] = sum[j] / count[j]
+        else:
+            mu[j] = old[j]
+    if convergence is requested AND mu equals old:
+        break
+return label, mu
+```
+
+按簇编号递增扫描，只在严格更小时换候选，距离相同即保留较小编号。分配阶段读取 old，更新阶段写 mu，所以某个中心的更新不会影响本轮后续点的分配。
+
+#### 3. 停止位置与应报告的结果
+
+若题目给固定轮次，就完成指定轮数，并列出每轮的分簇、$n_j,S_j$ 和更新中心；若要求收敛，则按中心不再变化或题给容差停止。返回的 label 对应最后一轮旧中心的分配，mu 对应该轮统一更新后的中心。
+
+数列、k、初始中心、轮数未补齐，因此当前没有唯一数值簇或最终中心。E25-06 可练固定两轮的手算；E20-07 可用于学习数据流在线摘要，本题模板采用批量 Lloyd。
+
+#### 4. 复杂度
+
+一轮比较 N 个点到 k 个中心的距离，需要 $O(Nk)$ 时间；实际运行 I 轮为
+
+$$\boxed{O(INk)}.$$
+
+保存输入和标签需 $O(N)$，旧 / 新中心、各簇 sum 与 count 需 $O(k)$，总空间为
+
+$$\boxed{O(N+k)}.$$
+
+可逐点保存当前最小距离，无需存完整的 N×k 距离矩阵。
+
+### English answer pattern
+
+Use a copy of the old centers to assign every point, accumulate each cluster count and sum, and then update the centers simultaneously. Break distance ties by the smaller cluster index and retain the old center for an empty cluster. The one-dimensional implementation takes $O(INk)$ time and $O(N+k)$ space. Numerical clusters require the missing original inputs.
+
+复制旧中心后分配全部点，累计每簇的点数和坐标和，再同时更新中心。距离平局取较小簇编号，空簇保留旧中心。一维实现需要 $O(INk)$ 时间、$O(N+k)$ 空间。具体数值簇需要缺失的原始输入。
+
+### 易错点与约定
+
+同一轮全部距离都使用 old；整轮分配完成后才更新 mu。固定轮次与收敛停止按题意选择。数列是奇数或质数尚未确认。
+
+### 计算与内存分析
+
+设 I 为实际迭代轮数、N 为点数、k 为簇数，一维 Lloyd 时间为 $O(INk)$；输入、标签、中心和累加器共 $O(N+k)$ 空间。
+
+### 知识点与公式总结
+
+- 分配按 $(x_i-\mu_j^{old})^2$ 选择最近旧中心；更新按 $S_j/n_j$ 求新中心。
+- 每轮先完成全部点的分配，再同时更新；平局与空簇规则写在代码约定中。
+- 一维运行 I 轮的时间为 $O(INk)$、空间为 $O(N+k)$；有序性和奇数 / 质数描述不改变此基本实现。
